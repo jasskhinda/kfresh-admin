@@ -1,36 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KFresh Admin Panel
 
-## Getting Started
+Professional e-commerce management dashboard for KFresh Supermarket. Simple, clean, and powerful admin interface for managing products, orders, payments, and reports.
 
-First, run the development server:
+## ✨ Features
 
+### 📊 Dashboard Overview
+- **Revenue Analytics** - Real-time sales and revenue tracking
+- **Order Management** - View recent orders and status updates
+- **Low Stock Alerts** - Monitor inventory levels
+- **Quick Actions** - Fast access to common tasks
+
+### 📦 Product Management
+- **CRUD Operations** - Add, edit, delete, and view products
+- **Bulk Actions** - Select multiple products for batch operations
+- **Inventory Tracking** - Stock levels and low stock alerts
+- **Category Management** - Organize products by categories
+- **Price Management** - Regular and compare pricing
+- **Export Data** - Download product catalogs as CSV
+
+### 🛍️ Order Tracking
+- **Order Status Management** - Update order statuses in real-time
+- **Fulfillment Options** - Track pickup vs delivery orders
+- **Delivery Integration** - Support for Uber Eats, DoorDash, Skip, Instacart
+- **Customer Information** - View customer details and contact info
+- **Order History** - Complete order timeline and updates
+
+### 💳 Payment Tracking
+- **Revenue Dashboard** - Daily, weekly, monthly revenue tracking
+- **Transaction History** - Complete payment transaction logs
+- **Payment Methods** - Credit cards, cash, debit card tracking
+- **Payment Status** - Pending, completed, failed payment monitoring
+
+### 📈 Reports & Downloads
+- **Sales Reports** - Revenue analysis and trends
+- **Inventory Reports** - Stock levels and movement
+- **Customer Reports** - Customer data and purchase history
+- **Quick Downloads** - Instant access to daily summaries
+- **Custom Reports** - Generate reports by date range and type
+- **Multiple Formats** - Export as CSV, Excel, or PDF
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Environment Setup
+Copy the `.env.local` file and add your Supabase keys:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://tmufbgaxhtqgkvcngyxg.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+NEXT_PUBLIC_CLIENT_URL=https://your-client-app.vercel.app
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Run Development Server
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The admin panel will be available at `http://localhost:3001`
 
-## Learn More
+### 4. Build for Production
+```bash
+npm run build
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📋 Database Connection
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This admin app shares the **same Supabase database** as the client app. Both applications connect to:
+- **Project ID**: `tmufbgaxhtqgkvcngyxg`
+- **Database**: All product, order, and customer data is synchronized
+- **Real-time Updates**: Changes in admin immediately reflect on the client store
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎯 Core Admin Features
 
-## Deploy on Vercel
+### Product Management
+- ✅ **Add Products** - Create new products with all details
+- ✅ **Edit Products** - Update pricing, inventory, descriptions
+- ✅ **Delete Products** - Remove products individually or in bulk
+- ✅ **Stock Control** - Monitor and update inventory levels
+- ✅ **Price Updates** - Regular price and sale price management
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Order Processing
+- ✅ **Order List** - View all orders with filtering
+- ✅ **Status Updates** - Change order status (pending → processing → ready → completed)
+- ✅ **Customer Info** - View customer contact details
+- ✅ **Fulfillment Tracking** - Track pickup and delivery orders
+- ✅ **Payment Status** - Monitor payment completion
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Business Intelligence
+- ✅ **Revenue Tracking** - Daily, weekly, monthly sales
+- ✅ **Inventory Alerts** - Low stock notifications
+- ✅ **Export Reports** - Download business data
+- ✅ **Payment Analytics** - Transaction and payment method analysis
+
+## 🔄 Deployment
+
+### Deploy to Vercel (Recommended)
+1. Push code to your GitHub repository: `https://github.com/jasskhinda/kfreshadmin`
+2. Connect repository to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy!
+
+## 🎉 Ready for Business
+
+This admin panel provides everything needed to manage a professional e-commerce operation:
+
+- **Product Catalog Management** - Complete CRUD operations
+- **Order Processing** - From order to fulfillment
+- **Inventory Control** - Stock monitoring and alerts
+- **Financial Tracking** - Revenue and payment monitoring
+- **Business Reports** - Data export and analysis
+- **Professional Interface** - Clean, fast, reliable
+
+Perfect for managing KFresh Supermarket's operations with the same database as the customer-facing store!
+
+---
+
+**Built with ❤️ for KFresh Supermarket Management**
