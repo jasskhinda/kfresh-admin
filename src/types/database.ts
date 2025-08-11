@@ -37,6 +37,8 @@ export interface Database {
           metadata: Json
           seo_title: string | null
           seo_description: string | null
+          /** Add cooked flag to power pickup-only rules */
+          is_cooked: boolean
           created_at: string
           updated_at: string
         }
@@ -67,6 +69,8 @@ export interface Database {
           metadata?: Json
           seo_title?: string | null
           seo_description?: string | null
+          /** Optional; defaults to false in DB */
+          is_cooked?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -97,6 +101,8 @@ export interface Database {
           metadata?: Json
           seo_title?: string | null
           seo_description?: string | null
+          /** Optional on update */
+          is_cooked?: boolean
           created_at?: string
           updated_at?: string
         }
