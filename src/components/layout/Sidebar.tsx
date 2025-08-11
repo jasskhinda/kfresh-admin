@@ -10,12 +10,14 @@ import {
   CreditCard,
   Download,
   Settings,
-  Store
+  Store,
+  FolderTree
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Categories', href: '/categories', icon: FolderTree },
   { name: 'Products', href: '/products', icon: Package },
   { name: 'Orders', href: '/orders', icon: ShoppingCart },
   { name: 'Payments', href: '/payments', icon: CreditCard },
