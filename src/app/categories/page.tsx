@@ -284,13 +284,17 @@ export default function CategoriesPage() {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div className="absolute inset-0 bg-gray-500 opacity-75" onClick={() => { setShowModal(false); resetForm(); }}></div>
-            </div>
-
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+        <div 
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black bg-opacity-50"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowModal(false);
+              resetForm();
+            }
+          }}
+        >
+          {/* Modal panel */}
+          <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
               <form onSubmit={handleSubmit}>
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <h3 className="text-lg font-medium text-gray-900 mb-4">
@@ -307,7 +311,7 @@ export default function CategoriesPage() {
                         required
                         value={formData.name}
                         onChange={(e) => handleNameChange(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                         placeholder="e.g., Rice & Grains"
                       />
                     </div>
@@ -320,7 +324,7 @@ export default function CategoriesPage() {
                         type="text"
                         value={formData.slug}
                         onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-mono text-sm bg-white text-gray-900"
                         placeholder="rice-grains"
                       />
                     </div>
@@ -333,7 +337,7 @@ export default function CategoriesPage() {
                         rows={3}
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                         placeholder="Optional description..."
                       />
                     </div>
@@ -347,7 +351,7 @@ export default function CategoriesPage() {
                           type="number"
                           value={formData.sort_order}
                           onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                           min="0"
                         />
                       </div>
@@ -359,7 +363,7 @@ export default function CategoriesPage() {
                         <select
                           value={formData.is_active ? 'true' : 'false'}
                           onChange={(e) => setFormData({ ...formData, is_active: e.target.value === 'true' })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                         >
                           <option value="true">Active</option>
                           <option value="false">Inactive</option>
@@ -369,7 +373,7 @@ export default function CategoriesPage() {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div className="bg-gray-50 px-4 py-3 sm:px-6 flex flex-col sm:flex-row-reverse gap-3 sm:gap-0">
                   <button
                     type="submit"
                     className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
@@ -379,7 +383,7 @@ export default function CategoriesPage() {
                   <button
                     type="button"
                     onClick={() => { setShowModal(false); resetForm(); }}
-                    className="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                    className="w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:w-auto sm:text-sm"
                   >
                     Cancel
                   </button>
@@ -387,8 +391,7 @@ export default function CategoriesPage() {
               </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   )
 }
