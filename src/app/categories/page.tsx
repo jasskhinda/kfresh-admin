@@ -9,6 +9,7 @@ type Category = Database['public']['Tables']['categories']['Row']
 type NewCategory = Database['public']['Tables']['categories']['Insert']
 
 export default function CategoriesPage() {
+  // Fixed edit functionality with proper error handling and loading states
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
