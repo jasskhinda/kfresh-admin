@@ -14,6 +14,7 @@ export default function CategoriesPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
+  const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -64,28 +65,60 @@ export default function CategoriesPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    if (submitting) return
+    
+    // Validation
+    if (!formData.name.trim()) {
+      alert('Category name is required')
+      return
+    }
+
+    if (!formData.slug.trim()) {
+      alert('Category slug is required')
+      return
+    }
+    
+    setSubmitting(true)
+    
     try {
       const categoryData: NewCategory = {
-        name: formData.name,
-        slug: formData.slug,
-        description: formData.description || null,
+        name: formData.name.trim(),
+        slug: formData.slug.trim(),
+        description: formData.description?.trim() || null,
         is_active: formData.is_active,
         sort_order: formData.sort_order
       }
 
+      console.log('Submitting category data:', categoryData)
+      console.log('Editing category:', editingCategory)
+
       if (editingCategory) {
-        const { error } = await supabase
+        console.log('Updating category with ID:', editingCategory.id)
+        const { data, error } = await supabase
           .from('categories')
           .update(categoryData)
           .eq('id', editingCategory.id)
+          .select()
         
-        if (error) throw error
+        if (error) {
+          console.error('Update error:', error)
+          throw error
+        }
+        console.log('Update successful:', data)
+        alert('Category updated successfully!')
       } else {
-        const { error } = await supabase
+        console.log('Creating new category')
+        const { data, error } = await supabase
           .from('categories')
           .insert([categoryData])
+          .select()
         
-        if (error) throw error
+        if (error) {
+          console.error('Insert error:', error)
+          throw error
+        }
+        console.log('Insert successful:', data)
+        alert('Category created successfully!')
       }
 
       await fetchCategories()
@@ -93,7 +126,9 @@ export default function CategoriesPage() {
       setShowModal(false)
     } catch (error) {
       console.error('Error saving category:', error)
-      alert('Error saving category. Please try again.')
+      alert(`Error saving category: ${error.message || 'Please try again.'}`)
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -376,9 +411,17 @@ export default function CategoriesPage() {
                 <div className="bg-gray-50 px-4 py-3 sm:px-6 flex flex-col sm:flex-row-reverse gap-3 sm:gap-0">
                   <button
                     type="submit"
-                    className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    disabled={submitting}
+                    className={`w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm ${
+                      submitting 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-green-600 hover:bg-green-700'
+                    }`}
                   >
-                    {editingCategory ? 'Update' : 'Create'}
+                    {submitting 
+                      ? (editingCategory ? 'Updating...' : 'Creating...') 
+                      : (editingCategory ? 'Update' : 'Create')
+                    }
                   </button>
                   <button
                     type="button"
