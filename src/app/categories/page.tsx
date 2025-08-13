@@ -95,30 +95,42 @@ export default function CategoriesPage() {
 
       if (editingCategory) {
         console.log('Updating category with ID:', editingCategory.id)
-        const { data, error } = await supabase
-          .from('categories')
-          .update(categoryData)
-          .eq('id', editingCategory.id)
-          .select()
+        const response = await fetch('/api/categories', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: editingCategory.id,
+            ...categoryData
+          })
+        })
         
-        if (error) {
-          console.error('Update error:', error)
-          throw error
+        const result = await response.json()
+        
+        if (!response.ok) {
+          console.error('Update error:', result)
+          throw new Error(result.error || 'Failed to update category')
         }
-        console.log('Update successful:', data)
+        console.log('Update successful:', result.data)
         alert('Category updated successfully!')
       } else {
         console.log('Creating new category')
-        const { data, error } = await supabase
-          .from('categories')
-          .insert([categoryData])
-          .select()
+        const response = await fetch('/api/categories', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(categoryData)
+        })
         
-        if (error) {
-          console.error('Insert error:', error)
-          throw error
+        const result = await response.json()
+        
+        if (!response.ok) {
+          console.error('Insert error:', result)
+          throw new Error(result.error || 'Failed to create category')
         }
-        console.log('Insert successful:', data)
+        console.log('Insert successful:', result.data)
         alert('Category created successfully!')
       }
 
@@ -149,12 +161,16 @@ export default function CategoriesPage() {
     if (!confirm('Are you sure you want to delete this category?')) return
 
     try {
-      const { error } = await supabase
-        .from('categories')
-        .delete()
-        .eq('id', id)
+      const response = await fetch(`/api/categories?id=${id}`, {
+        method: 'DELETE'
+      })
 
-      if (error) throw error
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete category')
+      }
+      
       await fetchCategories()
     } catch (error) {
       console.error('Error deleting category:', error)
