@@ -139,7 +139,8 @@ export default function CategoriesPage() {
       setShowModal(false)
     } catch (error) {
       console.error('Error saving category:', error)
-      alert(`Error saving category: ${error.message || 'Please try again.'}`)
+      const errorMessage = error instanceof Error ? error.message : 'Please try again.'
+      alert(`Error saving category: ${errorMessage}`)
     } finally {
       setSubmitting(false)
     }
