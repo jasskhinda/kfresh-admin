@@ -24,7 +24,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "import-products": "npx tsx scripts/import-products.ts"
+    "import-products": "npx tsx scripts/import-products.ts",
+    "import-all-products": "npx tsx scripts/complete-product-import.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
