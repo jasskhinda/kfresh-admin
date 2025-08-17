@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Save, Loader2, Upload } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, Upload, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { imageUploadService } from '@/lib/imageUpload'
 
 interface Category {
   id: string
@@ -50,6 +51,8 @@ export default function ProductEditPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<string[]>([])
 
   const supabase = createClient()
 
@@ -125,6 +128,65 @@ export default function ProductEditPage() {
     setProduct({ ...product, [field]: value })
   }
 
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !product) return
+
+    setUploading(true)
+    setUploadProgress([])
+    
+    try {
+      const fileArray = Array.from(files)
+      const uploadResults = await imageUploadService.uploadMultipleImages(fileArray, product.id)
+      
+      const successfulUploads = uploadResults
+        .filter(result => result.success && result.url)
+        .map(result => result.url!)
+
+      const failedUploads = uploadResults
+        .filter(result => !result.success)
+        .map(result => result.error)
+
+      if (successfulUploads.length > 0) {
+        const newImages = [...(product.images || []), ...successfulUploads]
+        updateProduct('images', newImages)
+        setUploadProgress(prev => [...prev, `✅ Uploaded ${successfulUploads.length} image(s) successfully`])
+      }
+
+      if (failedUploads.length > 0) {
+        setUploadProgress(prev => [...prev, `❌ ${failedUploads.length} upload(s) failed`])
+        failedUploads.forEach(error => {
+          setUploadProgress(prev => [...prev, `Error: ${error}`])
+        })
+      }
+
+    } catch (error) {
+      console.error('Upload error:', error)
+      setUploadProgress(['❌ Upload failed. Please try again.'])
+    } finally {
+      setUploading(false)
+      // Clear progress after 5 seconds
+      setTimeout(() => setUploadProgress([]), 5000)
+    }
+  }
+
+  const handleImageDelete = async (imageUrl: string, index: number) => {
+    if (!product) return
+
+    try {
+      // Remove from product images immediately for better UX
+      const newImages = product.images.filter((_, i) => i !== index)
+      updateProduct('images', newImages)
+
+      // Try to delete from storage (don't block UI if this fails)
+      const deleted = await imageUploadService.deleteImage(imageUrl)
+      if (!deleted) {
+        console.warn('Failed to delete image from storage:', imageUrl)
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -194,13 +256,11 @@ export default function ProductEditPage() {
                       />
                       <button
                         type="button"
-                        onClick={() => {
-                          const newImages = product.images.filter((_, i) => i !== index)
-                          updateProduct('images', newImages)
-                        }}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleImageDelete(image, index)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                        title="Delete image"
                       >
-                        ×
+                        <X className="h-3 w-3" />
                       </button>
                     </div>
                   ))}
@@ -213,30 +273,45 @@ export default function ProductEditPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Add New Images
               </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">Upload product images</p>
-                <p className="text-sm text-gray-500 mb-4">PNG, JPG, GIF up to 10MB each</p>
+              <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                uploading ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+              }`}>
+                <Upload className={`h-12 w-12 mx-auto mb-4 ${
+                  uploading ? 'text-blue-500 animate-pulse' : 'text-gray-400'
+                }`} />
+                <p className="text-gray-600 mb-2">
+                  {uploading ? 'Uploading images...' : 'Upload product images'}
+                </p>
+                <p className="text-sm text-gray-500 mb-4">PNG, JPG, WebP, GIF up to 10MB each</p>
+                
+                {/* Upload Progress */}
+                {uploadProgress.length > 0 && (
+                  <div className="mb-4 p-3 bg-gray-50 rounded-lg text-left">
+                    {uploadProgress.map((message, index) => (
+                      <p key={index} className="text-sm text-gray-700">{message}</p>
+                    ))}
+                  </div>
+                )}
+
                 <input
                   type="file"
                   multiple
-                  accept="image/*"
-                  onChange={(e) => {
-                    const files = Array.from(e.target.files || [])
-                    // For now, we'll just show a message. In production, you'd upload to storage
-                    if (files.length > 0) {
-                      alert(`Selected ${files.length} image(s). Image upload functionality needs to be connected to your storage service (Supabase Storage, Cloudinary, etc.)`)
-                    }
-                  }}
+                  accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                  onChange={(e) => handleImageUpload(e.target.files)}
                   className="hidden"
                   id="image-upload"
+                  disabled={uploading}
                 />
                 <label
                   htmlFor="image-upload"
-                  className="inline-flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
+                  className={`inline-flex items-center gap-2 border rounded-lg px-4 py-2 text-sm font-medium cursor-pointer transition-colors ${
+                    uploading 
+                      ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  }`}
                 >
                   <Upload className="h-4 w-4" />
-                  Choose Images
+                  {uploading ? 'Uploading...' : 'Choose Images'}
                 </label>
               </div>
             </div>
