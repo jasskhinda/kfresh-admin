@@ -1,3 +1,5 @@
+'use client'
+
 import { 
   DollarSign, 
   ShoppingCart, 
@@ -6,18 +8,113 @@ import {
   AlertTriangle,
   Users,
   Eye,
-  CreditCard
+  CreditCard,
+  Bell
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
+
+interface DashboardStats {
+  totalRevenue: number
+  ordersToday: number
+  totalProducts: number
+  activeCustomers: number
+}
+
+interface RecentOrder {
+  id: string
+  order_number: string
+  total_amount: number
+  status: string
+  created_at: string
+  notes?: string
+}
+
+interface LowStockProduct {
+  id: string
+  name: string
+  stock_quantity: number
+  unit: string
+}
 
 export default function AdminDashboard() {
-  // Mock data - will be replaced with real Supabase data
-  const stats = [
+  const [stats, setStats] = useState<DashboardStats>({
+    totalRevenue: 0,
+    ordersToday: 0,
+    totalProducts: 0,
+    activeCustomers: 0
+  })
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([])
+  const [lowStockProducts, setLowStockProducts] = useState<LowStockProduct[]>([])
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    try {
+      // Fetch total revenue from orders
+      const { data: revenueData } = await supabase
+        .from('orders')
+        .select('total_amount')
+        .eq('status', 'completed')
+
+      const totalRevenue = revenueData?.reduce((sum, order) => sum + Number(order.total_amount), 0) || 0
+
+      // Fetch orders today
+      const today = new Date().toISOString().split('T')[0]
+      const { data: todayOrders } = await supabase
+        .from('orders')
+        .select('id')
+        .gte('created_at', today)
+
+      // Fetch total products
+      const { data: productsData } = await supabase
+        .from('products')
+        .select('id')
+
+      // Fetch recent orders
+      const { data: ordersData } = await supabase
+        .from('orders')
+        .select('id, order_number, total_amount, status, created_at, notes')
+        .order('created_at', { ascending: false })
+        .limit(4)
+
+      // Fetch low stock products
+      const { data: lowStockData } = await supabase
+        .from('products')
+        .select('id, name, stock_quantity, unit')
+        .lt('stock_quantity', 20)
+        .order('stock_quantity', { ascending: true })
+        .limit(5)
+
+      setStats({
+        totalRevenue,
+        ordersToday: todayOrders?.length || 0,
+        totalProducts: productsData?.length || 0,
+        activeCustomers: 0 // We'll calculate this later
+      })
+
+      setRecentOrders(ordersData || [])
+      setLowStockProducts(lowStockData || [])
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error)
+      // Keep default values on error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Real stats data
+  const statsCards = [
     {
       name: 'Total Revenue',
-      value: '$8,432.50',
-      change: '+12.5%',
+      value: loading ? '...' : formatPrice(stats.totalRevenue),
+      change: '+0%',
       trend: 'up',
       icon: DollarSign,
       color: 'text-green-600',
@@ -25,8 +122,8 @@ export default function AdminDashboard() {
     },
     {
       name: 'Orders Today',
-      value: '23',
-      change: '+5.2%',
+      value: loading ? '...' : stats.ordersToday.toString(),
+      change: '+0%',
       trend: 'up', 
       icon: ShoppingCart,
       color: 'text-blue-600',
@@ -34,8 +131,8 @@ export default function AdminDashboard() {
     },
     {
       name: 'Total Products',
-      value: '1,247',
-      change: '+8.1%',
+      value: loading ? '...' : stats.totalProducts.toString(),
+      change: '+0%',
       trend: 'up',
       icon: Package,
       color: 'text-purple-600',
@@ -43,8 +140,8 @@ export default function AdminDashboard() {
     },
     {
       name: 'Active Customers',
-      value: '892',
-      change: '+3.2%',
+      value: loading ? '...' : stats.activeCustomers.toString(),
+      change: '+0%',
       trend: 'up',
       icon: Users,
       color: 'text-orange-600',
@@ -52,19 +149,22 @@ export default function AdminDashboard() {
     }
   ]
 
-  const recentOrders = [
-    { id: 'KF20250107001', customer: 'John Doe', total: 45.99, status: 'processing', time: '5 mins ago' },
-    { id: 'KF20250107002', customer: 'Jane Smith', total: 32.50, status: 'completed', time: '12 mins ago' },
-    { id: 'KF20250107003', customer: 'Mike Johnson', total: 78.25, status: 'pending', time: '25 mins ago' },
-    { id: 'KF20250107004', customer: 'Sarah Wilson', total: 23.99, status: 'ready', time: '1 hour ago' }
-  ]
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
+    
+    if (diffInMinutes < 1) return 'Just now'
+    if (diffInMinutes < 60) return `${diffInMinutes} mins ago`
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hours ago`
+    return `${Math.floor(diffInMinutes / 1440)} days ago`
+  }
 
-  const lowStockProducts = [
-    { name: 'Ghana Yam', stock: 3, unit: 'lbs' },
-    { name: 'Palm Oil (Red)', stock: 5, unit: 'bottles' },
-    { name: 'Goat Meat', stock: 2, unit: 'lbs' },
-    { name: 'Fresh Ginger', stock: 8, unit: 'lbs' }
-  ]
+  const getCustomerName = (notes: string | undefined) => {
+    if (!notes) return 'Guest Customer'
+    const match = notes.match(/Customer: ([^,]+)/)
+    return match ? match[1] : 'Guest Customer'
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -86,7 +186,7 @@ export default function AdminDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
+        {statsCards.map((stat) => (
           <div key={stat.name} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -98,8 +198,8 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="mt-4 flex items-center">
-              <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-              <span className="text-sm font-medium text-green-600">{stat.change}</span>
+              <TrendingUp className="h-4 w-4 text-gray-400 mr-1" />
+              <span className="text-sm font-medium text-gray-500">{stat.change}</span>
               <span className="text-sm text-gray-500 ml-2">from last month</span>
             </div>
           </div>
@@ -119,25 +219,44 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="p-6">
-            <div className="space-y-4">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">{order.id}</p>
-                    <p className="text-sm text-gray-600">{order.customer}</p>
+            {loading ? (
+              <div className="space-y-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="animate-pulse p-4 bg-gray-50 rounded-lg">
+                    <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/4"></div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-gray-900">{formatPrice(order.total)}</p>
-                    <div className="flex items-center space-x-2">
-                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                        {order.status}
-                      </span>
-                      <span className="text-xs text-gray-500">{order.time}</span>
+                ))}
+              </div>
+            ) : recentOrders.length === 0 ? (
+              <div className="text-center py-8">
+                <ShoppingCart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">No recent orders</p>
+                <Link href="/orders" className="text-green-600 hover:text-green-700 font-medium text-sm">
+                  View all orders
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {recentOrders.map((order) => (
+                  <div key={order.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-900">{order.order_number}</p>
+                      <p className="text-sm text-gray-600">{getCustomerName(order.notes)}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-900">{formatPrice(Number(order.total_amount))}</p>
+                      <div className="flex items-center space-x-2">
+                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                          {order.status}
+                        </span>
+                        <span className="text-xs text-gray-500">{getTimeAgo(order.created_at)}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -150,23 +269,39 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="p-6">
-            <div className="space-y-4">
-              {lowStockProducts.map((product, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-orange-50 rounded-lg border border-orange-200">
-                  <div>
-                    <p className="font-medium text-gray-900">{product.name}</p>
-                    <p className="text-sm text-gray-600">per {product.unit}</p>
+            {loading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="animate-pulse p-4 bg-gray-50 rounded-lg">
+                    <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/4"></div>
                   </div>
-                  <div className="text-right">
-                    <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                      product.stock <= 5 ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'
-                    }`}>
-                      {product.stock} left
-                    </span>
+                ))}
+              </div>
+            ) : lowStockProducts.length === 0 ? (
+              <div className="text-center py-8">
+                <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500">All products are well stocked</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {lowStockProducts.map((product, index) => (
+                  <div key={index} className="flex items-center justify-between p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <div>
+                      <p className="font-medium text-gray-900">{product.name}</p>
+                      <p className="text-sm text-gray-600">per {product.unit}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                        product.stock_quantity <= 5 ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'
+                      }`}>
+                        {product.stock_quantity} left
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
             <div className="mt-4">
               <Link
                 href="/products"
