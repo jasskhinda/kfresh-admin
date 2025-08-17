@@ -173,6 +173,117 @@ export default function ProductEditPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Images */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-lg font-medium text-gray-900 mb-6">Product Images</h2>
+          
+          <div className="space-y-4">
+            {/* Current Images */}
+            {product.images && product.images.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Current Images
+                </label>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {product.images.map((image, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={image}
+                        alt={`Product image ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newImages = product.images.filter((_, i) => i !== index)
+                          updateProduct('images', newImages)
+                        }}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Image Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Add New Images
+              </label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 mb-2">Upload product images</p>
+                <p className="text-sm text-gray-500 mb-4">PNG, JPG, GIF up to 10MB each</p>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || [])
+                    // For now, we'll just show a message. In production, you'd upload to storage
+                    if (files.length > 0) {
+                      alert(`Selected ${files.length} image(s). Image upload functionality needs to be connected to your storage service (Supabase Storage, Cloudinary, etc.)`)
+                    }
+                  }}
+                  className="hidden"
+                  id="image-upload"
+                />
+                <label
+                  htmlFor="image-upload"
+                  className="inline-flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
+                >
+                  <Upload className="h-4 w-4" />
+                  Choose Images
+                </label>
+              </div>
+            </div>
+
+            {/* Manual Image URL Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Or Add Image URL
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  placeholder="https://example.com/image.jpg"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      const input = e.target as HTMLInputElement
+                      const url = input.value.trim()
+                      if (url) {
+                        const newImages = [...(product.images || []), url]
+                        updateProduct('images', newImages)
+                        input.value = ''
+                      }
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    const input = (e.target as HTMLButtonElement).previousElementSibling as HTMLInputElement
+                    const url = input.value.trim()
+                    if (url) {
+                      const newImages = [...(product.images || []), url]
+                      updateProduct('images', newImages)
+                      input.value = ''
+                    }
+                  }}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Basic Information */}
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-6">Basic Information</h2>
