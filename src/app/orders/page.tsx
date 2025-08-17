@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice, formatDate, downloadCSV } from '@/lib/utils'
+import DatabaseDebug from '@/components/debug/DatabaseDebug'
 
 interface Order {
   id: string
@@ -45,17 +46,53 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     try {
       const supabase = createClient()
+      
+      // First, let's try to get orders with the expected structure
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select(`
+          id,
+          order_number,
+          total_amount,
+          status,
+          created_at,
+          updated_at,
+          notes,
+          user_id,
+          fulfillment_method,
+          delivery_method,
+          payment_status
+        `)
         .order('created_at', { ascending: false })
         .limit(50)
 
       if (error) {
         console.error('Error fetching orders:', error)
+        console.log('Falling back to mock data. Check your orders table structure.')
         setOrders(getMockOrders())
+      } else if (data && data.length > 0) {
+        // Transform the data to match the expected interface
+        const transformedOrders = data.map(order => ({
+          id: order.id,
+          order_number: order.order_number || `KF${order.id.slice(0, 8)}`,
+          customer_id: order.user_id || null,
+          email: extractEmailFromNotes(order.notes),
+          phone: extractPhoneFromNotes(order.notes),
+          status: order.status || 'pending',
+          fulfillment_status: 'unfulfilled', // Default value
+          payment_status: order.payment_status || 'pending',
+          total: order.total_amount || 0,
+          fulfillment_method: order.fulfillment_method || 'pickup',
+          delivery_method: order.delivery_method || null,
+          created_at: order.created_at,
+          updated_at: order.updated_at || order.created_at
+        }))
+        
+        console.log('Successfully loaded orders:', transformedOrders.length)
+        setOrders(transformedOrders)
       } else {
-        setOrders(data || [])
+        console.log('No orders found in database')
+        setOrders([])
       }
     } catch (error) {
       console.error('Error:', error)
@@ -63,6 +100,20 @@ export default function OrdersPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Helper function to extract email from notes
+  const extractEmailFromNotes = (notes: string | null): string | null => {
+    if (!notes) return null
+    const emailMatch = notes.match(/Customer: ([^,]+)/)
+    return emailMatch ? emailMatch[1] : null
+  }
+
+  // Helper function to extract phone from notes
+  const extractPhoneFromNotes = (notes: string | null): string | null => {
+    if (!notes) return null
+    const phoneMatch = notes.match(/Phone: ([^,]+)/)
+    return phoneMatch ? phoneMatch[1] : null
   }
 
   const updateOrderStatus = async (orderId: string, status: string) => {
@@ -194,15 +245,23 @@ export default function OrdersPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Orders</h1>
-          <p className="text-gray-600">Manage and track customer orders</p>
+          <p className="text-gray-600">Manage and track customer orders ({orders.length} total)</p>
         </div>
-        <button
-          onClick={handleExportOrders}
-          className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          <Download className="h-4 w-4" />
-          <span>Export Orders</span>
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={fetchOrders}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <span>Refresh Orders</span>
+          </button>
+          <button
+            onClick={handleExportOrders}
+            className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <Download className="h-4 w-4" />
+            <span>Export Orders</span>
+          </button>
+        </div>
       </div>
 
       {/* Status Overview */}
@@ -405,6 +464,9 @@ export default function OrdersPage() {
           </div>
         </div>
       </div>
+
+      {/* Debug Component - Remove this in production */}
+      <DatabaseDebug />
     </div>
   )
 }
