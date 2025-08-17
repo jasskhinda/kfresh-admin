@@ -39,7 +39,7 @@ export default function DatabaseDebug() {
         }
       })
     } catch (error) {
-      setDebugData({ error: error.message })
+      setDebugData({ error: error instanceof Error ? error.message : 'Unknown error occurred' })
     } finally {
       setLoading(false)
     }
