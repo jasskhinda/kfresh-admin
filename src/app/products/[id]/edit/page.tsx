@@ -102,6 +102,8 @@ export default function ProductEditPage() {
     setError('')
 
     try {
+      console.log('Saving product with images:', product.images)
+      
       const response = await fetch('/api/products', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -114,6 +116,7 @@ export default function ProductEditPage() {
         throw new Error(result.error || 'Failed to update product')
       }
 
+      console.log('Product saved successfully:', result)
       router.push('/products')
     } catch (error) {
       console.error('Error updating product:', error)
@@ -233,6 +236,24 @@ export default function ProductEditPage() {
           <p className="text-red-700">{error}</p>
         </div>
       )}
+
+      {/* Debug Info */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 className="font-medium text-blue-900 mb-2">Debug Info:</h3>
+        <p className="text-sm text-blue-800">
+          Current images in database: {product?.images?.length || 0}
+        </p>
+        {product?.images && product.images.length > 0 && (
+          <div className="mt-2">
+            <p className="text-xs text-blue-700">Image URLs:</p>
+            <ul className="text-xs text-blue-600 ml-4">
+              {product.images.map((url, index) => (
+                <li key={index} className="truncate">{url}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Images */}

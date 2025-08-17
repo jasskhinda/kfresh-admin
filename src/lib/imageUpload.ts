@@ -12,6 +12,15 @@ export class ImageUploadService {
 
   async uploadImage(file: File, productId?: string): Promise<UploadResult> {
     try {
+      // Check if user is authenticated
+      const { data: { user }, error: authError } = await this.supabase.auth.getUser()
+      if (authError || !user) {
+        return {
+          success: false,
+          error: 'Authentication required. Please log in to upload images.'
+        }
+      }
+
       // Validate file
       if (!this.isValidImageFile(file)) {
         return {
@@ -32,16 +41,26 @@ export class ImageUploadService {
       const fileName = `${productId || 'temp'}_${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`
       const filePath = `products/${fileName}`
 
-      // Upload to Supabase Storage
+      // Upload to Supabase Storage with explicit options
       const { data, error } = await this.supabase.storage
         .from(this.bucketName)
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false
+          upsert: false,
+          duplex: 'half'
         })
 
       if (error) {
         console.error('Upload error:', error)
+        
+        // Provide more specific error messages
+        if (error.message.includes('row-level security')) {
+          return {
+            success: false,
+            error: 'Storage permissions error. Please check your Supabase storage policies.'
+          }
+        }
+        
         return {
           success: false,
           error: `Upload failed: ${error.message}`
