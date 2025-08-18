@@ -95,7 +95,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (error) {
         console.error('Error fetching profile:', error)
-        // If profile doesn't exist in DB, set a basic profile
+        
+        // For admin email, create a profile with admin role if it doesn't exist
+        if (user?.email === 'info@jasskhinda.com') {
+          const adminProfile: AdminProfile = {
+            id: userId,
+            email: 'info@jasskhinda.com',
+            first_name: 'Jass',
+            last_name: 'Khinda',
+            role: 'admin',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }
+          setProfile(adminProfile)
+          
+          // Try to insert the profile into the database
+          try {
+            await supabase
+              .from('user_profiles')
+              .upsert(adminProfile, { onConflict: 'id' })
+          } catch (insertError) {
+            console.warn('Could not insert admin profile:', insertError)
+          }
+          return
+        }
+        
+        // For other users, set a basic profile
         const basicProfile: AdminProfile = {
           id: userId,
           email: user?.email || '',
@@ -148,7 +173,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     console.log('Signing out...')
-    await supabase.auth.signOut()
+    try {
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Supabase signOut error:', error)
+      }
+    } catch (error) {
+      console.error('Error during signOut:', error)
+    }
+    
     // Clear state immediately for better UX
     setUser(null)
     setProfile(null)
