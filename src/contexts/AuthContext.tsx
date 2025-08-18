@@ -192,7 +192,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   // Check if user is admin based on role or specific email
-  const isAdmin = profile?.role === 'admin' || profile?.email === 'info@jasskhinda.com'
+  const isAdmin = Boolean(
+    profile?.role === 'admin' || 
+    profile?.email === 'info@jasskhinda.com' ||
+    user?.email === 'info@jasskhinda.com'
+  )
+
+  console.log('Auth state:', {
+    user: !!user,
+    userEmail: user?.email,
+    profile: !!profile,
+    profileEmail: profile?.email,
+    profileRole: profile?.role,
+    isAdmin,
+    loading
+  })
 
   const value: AuthContextType = {
     user,
