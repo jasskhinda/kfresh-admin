@@ -1,8 +1,10 @@
 'use client'
 
-import { Bell, Search, ExternalLink, X } from 'lucide-react'
+import { Bell, Search, ExternalLink, X, LogOut, User, ChevronDown } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 
 interface Notification {
   id: string
@@ -15,13 +17,21 @@ interface Notification {
 
 export default function Header() {
   const [showNotifications, setShowNotifications] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
+  const { user, profile, signOut } = useAuth()
+  const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
     fetchNotifications()
   }, [])
+
+  const handleSignOut = async () => {
+    await signOut()
+    router.push('/login')
+  }
 
   const fetchNotifications = async () => {
     try {
@@ -81,6 +91,20 @@ export default function Header() {
       default: return '📢'
     }
   }
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
+
+  const displayName = profile?.first_name && profile?.last_name 
+    ? `${profile.first_name} ${profile.last_name}`
+    : profile?.first_name || profile?.email || 'Admin User'
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="flex items-center justify-between px-6 py-4">
@@ -178,17 +202,58 @@ export default function Header() {
           </div>
 
           {/* User Menu */}
-          <div className="flex items-center space-x-3">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">Admin User</p>
-              <p className="text-xs text-gray-500">Online</p>
-            </div>
-            <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-white">A</span>
-            </div>
+          <div className="relative">
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="flex items-center space-x-3 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 p-2 hover:bg-gray-50 transition-colors"
+            >
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-900">{displayName}</p>
+                <p className="text-xs text-gray-500">{profile?.role || 'Admin'}</p>
+              </div>
+              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                <span className="text-sm font-medium text-white">
+                  {getInitials(displayName)}
+                </span>
+              </div>
+              <ChevronDown className="h-4 w-4 text-gray-400" />
+            </button>
+
+            {/* User Dropdown */}
+            {showUserMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                <div className="p-4 border-b border-gray-200">
+                  <p className="text-sm font-medium text-gray-900">{displayName}</p>
+                  <p className="text-xs text-gray-500">{profile?.email}</p>
+                </div>
+                <div className="py-2">
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false)
+                      // Could add profile page later
+                    }}
+                    className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <User className="h-4 w-4 mr-3" />
+                    Profile Settings
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false)
+                      handleSignOut()
+                    }}
+                    className="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors"
+                  >
+                    <LogOut className="h-4 w-4 mr-3" />
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </header>
   )
+}
 }
