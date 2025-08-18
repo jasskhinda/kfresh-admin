@@ -332,7 +332,7 @@ export default function ProductsPage() {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                        <div className="relative w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
                           {product.images && product.images.length > 0 ? (
                             <img
                               src={product.images[0]}
@@ -341,13 +341,38 @@ export default function ProductsPage() {
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.style.display = 'none';
-                                target.nextElementSibling!.style.display = 'flex';
+                                const fallback = target.nextElementSibling as HTMLElement;
+                                if (fallback) fallback.style.display = 'flex';
                               }}
                             />
                           ) : null}
                           <div className={`w-full h-full flex items-center justify-center ${product.images && product.images.length > 0 ? 'hidden' : ''}`}>
                             <Package className="h-5 w-5 text-gray-400" />
                           </div>
+                          {/* Featured Image Badge */}
+                          {product.images && product.images.length > 0 && (
+                            <div className="absolute -top-1 -right-1 bg-yellow-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                              <span className="text-xs font-bold">★</span>
+                            </div>
+                          )}
+                          {/* Image Count Badge */}
+                          {product.images && product.images.length > 1 && (
+                            <div className="absolute -bottom-1 -left-1 bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                              <span className="text-xs font-bold">{product.images.length}</span>
+                            </div>
+                          )}
+                          {/* Featured Image Badge */}
+                          {product.images && product.images.length > 0 && (
+                            <div className="absolute -top-1 -right-1 bg-yellow-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                              <span className="text-xs font-bold">★</span>
+                            </div>
+                          )}
+                          {/* Image Count Badge */}
+                          {product.images && product.images.length > 1 && (
+                            <div className="absolute -bottom-1 -left-1 bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                              <span className="text-xs font-bold">{product.images.length}</span>
+                            </div>
+                          )}
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">{product.name}</p>

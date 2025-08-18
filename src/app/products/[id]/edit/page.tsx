@@ -331,7 +331,7 @@ export default function ProductEditPage() {
                         className="w-full h-32 object-cover rounded-lg border border-gray-200"
                       />
                       <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                        Gallery
+                        Gallery #{index + 1}
                       </div>
                       <button
                         type="button"
@@ -367,10 +367,10 @@ export default function ProductEditPage() {
                         <button
                           type="button"
                           onClick={() => handleSetFeatured(index + 1)}
-                          className="bg-green-600 text-white rounded px-2 py-1 text-xs hover:bg-green-700"
-                          title="Set as featured"
+                          className="bg-yellow-500 text-white rounded px-2 py-1 text-xs hover:bg-yellow-600 font-bold"
+                          title="Set as featured image"
                         >
-                          ★
+                          ⭐ Featured
                         </button>
                       </div>
                     </div>
