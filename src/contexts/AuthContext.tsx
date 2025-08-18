@@ -188,6 +188,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setProfile(null)
     setSession(null)
     setLoading(false)
+    
+    // Clear any cached data
+    if (typeof window !== 'undefined') {
+      localStorage.clear()
+      sessionStorage.clear()
+    }
+    
     console.log('Signed out successfully')
   }
 

@@ -30,8 +30,15 @@ export default function Header() {
   }, [])
 
   const handleSignOut = async () => {
-    await signOut()
-    router.push('/login')
+    try {
+      await signOut()
+      // Force a hard redirect to login page
+      window.location.href = '/login'
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Force redirect even on error
+      window.location.href = '/login'
+    }
   }
 
   const fetchNotifications = async () => {
