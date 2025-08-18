@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, Search, Edit, Trash2, FolderTree } from 'lucide-react'
+import { Plus, Search, Edit, Trash2, FolderTree, Upload, X, Image as ImageIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database'
+import { imageUploadService } from '@/lib/imageUpload'
 
 type Category = Database['public']['Tables']['categories']['Row']
 type NewCategory = Database['public']['Tables']['categories']['Insert']
@@ -20,9 +21,12 @@ export default function CategoriesPage() {
     name: '',
     slug: '',
     description: '',
+    image_url: '',
     is_active: true,
     sort_order: 0
   })
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<string[]>([])
 
   const supabase = createClient()
 
@@ -86,6 +90,7 @@ export default function CategoriesPage() {
         name: formData.name.trim(),
         slug: formData.slug.trim(),
         description: formData.description?.trim() || null,
+        image_url: formData.image_url || null,
         is_active: formData.is_active,
         sort_order: formData.sort_order
       }
@@ -152,6 +157,7 @@ export default function CategoriesPage() {
       name: category.name,
       slug: category.slug,
       description: category.description || '',
+      image_url: category.image_url || '',
       is_active: category.is_active,
       sort_order: category.sort_order
     })
@@ -179,15 +185,66 @@ export default function CategoriesPage() {
     }
   }
 
+  const handleImageUpload = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file')
+      return
+    }
+
+    setUploading(true)
+    setUploadProgress(['Uploading image...'])
+
+    try {
+      setUploadProgress(['Uploading image...', 'Processing...'])
+      const result = await imageUploadService.uploadImage(file, 'categories')
+      
+      if (result.success && result.url) {
+        setUploadProgress(['Uploading image...', 'Processing...', 'Complete!'])
+        
+        setFormData({
+          ...formData,
+          image_url: result.url
+        })
+
+        setTimeout(() => setUploadProgress([]), 2000)
+      } else {
+        throw new Error(result.error || 'Upload failed')
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      alert(`Error uploading image: ${error instanceof Error ? error.message : 'Please try again.'}`)
+      setUploadProgress([])
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleImageDelete = async () => {
+    if (!formData.image_url) return
+
+    try {
+      await imageUploadService.deleteImage(formData.image_url)
+      setFormData({
+        ...formData,
+        image_url: ''
+      })
+    } catch (error) {
+      console.error('Error deleting image:', error)
+      alert('Error deleting image. Please try again.')
+    }
+  }
+
   const resetForm = () => {
     setFormData({
       name: '',
       slug: '',
       description: '',
+      image_url: '',
       is_active: true,
       sort_order: 0
     })
     setEditingCategory(null)
+    setUploadProgress([])
   }
 
   const filteredCategories = categories.filter(category =>
@@ -243,6 +300,9 @@ export default function CategoriesPage() {
                 Category
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Image
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Slug
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -291,6 +351,19 @@ export default function CategoriesPage() {
                         </div>
                       )}
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {category.image_url ? (
+                      <img
+                        src={category.image_url}
+                        alt={category.name}
+                        className="h-12 w-12 object-cover rounded-lg border border-gray-200"
+                      />
+                    ) : (
+                      <div className="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
+                        <ImageIcon className="h-6 w-6 text-gray-400" />
+                      </div>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="text-sm font-mono text-gray-600 bg-gray-100 px-2 py-1 rounded">
@@ -393,6 +466,90 @@ export default function CategoriesPage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-900"
                         placeholder="Optional description..."
                       />
+                    </div>
+
+                    {/* Image Upload Section */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Category Image
+                      </label>
+                      
+                      {formData.image_url ? (
+                        <div className="space-y-3">
+                          <div className="relative inline-block">
+                            <img
+                              src={formData.image_url}
+                              alt="Category preview"
+                              className="w-32 h-32 object-cover rounded-lg border border-gray-300"
+                            />
+                            <button
+                              type="button"
+                              onClick={handleImageDelete}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                          <div className="flex gap-2">
+                            <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                              <Upload className="h-4 w-4" />
+                              Replace Image
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0]
+                                  if (file) handleImageUpload(file)
+                                }}
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                          <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
+                          <div className="mt-2">
+                            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                              <Upload className="h-4 w-4" />
+                              Upload Image
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0]
+                                  if (file) handleImageUpload(file)
+                                }}
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+                          <p className="mt-2 text-xs text-gray-500">
+                            PNG, JPG, GIF up to 10MB
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Upload Progress */}
+                      {uploading && (
+                        <div className="mt-2">
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                            Uploading...
+                          </div>
+                        </div>
+                      )}
+
+                      {uploadProgress.length > 0 && !uploading && (
+                        <div className="mt-2 space-y-1">
+                          {uploadProgress.map((step, index) => (
+                            <div key={index} className="flex items-center gap-2 text-sm text-green-600">
+                              <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                              {step}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

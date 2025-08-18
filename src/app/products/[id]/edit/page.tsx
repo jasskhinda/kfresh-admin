@@ -190,6 +190,24 @@ export default function ProductEditPage() {
     }
   }
 
+  const handleImageReorder = (fromIndex: number, toIndex: number) => {
+    if (!product || !product.images) return
+
+    const newImages = [...product.images]
+    const [movedImage] = newImages.splice(fromIndex, 1)
+    newImages.splice(toIndex, 0, movedImage)
+    updateProduct('images', newImages)
+  }
+
+  const handleSetFeatured = (index: number) => {
+    if (!product || !product.images) return
+
+    const newImages = [...product.images]
+    const [featuredImage] = newImages.splice(index, 1)
+    newImages.unshift(featuredImage) // Move to beginning (featured position)
+    updateProduct('images', newImages)
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -260,32 +278,117 @@ export default function ProductEditPage() {
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-6">Product Images</h2>
           
-          <div className="space-y-4">
-            {/* Current Images */}
+          <div className="space-y-6">
+            {/* Featured Image Section */}
             {product.images && product.images.length > 0 && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Current Images
-                </label>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Featured Image
+                  </label>
+                  <span className="text-xs text-gray-500">
+                    This image appears in product listings and cards
+                  </span>
+                </div>
+                <div className="relative group inline-block">
+                  <img
+                    src={product.images[0]}
+                    alt="Featured product image"
+                    className="w-48 h-32 object-cover rounded-lg border-2 border-green-500 shadow-sm"
+                  />
+                  <div className="absolute top-2 left-2 bg-green-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                    Featured
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleImageDelete(product.images[0], 0)}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                    title="Delete featured image"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Product Gallery Section */}
+            {product.images && product.images.length > 1 && (
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Product Gallery ({product.images.length - 1} additional images)
+                  </label>
+                  <span className="text-xs text-gray-500">
+                    These images appear on the product detail page
+                  </span>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {product.images.map((image, index) => (
-                    <div key={index} className="relative group">
+                  {product.images.slice(1).map((image, index) => (
+                    <div key={index + 1} className="relative group">
                       <img
                         src={image}
-                        alt={`Product image ${index + 1}`}
+                        alt={`Gallery image ${index + 1}`}
                         className="w-full h-32 object-cover rounded-lg border border-gray-200"
                       />
+                      <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                        Gallery
+                      </div>
                       <button
                         type="button"
-                        onClick={() => handleImageDelete(image, index)}
+                        onClick={() => handleImageDelete(image, index + 1)}
                         className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                        title="Delete image"
+                        title="Delete gallery image"
                       >
                         <X className="h-3 w-3" />
                       </button>
+                      
+                      {/* Reorder buttons */}
+                      <div className="absolute bottom-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => handleImageReorder(index + 1, index)}
+                            className="bg-gray-800 text-white rounded px-2 py-1 text-xs hover:bg-gray-700"
+                            title="Move left"
+                          >
+                            ←
+                          </button>
+                        )}
+                        {index < product.images.length - 2 && (
+                          <button
+                            type="button"
+                            onClick={() => handleImageReorder(index + 1, index + 2)}
+                            className="bg-gray-800 text-white rounded px-2 py-1 text-xs hover:bg-gray-700"
+                            title="Move right"
+                          >
+                            →
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleSetFeatured(index + 1)}
+                          className="bg-green-600 text-white rounded px-2 py-1 text-xs hover:bg-green-700"
+                          title="Set as featured"
+                        >
+                          ★
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* No Images State */}
+            {(!product.images || product.images.length === 0) && (
+              <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
+                <div className="text-gray-400 mb-2">
+                  <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <p className="text-gray-500 text-sm">No images uploaded yet</p>
+                <p className="text-gray-400 text-xs">Add images below to create a featured image and gallery</p>
               </div>
             )}
 
