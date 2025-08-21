@@ -31,9 +31,24 @@ export default function Header() {
 
   const handleSignOut = async () => {
     try {
+      // Show immediate feedback
+      const button = document.querySelector('[data-signout-btn]') as HTMLElement
+      if (button) {
+        button.innerHTML = '<div class="flex items-center gap-2"><div class="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>Signing out...</div>'
+        button.style.pointerEvents = 'none'
+      }
+      
       await signOut()
-      // Force a hard redirect to login page
-      window.location.href = '/login'
+      
+      // Show success message briefly before redirect
+      if (button) {
+        button.innerHTML = '<div class="flex items-center gap-2"><svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Signed out!</div>'
+      }
+      
+      // Force a hard redirect to login page after brief delay
+      setTimeout(() => {
+        window.location.href = '/login'
+      }, 800)
     } catch (error) {
       console.error('Logout error:', error)
       // Force redirect even on error
@@ -111,7 +126,8 @@ export default function Header() {
 
   const displayName = profile?.first_name && profile?.last_name 
     ? `${profile.first_name} ${profile.last_name}`
-    : profile?.first_name || profile?.email || 'Admin User'
+    : profile?.first_name || 
+      (profile?.email === 'info@jasskhinda.com' ? 'Jass Khinda' : 'Admin User')
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -250,7 +266,7 @@ export default function Header() {
                   <button
                     onClick={() => {
                       setShowUserMenu(false)
-                      // Could add profile page later
+                      router.push('/profile')
                     }}
                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                   >
@@ -262,6 +278,7 @@ export default function Header() {
                       setShowUserMenu(false)
                       handleSignOut()
                     }}
+                    data-signout-btn
                     className="flex items-center w-full px-4 py-2 text-sm text-red-700 hover:bg-red-50 transition-colors"
                   >
                     <LogOut className="h-4 w-4 mr-3" />

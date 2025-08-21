@@ -114,6 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             await supabase
               .from('user_profiles')
               .upsert(adminProfile, { onConflict: 'id' })
+            console.log('Admin profile created/updated in database')
           } catch (insertError) {
             console.warn('Could not insert admin profile:', insertError)
           }

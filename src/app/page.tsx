@@ -9,12 +9,15 @@ import {
   Users,
   Eye,
   CreditCard,
-  Bell
+  Bell,
+  User,
+  Shield
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatPrice } from '@/lib/utils'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface DashboardStats {
   totalRevenue: number
@@ -40,6 +43,7 @@ interface LowStockProduct {
 }
 
 export default function AdminDashboard() {
+  const { user, profile, loading } = useAuth()
   const [stats, setStats] = useState<DashboardStats>({
     totalRevenue: 0,
     ordersToday: 0,
@@ -48,7 +52,7 @@ export default function AdminDashboard() {
   })
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([])
   const [lowStockProducts, setLowStockProducts] = useState<LowStockProduct[]>([])
-  const [loading, setLoading] = useState(true)
+  const [dataLoading, setDataLoading] = useState(true)
   const supabase = createClient()
 
   useEffect(() => {
@@ -105,7 +109,7 @@ export default function AdminDashboard() {
       console.error('Error fetching dashboard data:', error)
       // Keep default values on error
     } finally {
-      setLoading(false)
+      setDataLoading(false)
     }
   }
 
@@ -113,7 +117,7 @@ export default function AdminDashboard() {
   const statsCards = [
     {
       name: 'Total Revenue',
-      value: loading ? '...' : formatPrice(stats.totalRevenue),
+      value: dataLoading ? '...' : formatPrice(stats.totalRevenue),
       change: '+0%',
       trend: 'up',
       icon: DollarSign,
@@ -122,7 +126,7 @@ export default function AdminDashboard() {
     },
     {
       name: 'Orders Today',
-      value: loading ? '...' : stats.ordersToday.toString(),
+      value: dataLoading ? '...' : stats.ordersToday.toString(),
       change: '+0%',
       trend: 'up', 
       icon: ShoppingCart,
@@ -131,7 +135,7 @@ export default function AdminDashboard() {
     },
     {
       name: 'Total Products',
-      value: loading ? '...' : stats.totalProducts.toString(),
+      value: dataLoading ? '...' : stats.totalProducts.toString(),
       change: '+0%',
       trend: 'up',
       icon: Package,
@@ -140,7 +144,7 @@ export default function AdminDashboard() {
     },
     {
       name: 'Active Customers',
-      value: loading ? '...' : stats.activeCustomers.toString(),
+      value: dataLoading ? '...' : stats.activeCustomers.toString(),
       change: '+0%',
       trend: 'up',
       icon: Users,
@@ -176,12 +180,65 @@ export default function AdminDashboard() {
     }
   }
 
+  // Show loading state while authenticating
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading admin panel...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error if not authenticated (shouldn't happen due to middleware, but good fallback)
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600">Please log in to access the admin panel.</p>
+        </div>
+      </div>
+    )
+  }
+
+  const displayName = profile?.first_name && profile?.last_name 
+    ? `${profile.first_name} ${profile.last_name}`
+    : profile?.first_name || 
+      (profile?.email === 'info@jasskhinda.com' ? 'Jass Khinda' : 'Admin User')
+
   return (
     <div className="space-y-6">
-      {/* Welcome Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Welcome back!</h1>
-        <p className="text-gray-600">Here&apos;s what&apos;s happening with your store today.</p>
+      {/* Professional Welcome Header */}
+      <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-xl p-6 text-white mb-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+              <span className="text-2xl font-bold">
+                {profile?.first_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'A'}
+              </span>
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold">Welcome back, {displayName}!</h1>
+              <div className="flex items-center gap-2 mt-1">
+                <Shield className="h-4 w-4" />
+                <span className="text-white/90">Administrator</span>
+                <span className="text-white/60">•</span>
+                <span className="text-white/90">{user.email}</span>
+              </div>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-white/90 text-sm">Today</p>
+            <p className="text-xl font-semibold">{new Date().toLocaleDateString()}</p>
+          </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-white/20">
+          <p className="text-white/90">Here's what's happening with your KFresh store today.</p>
+        </div>
       </div>
 
       {/* Stats Grid */}
