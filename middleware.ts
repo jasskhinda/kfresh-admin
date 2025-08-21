@@ -62,6 +62,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url))
   }
 
+  // Allow access to env-test page without authentication
+  if (request.nextUrl.pathname === '/env-test') {
+    return response
+  }
+
   // If trying to access protected routes without authentication, redirect to login
   if (!user && request.nextUrl.pathname !== '/login') {
     return NextResponse.redirect(new URL('/login', request.url))
