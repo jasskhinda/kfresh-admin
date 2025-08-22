@@ -43,12 +43,19 @@ export default function AdminLoginPage() {
     }
   }
 
+  const fillDemoCredentials = () => {
+    setFormData({
+      email: 'admin@kfresh.ca',
+      password: 'admin123'
+    })
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-green-600 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-green-500 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
       </div>
 
       {/* Header Navigation */}
@@ -75,13 +82,13 @@ export default function AdminLoginPage() {
           {/* Left Side - Welcome Content */}
           <div className="flex flex-col justify-center text-white lg:pr-8">
             <div className="mb-8">
-              <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              <h1 className="text-5xl font-bold mb-4 text-white drop-shadow-lg">
                 Welcome to
               </h1>
-              <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+              <h2 className="text-4xl font-bold mb-6 text-green-300 drop-shadow-lg">
                 KFresh Admin Panel
               </h2>
-              <p className="text-xl text-white/80 mb-8 leading-relaxed">
+              <p className="text-xl text-gray-100 mb-8 leading-relaxed drop-shadow-sm">
                 Manage your supermarket operations with our comprehensive admin dashboard. 
                 Control inventory, process orders, and monitor your business performance.
               </p>
@@ -89,52 +96,52 @@ export default function AdminLoginPage() {
 
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-green-600/20 rounded-lg flex items-center justify-center">
-                  <Shield className="h-4 w-4 text-green-400" />
+                <div className="w-8 h-8 bg-green-500/30 rounded-lg flex items-center justify-center border border-green-400/50">
+                  <Shield className="h-4 w-4 text-green-200" />
                 </div>
-                <span className="text-white/90">Secure Administrator Access</span>
+                <span className="text-gray-100 font-medium">Secure Administrator Access</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                  <svg className="h-4 w-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                <div className="w-8 h-8 bg-blue-500/30 rounded-lg flex items-center justify-center border border-blue-400/50">
+                  <svg className="h-4 w-4 text-blue-200" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 2a1 1 0 100 2h2a1 1 0 100-2h-2z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-white/90">Real-time Business Analytics</span>
+                <span className="text-gray-100 font-medium">Real-time Business Analytics</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-purple-600/20 rounded-lg flex items-center justify-center">
-                  <svg className="h-4 w-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                <div className="w-8 h-8 bg-purple-500/30 rounded-lg flex items-center justify-center border border-purple-400/50">
+                  <svg className="h-4 w-4 text-purple-200" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5zM8 15V9h4v6H8z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-white/90">Inventory & Order Management</span>
+                <span className="text-gray-100 font-medium">Inventory & Order Management</span>
               </div>
             </div>
 
             {/* Features List */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Admin Panel Features</h3>
-              <ul className="space-y-2 text-white/80 text-sm">
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                  Product & Category Management
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-white mb-4 drop-shadow-sm">Admin Panel Features</h3>
+              <ul className="space-y-3 text-gray-100 text-sm">
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-green-300 rounded-full shadow-sm"></div>
+                  <span className="font-medium">Product & Category Management</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
-                  Order Processing & Tracking
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-blue-300 rounded-full shadow-sm"></div>
+                  <span className="font-medium">Order Processing & Tracking</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-purple-400 rounded-full"></div>
-                  Customer & User Management
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-purple-300 rounded-full shadow-sm"></div>
+                  <span className="font-medium">Customer & User Management</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-orange-400 rounded-full"></div>
-                  Sales Analytics & Reports
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-orange-300 rounded-full shadow-sm"></div>
+                  <span className="font-medium">Sales Analytics & Reports</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-pink-400 rounded-full"></div>
-                  Inventory & Stock Control
+                <li className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-pink-300 rounded-full shadow-sm"></div>
+                  <span className="font-medium">Inventory & Stock Control</span>
                 </li>
               </ul>
             </div>
@@ -259,16 +266,23 @@ export default function AdminLoginPage() {
                 Demo Credentials
               </h3>
             </div>
-            <div className="space-y-2 text-sm">
+            <div className="space-y-2 text-sm mb-3">
               <div className="flex justify-between items-center">
                 <span className="text-amber-700 font-medium">Email:</span>
-                <code className="text-amber-800 bg-amber-100 px-2 py-1 rounded text-xs">admin@kfresh.ca</code>
+                <code className="text-amber-800 bg-amber-100 px-2 py-1 rounded text-xs font-mono">admin@kfresh.ca</code>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-amber-700 font-medium">Password:</span>
-                <code className="text-amber-800 bg-amber-100 px-2 py-1 rounded text-xs">admin123</code>
+                <code className="text-amber-800 bg-amber-100 px-2 py-1 rounded text-xs font-mono">admin123</code>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={fillDemoCredentials}
+              className="w-full py-2 px-4 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
+            >
+              Fill Demo Credentials
+            </button>
           </div>
 
           {/* Admin Notice */}
