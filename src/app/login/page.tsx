@@ -37,7 +37,8 @@ export default function AdminLoginPage() {
         router.push('/')
       }, 1000)
     } catch (error: any) {
-      setError(error.message || 'An error occurred')
+      console.error('Login error:', error)
+      setError(error.message || 'An error occurred during login')
     } finally {
       setLoading(false)
     }
@@ -198,6 +199,7 @@ export default function AdminLoginPage() {
                 <input
                   type="email"
                   required
+                  autoComplete="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-500 bg-gray-50/50 transition-all duration-200"
@@ -216,6 +218,7 @@ export default function AdminLoginPage() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete="current-password"
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                   className="w-full pl-12 pr-14 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-500 bg-gray-50/50 transition-all duration-200"
