@@ -21,6 +21,7 @@ interface AuthContextType {
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: AuthError | Error | null }>
   signOut: () => Promise<void>
+  updateProfile: (updates: Partial<AdminProfile>) => Promise<void>
   isAdmin: boolean
 }
 
@@ -199,6 +200,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log('Signed out successfully')
   }
 
+  const updateProfile = async (updates: Partial<AdminProfile>) => {
+    if (!user || !profile) return
+    
+    // Update local profile state immediately for responsive UI
+    const updatedProfile = {
+      ...profile,
+      ...updates,
+      updated_at: new Date().toISOString()
+    }
+    
+    setProfile(updatedProfile)
+  }
+
   // Check if user is admin based on role or specific email
   const isAdmin = Boolean(
     profile?.role === 'admin' || 
@@ -223,6 +237,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     signIn,
     signOut,
+    updateProfile,
     isAdmin,
   }
 

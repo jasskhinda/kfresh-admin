@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 
 export default function AdminProfilePage() {
-  const { user, profile, signOut } = useAuth()
+  const { user, profile, signOut, updateProfile } = useAuth()
   const router = useRouter()
   const supabase = createClient()
   
@@ -84,13 +84,20 @@ export default function AdminProfilePage() {
 
       if (updateError) throw updateError
 
+      // Update the profile in AuthContext to refresh header immediately
+      await updateProfile({
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email
+      })
+
       setSuccess('Profile updated successfully!')
       setEditing(false)
       
-      // Force a page refresh to update the header
+      // Auto-clear success message after 3 seconds
       setTimeout(() => {
-        window.location.reload()
-      }, 1500)
+        setSuccess('')
+      }, 3000)
 
     } catch (err: any) {
       setError(err.message || 'Failed to update profile')
@@ -290,7 +297,7 @@ export default function AdminProfilePage() {
                     setError('')
                     setSuccess('')
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-white/90 rounded-lg transition-colors text-gray-900 shadow-sm"
                 >
                   <Edit3 className="h-4 w-4" />
                   Edit Profile
