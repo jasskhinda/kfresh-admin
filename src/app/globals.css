@@ -79,6 +79,21 @@ input, textarea, select {
   border: 1px solid #d1d5db !important;
 }
 
+/* Profile form specific overrides */
+.profile-form input {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #d1d5db !important;
+  outline: none !important;
+  cursor: text !important;
+  pointer-events: auto !important;
+}
+
+.profile-form input:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+}
+
 input::placeholder, textarea::placeholder {
   color: #6b7280 !important;
 }

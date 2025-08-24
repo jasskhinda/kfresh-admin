@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { User, Mail, Shield, Calendar, Save, Edit3, X, CheckCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import DashboardLayout from '@/components/layout/DashboardLayout'
 
 export default function AdminProfilePage() {
   const { user, profile, signOut } = useAuth()
@@ -22,8 +23,23 @@ export default function AdminProfilePage() {
     email: ''
   })
 
+  // Debug log for state
+  console.log('AdminProfilePage render state:', {
+    editing,
+    loading,
+    hasUser: !!user,
+    hasProfile: !!profile,
+    formData
+  })
+
   useEffect(() => {
+    console.log('Profile changed in useEffect:', profile)
     if (profile) {
+      console.log('Setting form data with profile:', {
+        first_name: profile.first_name || '',
+        last_name: profile.last_name || '',
+        email: profile.email || ''
+      })
       setFormData({
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
@@ -68,7 +84,9 @@ export default function AdminProfilePage() {
   }
 
   const handleCancel = () => {
+    console.log('Cancel button clicked')
     if (profile) {
+      console.log('Resetting form data to profile values:', profile)
       setFormData({
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
@@ -93,7 +111,8 @@ export default function AdminProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <DashboardLayout>
+      <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
@@ -106,6 +125,33 @@ export default function AdminProfilePage() {
           <h1 className="text-3xl font-bold text-gray-900">Admin Profile</h1>
           <p className="mt-2 text-gray-600">Manage your admin account information</p>
         </div>
+
+        {/* Debug Section - Remove in production */}
+        {editing && (
+          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-blue-900 mb-2">Debug Info & Test</h3>
+            <div className="text-xs text-blue-800 space-y-1 mb-3">
+              <p>Editing: {editing ? 'true' : 'false'}</p>
+              <p>Form Data: {JSON.stringify(formData)}</p>
+              <p>Profile: {JSON.stringify(profile)}</p>
+              <p>User: {user?.email}</p>
+            </div>
+            <div className="mb-2">
+              <label className="block text-sm font-medium text-blue-900 mb-1">Test Input:</label>
+              <input
+                type="text"
+                placeholder="Type here to test if inputs work"
+                className="w-full px-3 py-2 border border-blue-300 rounded text-gray-900 bg-white"
+                style={{ 
+                  backgroundColor: '#ffffff !important',
+                  color: '#111827 !important',
+                  border: '1px solid #3b82f6 !important'
+                }}
+                onChange={(e) => console.log('Test input value:', e.target.value)}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Success Message */}
         {success && (
@@ -152,7 +198,12 @@ export default function AdminProfilePage() {
               
               {!editing && (
                 <button
-                  onClick={() => setEditing(true)}
+                  onClick={() => {
+                    console.log('Edit button clicked, setting editing to true')
+                    setEditing(true)
+                    setError('')
+                    setSuccess('')
+                  }}
                   className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
                 >
                   <Edit3 className="h-4 w-4" />
@@ -163,7 +214,7 @@ export default function AdminProfilePage() {
           </div>
 
           {/* Card Content */}
-          <div className="p-6">
+          <div className="p-6 profile-form">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* First Name */}
               <div>
@@ -174,9 +225,20 @@ export default function AdminProfilePage() {
                   <input
                     type="text"
                     value={formData.first_name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    onChange={(e) => {
+                      console.log('First name changed:', e.target.value)
+                      setFormData(prev => ({ ...prev, first_name: e.target.value }))
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 bg-white"
+                    style={{ 
+                      color: '#111827 !important', 
+                      backgroundColor: '#ffffff !important', 
+                      borderColor: '#d1d5db !important',
+                      outline: 'none'
+                    }}
                     placeholder="Enter first name"
+                    autoComplete="given-name"
+                    autoFocus
                   />
                 ) : (
                   <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
@@ -195,9 +257,19 @@ export default function AdminProfilePage() {
                   <input
                     type="text"
                     value={formData.last_name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    onChange={(e) => {
+                      console.log('Last name changed:', e.target.value)
+                      setFormData(prev => ({ ...prev, last_name: e.target.value }))
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 bg-white"
+                    style={{ 
+                      color: '#111827 !important', 
+                      backgroundColor: '#ffffff !important', 
+                      borderColor: '#d1d5db !important',
+                      outline: 'none'
+                    }}
                     placeholder="Enter last name"
+                    autoComplete="family-name"
                   />
                 ) : (
                   <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
@@ -304,5 +376,6 @@ export default function AdminProfilePage() {
         </div>
       </div>
     </div>
+    </DashboardLayout>
   )
 }
