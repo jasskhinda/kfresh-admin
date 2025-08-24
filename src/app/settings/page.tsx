@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Save, Database, Store, Bell, Shield, Globe, Mail, Phone, MapPin } from 'lucide-react'
+import DashboardLayout from '@/components/layout/DashboardLayout'
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
@@ -87,12 +88,13 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <button
-          onClick={handleSave}
-          disabled={saving}
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+          <button
+            onClick={handleSave}
+            disabled={saving}
           className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
             saved
               ? 'bg-green-600 text-white'
@@ -409,5 +411,6 @@ export default function SettingsPage() {
         </div>
       </div>
     </div>
+    </DashboardLayout>
   )
 }

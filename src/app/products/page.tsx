@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice, downloadCSV } from '@/lib/utils'
+import DashboardLayout from '@/components/layout/DashboardLayout'
 
 interface Product {
   id: string
@@ -182,13 +183,14 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-600">Manage your store&apos;s product catalog</p>
-        </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Products</h1>
+            <p className="text-gray-600">Manage your store&apos;s product catalog</p>
+          </div>
         <div className="flex items-center space-x-3">
           <button
             onClick={handleExportProducts}
@@ -462,6 +464,7 @@ export default function ProductsPage() {
         )}
       </div>
     </div>
+    </DashboardLayout>
   )
 }
 

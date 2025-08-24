@@ -9,6 +9,7 @@ import {
   Eye
 } from 'lucide-react'
 import { formatPrice, formatDate } from '@/lib/utils'
+import DashboardLayout from '@/components/layout/DashboardLayout'
 
 export default function PaymentsPage() {
   const paymentStats = [
@@ -95,13 +96,14 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Payments</h1>
-          <p className="text-gray-600">Track revenue, transactions, and payment status</p>
-        </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Payments</h1>
+            <p className="text-gray-600">Track revenue, transactions, and payment status</p>
+          </div>
         <button className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
           <Download className="h-4 w-4" />
           <span>Export Report</span>
@@ -220,5 +222,6 @@ export default function PaymentsPage() {
         </div>
       </div>
     </div>
+    </DashboardLayout>
   )
 }

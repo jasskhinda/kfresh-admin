@@ -15,6 +15,7 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice, formatDate, downloadCSV } from '@/lib/utils'
 import DatabaseDebug from '@/components/debug/DatabaseDebug'
+import DashboardLayout from '@/components/layout/DashboardLayout'
 
 interface Order {
   id: string
@@ -240,13 +241,14 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Orders</h1>
-          <p className="text-gray-600">Manage and track customer orders ({orders.length} total)</p>
-        </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Orders</h1>
+            <p className="text-gray-600">Manage and track customer orders ({orders.length} total)</p>
+          </div>
         <div className="flex gap-2">
           <button
             onClick={fetchOrders}
@@ -468,6 +470,7 @@ export default function OrdersPage() {
       {/* Debug Component - Remove this in production */}
       <DatabaseDebug />
     </div>
+    </DashboardLayout>
   )
 }
 

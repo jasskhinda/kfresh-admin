@@ -5,6 +5,7 @@ import { Plus, Search, Edit, Trash2, FolderTree, Upload, X, Image as ImageIcon }
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database'
 import { imageUploadService } from '@/lib/imageUpload'
+import DashboardLayout from '@/components/layout/DashboardLayout'
 
 type Category = Database['public']['Tables']['categories']['Row']
 type NewCategory = Database['public']['Tables']['categories']['Insert']
@@ -261,13 +262,14 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-          <p className="text-gray-600">Manage product categories</p>
-        </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
+            <p className="text-gray-600">Manage product categories</p>
+          </div>
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
@@ -611,5 +613,6 @@ export default function CategoriesPage() {
           </div>
         )}
     </div>
+    </DashboardLayout>
   )
 }

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice, downloadCSV } from '@/lib/utils'
+import DashboardLayout from '@/components/layout/DashboardLayout'
 
 interface SalesData {
   date: string
@@ -219,13 +220,14 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
-          <p className="text-gray-600">Business insights and performance metrics</p>
-        </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
+            <p className="text-gray-600">Business insights and performance metrics</p>
+          </div>
         <div className="flex items-center gap-3">
           <select
             value={dateRange}
@@ -516,5 +518,6 @@ export default function ReportsPage() {
         </div>
       </div>
     </div>
+    </DashboardLayout>
   )
 }
