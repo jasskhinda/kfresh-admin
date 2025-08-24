@@ -52,11 +52,11 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+    <div className="min-h-screen hero-gradient relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-green-500 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-green-400 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-400 rounded-full blur-3xl"></div>
       </div>
 
       {/* Header Navigation */}
@@ -86,10 +86,10 @@ export default function AdminLoginPage() {
               <h1 className="text-5xl font-bold mb-4 text-white drop-shadow-lg">
                 Welcome to
               </h1>
-              <h2 className="text-4xl font-bold mb-6 text-green-300 drop-shadow-lg">
+              <h2 className="text-4xl font-bold mb-6 text-white drop-shadow-lg">
                 KFresh Admin Panel
               </h2>
-              <p className="text-xl text-gray-100 mb-8 leading-relaxed drop-shadow-sm">
+              <p className="text-xl text-white mb-8 leading-relaxed drop-shadow-sm">
                 Manage your supermarket operations with our comprehensive admin dashboard. 
                 Control inventory, process orders, and monitor your business performance.
               </p>
@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
                 <div className="w-8 h-8 bg-green-500/30 rounded-lg flex items-center justify-center border border-green-400/50">
                   <Shield className="h-4 w-4 text-green-200" />
                 </div>
-                <span className="text-gray-100 font-medium">Secure Administrator Access</span>
+                <span className="text-white font-medium">Secure Administrator Access</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-blue-500/30 rounded-lg flex items-center justify-center border border-blue-400/50">
@@ -108,7 +108,7 @@ export default function AdminLoginPage() {
                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 4a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8zm8 2a1 1 0 100 2h2a1 1 0 100-2h-2z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-gray-100 font-medium">Real-time Business Analytics</span>
+                <span className="text-white font-medium">Real-time Business Analytics</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-purple-500/30 rounded-lg flex items-center justify-center border border-purple-400/50">
@@ -116,14 +116,14 @@ export default function AdminLoginPage() {
                     <path fillRule="evenodd" d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5zM8 15V9h4v6H8z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-gray-100 font-medium">Inventory & Order Management</span>
+                <span className="text-white font-medium">Inventory & Order Management</span>
               </div>
             </div>
 
             {/* Features List */}
             <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 p-6 shadow-lg">
               <h3 className="text-lg font-semibold text-white mb-4 drop-shadow-sm">Admin Panel Features</h3>
-              <ul className="space-y-3 text-gray-100 text-sm">
+              <ul className="space-y-3 text-white text-sm">
                 <li className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-300 rounded-full shadow-sm"></div>
                   <span className="font-medium">Product & Category Management</span>
@@ -154,7 +154,7 @@ export default function AdminLoginPage() {
           
           {/* Header */}
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-brand rounded-2xl mb-4">
               <Shield className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
@@ -202,7 +202,7 @@ export default function AdminLoginPage() {
                   autoComplete="email"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-500 bg-gray-50/50 transition-all duration-200"
+                  className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl focus:ring-2 ring-brand focus:border-brand text-gray-900 placeholder-gray-500 bg-gray-50/50 transition-all duration-200"
                   placeholder="admin@kfresh.ca"
                 />
               </div>
@@ -221,7 +221,7 @@ export default function AdminLoginPage() {
                   autoComplete="current-password"
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                  className="w-full pl-12 pr-14 py-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 placeholder-gray-500 bg-gray-50/50 transition-all duration-200"
+                  className="w-full pl-12 pr-14 py-4 border border-gray-200 rounded-xl focus:ring-2 ring-brand focus:border-brand text-gray-900 placeholder-gray-500 bg-gray-50/50 transition-all duration-200"
                   placeholder="••••••••"
                 />
                 <button
@@ -238,7 +238,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading || !!success}
-              className="w-full py-4 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-xl font-bold text-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              className="w-full py-4 bg-brand text-white rounded-xl font-bold text-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               {loading ? (
                 <div className="flex items-center justify-center">
@@ -282,7 +282,7 @@ export default function AdminLoginPage() {
             <button
               type="button"
               onClick={fillDemoCredentials}
-              className="w-full py-2 px-4 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors"
+              className="w-full py-2 px-4 bg-brand text-white rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
             >
               Fill Demo Credentials
             </button>
