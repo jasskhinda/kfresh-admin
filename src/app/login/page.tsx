@@ -150,17 +150,20 @@ export default function AdminLoginPage() {
 
           {/* Right Side - Login Form */}
           <div className="flex items-center justify-center">
-            <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-8 space-y-6">
+            <div 
+              className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-8 space-y-6"
+              style={{ color: '#000000' }}
+            >
           
           {/* Header */}
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-brand rounded-2xl mb-4">
               <Shield className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-black mb-3">
+            <h1 className="text-4xl font-bold text-black mb-3" style={{ color: '#000000 !important', fontSize: '2.25rem', fontWeight: '900' }}>
               Admin Access
             </h1>
-            <p className="text-lg font-medium text-black mb-6">
+            <p className="text-lg font-medium text-black mb-6" style={{ color: '#000000 !important', fontSize: '1.125rem', fontWeight: '500' }}>
               Sign in to KFresh Admin Panel
             </p>
           </div>
@@ -191,7 +194,7 @@ export default function AdminLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
-              <label className="block text-base font-bold text-black mb-3">
+              <label className="block text-base font-bold text-black mb-3" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>
                 Email Address
               </label>
               <div className="relative">
@@ -210,7 +213,7 @@ export default function AdminLoginPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-base font-bold text-black mb-3">
+              <label className="block text-base font-bold text-black mb-3" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>
                 Password
               </label>
               <div className="relative">
@@ -265,18 +268,18 @@ export default function AdminLoginPage() {
               <svg className="h-4 w-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
               </svg>
-              <h3 className="text-base font-bold text-black">
+              <h3 className="text-base font-bold text-black" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>
                 Demo Credentials
               </h3>
             </div>
             <div className="space-y-3 text-base mb-4">
               <div className="flex justify-between items-center">
-                <span className="text-black font-bold">Email:</span>
-                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono">admin@kfresh.ca</code>
+                <span className="text-black font-bold" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>Email:</span>
+                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono" style={{ color: '#000000 !important', backgroundColor: '#fef08a' }}>admin@kfresh.ca</code>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-black font-bold">Password:</span>
-                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono">admin123</code>
+                <span className="text-black font-bold" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>Password:</span>
+                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono" style={{ color: '#000000 !important', backgroundColor: '#fef08a' }}>admin123</code>
               </div>
             </div>
             <button
@@ -292,11 +295,11 @@ export default function AdminLoginPage() {
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Shield className="h-4 w-4 text-blue-600" />
-              <h3 className="text-base font-bold text-black">
+              <h3 className="text-base font-bold text-black" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>
                 Admin Access Only
               </h3>
             </div>
-            <p className="text-sm font-medium text-black">
+            <p className="text-sm font-medium text-black" style={{ color: '#000000 !important', fontSize: '0.875rem', fontWeight: '500' }}>
               This panel is restricted to authorized administrators only.
               Unauthorized access attempts are logged and monitored.
             </p>
@@ -304,7 +307,7 @@ export default function AdminLoginPage() {
 
           {/* Footer */}
           <div className="text-center pt-4 border-t border-gray-200">
-            <p className="text-sm font-medium text-black">
+            <p className="text-sm font-medium text-black" style={{ color: '#000000 !important', fontSize: '0.875rem', fontWeight: '500' }}>
               KFresh Supermarket Admin Panel © 2025
             </p>
           </div>
