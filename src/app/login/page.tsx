@@ -157,10 +157,10 @@ export default function AdminLoginPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-brand rounded-2xl mb-4">
               <Shield className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
+            <h1 className="text-4xl font-bold text-black mb-3">
               Admin Access
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="text-lg font-medium text-black mb-6">
               Sign in to KFresh Admin Panel
             </p>
           </div>
@@ -191,7 +191,7 @@ export default function AdminLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-base font-bold text-black mb-3">
                 Email Address
               </label>
               <div className="relative">
@@ -210,7 +210,7 @@ export default function AdminLoginPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-base font-bold text-black mb-3">
                 Password
               </label>
               <div className="relative">
@@ -265,18 +265,18 @@ export default function AdminLoginPage() {
               <svg className="h-4 w-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
               </svg>
-              <h3 className="text-sm font-semibold text-amber-900">
+              <h3 className="text-base font-bold text-black">
                 Demo Credentials
               </h3>
             </div>
-            <div className="space-y-2 text-sm mb-3">
+            <div className="space-y-3 text-base mb-4">
               <div className="flex justify-between items-center">
-                <span className="text-amber-700 font-medium">Email:</span>
-                <code className="text-amber-800 bg-amber-100 px-2 py-1 rounded text-xs font-mono">admin@kfresh.ca</code>
+                <span className="text-black font-bold">Email:</span>
+                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono">admin@kfresh.ca</code>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-amber-700 font-medium">Password:</span>
-                <code className="text-amber-800 bg-amber-100 px-2 py-1 rounded text-xs font-mono">admin123</code>
+                <span className="text-black font-bold">Password:</span>
+                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono">admin123</code>
               </div>
             </div>
             <button
@@ -292,11 +292,11 @@ export default function AdminLoginPage() {
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 text-center">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Shield className="h-4 w-4 text-blue-600" />
-              <h3 className="text-sm font-semibold text-blue-900">
+              <h3 className="text-base font-bold text-black">
                 Admin Access Only
               </h3>
             </div>
-            <p className="text-xs text-blue-700">
+            <p className="text-sm font-medium text-black">
               This panel is restricted to authorized administrators only.
               Unauthorized access attempts are logged and monitored.
             </p>
@@ -304,7 +304,7 @@ export default function AdminLoginPage() {
 
           {/* Footer */}
           <div className="text-center pt-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
+            <p className="text-sm font-medium text-black">
               KFresh Supermarket Admin Panel © 2025
             </p>
           </div>

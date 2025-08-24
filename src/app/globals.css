@@ -22,6 +22,44 @@
   background-image: linear-gradient(135deg, rgb(17 24 39), rgb(6 78 59), rgb(6 95 70)); /* from gray-900 to emerald-800 tones */
 }
 
+/* Hero gradient text override for left side welcome content only */
+.hero-gradient .text-white {
+  color: #ffffff !important;
+}
+
+/* Only apply white text to the left side welcome content, not the form */
+.hero-gradient > div > div:first-child h1,
+.hero-gradient > div > div:first-child h2,
+.hero-gradient > div > div:first-child p,
+.hero-gradient > div > div:first-child span {
+  color: #ffffff !important;
+}
+
+/* Ensure form area text is black/dark */
+.hero-gradient .bg-white h1,
+.hero-gradient .bg-white p,
+.hero-gradient .bg-white label,
+.hero-gradient .bg-white span,
+.hero-gradient .bg-white code {
+  color: #000000 !important; /* Force pure black text in white form background */
+}
+
+/* Make form text more prominent */
+.hero-gradient .bg-white h1 {
+  font-size: 2.25rem !important; /* text-4xl */
+  font-weight: 900 !important; /* black */
+}
+
+.hero-gradient .bg-white h3 {
+  font-size: 1rem !important; /* text-base */
+  font-weight: 700 !important; /* bold */
+}
+
+.hero-gradient .bg-white label {
+  font-size: 1rem !important; /* text-base */
+  font-weight: 700 !important; /* bold */
+}
+
 /* Force light mode for admin panel */
 body {
   background: #ffffff !important;
