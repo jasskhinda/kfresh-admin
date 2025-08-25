@@ -7,10 +7,6 @@ import {
   TrendingUp, 
   AlertTriangle,
   Users,
-  Eye,
-  CreditCard,
-  Bell,
-  User,
   Shield
 } from 'lucide-react'
 import Link from 'next/link'
@@ -19,7 +15,6 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import DashboardLayout from '@/components/layout/DashboardLayout'
-import SupabaseTest from '@/components/SupabaseTest'
 
 interface DashboardStats {
   totalRevenue: number
@@ -182,31 +177,6 @@ export default function AdminDashboard() {
     }
   }
 
-  // Show loading state while authenticating - BYPASS FOR TESTING
-  if (false) {  // Changed from: if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading admin panel...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Show error if not authenticated (shouldn't happen due to middleware, but good fallback) - BYPASS FOR TESTING  
-  if (false) {  // Changed from: if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-600">Please log in to access the admin panel.</p>
-        </div>
-      </div>
-    )
-  }
-
   const displayName = profile?.first_name && profile?.last_name 
     ? `${profile.first_name} ${profile.last_name}`
     : profile?.first_name || 
@@ -214,44 +184,35 @@ export default function AdminDashboard() {
 
   return (
     <DashboardLayout>
-    <div className="space-y-6">
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-        <h3 className="font-bold">Auth Debug Info</h3>
-        <p>Loading: {loading.toString()}</p>
-        <p>User: {user ? user.email : 'null'}</p>
-        <p>Profile: {profile ? profile.email : 'null'}</p>
-      </div>
-      
-      <SupabaseTest />
-      
-      {/* Professional Welcome Header */}
-      <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-xl p-6 text-white mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-              <span className="text-2xl font-bold">
-                {profile?.first_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
-              </span>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">Welcome back, {displayName}!</h1>
-              <div className="flex items-center gap-2 mt-1">
-                <Shield className="h-4 w-4" />
-                <span className="text-white/90">Administrator</span>
-                <span className="text-white/60">•</span>
-                <span className="text-white/90">{user?.email || 'No email'}</span>
+      <div className="space-y-6">
+        {/* Professional Welcome Header */}
+        <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-xl p-6 text-white mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                <span className="text-2xl font-bold">
+                  {profile?.first_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
+                </span>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold">Welcome back, {displayName}!</h1>
+                <div className="flex items-center gap-2 mt-1">
+                  <Shield className="h-4 w-4" />
+                  <span className="text-white/90">Administrator</span>
+                  <span className="text-white/60">•</span>
+                  <span className="text-white/90">{user?.email || 'No email'}</span>
+                </div>
               </div>
             </div>
+            <div className="text-right">
+              <p className="text-white/90 text-sm">Today</p>
+              <p className="text-xl font-semibold">{new Date().toLocaleDateString()}</p>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="text-white/90 text-sm">Today</p>
-            <p className="text-xl font-semibold">{new Date().toLocaleDateString()}</p>
+          <div className="mt-4 pt-4 border-t border-white/20">
+            <p className="text-white/90">Here's what's happening with your KFresh store today.</p>
           </div>
         </div>
-        <div className="mt-4 pt-4 border-t border-white/20">
-          <p className="text-white/90">Here's what's happening with your KFresh store today.</p>
-        </div>
-      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -288,7 +249,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="p-6">
-            {loading ? (
+            {dataLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3, 4].map((i) => (
                   <div key={i} className="animate-pulse p-4 bg-gray-50 rounded-lg">
@@ -338,7 +299,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="p-6">
-            {loading ? (
+            {dataLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="animate-pulse p-4 bg-gray-50 rounded-lg">
