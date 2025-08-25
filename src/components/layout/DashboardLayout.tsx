@@ -16,10 +16,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [user, loading, router])
 
+  // Add timeout to prevent infinite loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (loading && !user) {
+        console.log('DashboardLayout: Force redirecting to login due to timeout')
+        router.push('/login')
+      }
+    }, 3000) // 3 second timeout
+
+    return () => clearTimeout(timer)
+  }, [loading, user, router])
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading admin panel...</p>
+          <p className="mt-2 text-sm text-gray-500">If this takes too long, you'll be redirected to login</p>
+        </div>
       </div>
     )
   }

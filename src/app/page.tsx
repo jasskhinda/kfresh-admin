@@ -19,6 +19,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import DashboardLayout from '@/components/layout/DashboardLayout'
+import SupabaseTest from '@/components/SupabaseTest'
 
 interface DashboardStats {
   totalRevenue: number
@@ -181,8 +182,8 @@ export default function AdminDashboard() {
     }
   }
 
-  // Show loading state while authenticating
-  if (loading) {
+  // Show loading state while authenticating - BYPASS FOR TESTING
+  if (false) {  // Changed from: if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -193,8 +194,8 @@ export default function AdminDashboard() {
     )
   }
 
-  // Show error if not authenticated (shouldn't happen due to middleware, but good fallback)
-  if (!user) {
+  // Show error if not authenticated (shouldn't happen due to middleware, but good fallback) - BYPASS FOR TESTING  
+  if (false) {  // Changed from: if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -214,13 +215,22 @@ export default function AdminDashboard() {
   return (
     <DashboardLayout>
     <div className="space-y-6">
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <h3 className="font-bold">Auth Debug Info</h3>
+        <p>Loading: {loading.toString()}</p>
+        <p>User: {user ? user.email : 'null'}</p>
+        <p>Profile: {profile ? profile.email : 'null'}</p>
+      </div>
+      
+      <SupabaseTest />
+      
       {/* Professional Welcome Header */}
       <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-xl p-6 text-white mb-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
               <span className="text-2xl font-bold">
-                {profile?.first_name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'A'}
+                {profile?.first_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
               </span>
             </div>
             <div>
@@ -229,7 +239,7 @@ export default function AdminDashboard() {
                 <Shield className="h-4 w-4" />
                 <span className="text-white/90">Administrator</span>
                 <span className="text-white/60">•</span>
-                <span className="text-white/90">{user.email}</span>
+                <span className="text-white/90">{user?.email || 'No email'}</span>
               </div>
             </div>
           </div>

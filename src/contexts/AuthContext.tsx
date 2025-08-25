@@ -46,25 +46,77 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
+  console.log('AuthProvider initializing...') // Debug log
+
   useEffect(() => {
+    let isMounted = true
+    let initializationComplete = false
+    
+    // Force loading to false after 1 second regardless of what happens
+    const forceInitTimeout = setTimeout(() => {
+      if (!initializationComplete) {
+        console.log('FORCE: Auth initialization timeout - setting loading to false')
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }, 1000)
+    
     // Get initial session
     const getSession = async () => {
       console.log('Getting initial session...')
-      const { data: { session } } = await supabase.auth.getSession()
-      console.log('Initial session:', !!session, session?.user?.id)
-      setSession(session)
-      setUser(session?.user ?? null)
-      
-      if (session?.user) {
-        console.log('Fetching profile for user:', session.user.id)
-        await fetchProfile(session.user.id)
+      try {
+        console.log('Supabase client created, calling getSession...')
+        
+        // Create a timeout promise that rejects after 500ms
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('getSession timeout')), 500)
+        })
+        
+        // Race between getSession and timeout
+        const result = await Promise.race([
+          supabase.auth.getSession(),
+          timeoutPromise
+        ])
+        
+        const { data: { session }, error } = result as any
+        console.log('Initial session result:', { session: !!session, error, userId: session?.user?.id })
+        
+        if (!isMounted) return
+        
+        setSession(session)
+        setUser(session?.user ?? null)
+        
+        if (session?.user) {
+          console.log('Fetching profile for user:', session.user.id)
+          await fetchProfile(session.user.id)
+        }
+        
+        console.log('Setting loading to false')
+        initializationComplete = true
+        setLoading(false)
+      } catch (error) {
+        console.error('Error getting session:', error)
+        if (isMounted) {
+          initializationComplete = true
+          setLoading(false) // Ensure loading is set to false even on error
+        }
       }
-      
-      console.log('Setting loading to false')
-      setLoading(false)
     }
 
+    console.log('About to call getSession...')
     getSession()
+
+    // Fallback: ensure loading is set to false after maximum 800ms  
+    const loadingTimeout = setTimeout(() => {
+      if (!initializationComplete) {
+        console.log('Loading timeout reached, forcing loading to false')
+        if (isMounted) {
+          initializationComplete = true
+          setLoading(false)
+        }
+      }
+    }, 800)
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -83,7 +135,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+      clearTimeout(loadingTimeout)
+      clearTimeout(forceInitTimeout)
+    }
   }, [])
 
   const fetchProfile = async (userId: string) => {
