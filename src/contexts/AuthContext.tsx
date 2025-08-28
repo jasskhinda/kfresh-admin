@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  console.log('AuthProvider initializing...') // Debug log
+  // console.log('AuthProvider initializing...') // Debug log
 
   useEffect(() => {
     let isMounted = true
@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Force loading to false after 1 second regardless of what happens
     const forceInitTimeout = setTimeout(() => {
       if (!initializationComplete) {
-        console.log('FORCE: Auth initialization timeout - setting loading to false')
+        // console.log('FORCE: Auth initialization timeout - setting loading to false')
         if (isMounted) {
           setLoading(false)
         }
@@ -277,15 +277,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user?.email === 'info@jasskhinda.com'
   )
 
-  console.log('Auth state:', {
-    user: !!user,
-    userEmail: user?.email,
-    profile: !!profile,
-    profileEmail: profile?.email,
-    profileRole: profile?.role,
-    isAdmin,
-    loading
-  })
+  // console.log('Auth state:', {
+  //   user: !!user,
+  //   userEmail: user?.email,
+  //   profile: !!profile,
+  //   profileEmail: profile?.email,
+  //   profileRole: profile?.role,
+  //   isAdmin,
+  //   loading
+  // })
 
   const value: AuthContextType = {
     user,
