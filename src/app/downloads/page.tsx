@@ -10,6 +10,7 @@ import {
   Calendar
 } from 'lucide-react'
 import { downloadCSV } from '@/lib/utils'
+import DashboardLayout from '@/components/layout/DashboardLayout'
 
 export default function DownloadsPage() {
   const reportTypes = [
@@ -149,12 +150,13 @@ export default function DownloadsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Downloads & Reports</h1>
-        <p className="text-gray-600">Export data and generate business reports</p>
-      </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Downloads & Reports</h1>
+          <p className="text-gray-600">Export data and generate business reports</p>
+        </div>
 
       {/* Quick Reports */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -254,6 +256,7 @@ export default function DownloadsPage() {
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    </DashboardLayout>
   )
 }
