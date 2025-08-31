@@ -245,7 +245,7 @@ export default function Header() {
             >
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900">{displayName}</p>
-                <p className="text-xs text-gray-500">{profile?.role || 'Admin'}</p>
+                <p className="text-xs text-gray-900">{profile?.role || 'Admin'}</p>
               </div>
               <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
                 <span className="text-sm font-medium text-white">
@@ -260,7 +260,7 @@ export default function Header() {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                 <div className="p-4 border-b border-gray-200">
                   <p className="text-sm font-medium text-gray-900">{displayName}</p>
-                  <p className="text-xs text-gray-500">{profile?.email}</p>
+                  <p className="text-xs text-gray-900">{profile?.email}</p>
                 </div>
                 <div className="py-2">
                   <button

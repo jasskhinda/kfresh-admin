@@ -186,31 +186,31 @@ export default function AdminDashboard() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Professional Welcome Header */}
-        <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-xl p-6 text-white mb-8">
+        <div className="bg-gradient-to-r from-green-700 to-blue-700 rounded-xl p-6 text-white mb-8 shadow-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold">
+              <div className="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center shadow-md">
+                <span className="text-2xl font-bold text-white">
                   {profile?.first_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
                 </span>
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Welcome back, {displayName}!</h1>
+                <h1 className="text-3xl font-bold text-white drop-shadow-sm">Welcome back, {displayName}!</h1>
                 <div className="flex items-center gap-2 mt-1">
-                  <Shield className="h-4 w-4" />
-                  <span className="text-white/90">Administrator</span>
-                  <span className="text-white/60">•</span>
-                  <span className="text-white/90">{user?.email || 'No email'}</span>
+                  <Shield className="h-4 w-4 text-white" />
+                  <span className="text-white font-medium">Administrator</span>
+                  <span className="text-white/80">•</span>
+                  <span className="text-white font-medium">{user?.email || 'No email'}</span>
                 </div>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-white/90 text-sm">Today</p>
-              <p className="text-xl font-semibold">{new Date().toLocaleDateString()}</p>
+              <p className="text-white/95 text-sm font-medium">Today</p>
+              <p className="text-xl font-semibold text-white">{new Date().toLocaleDateString()}</p>
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t border-white/20">
-            <p className="text-white/90">Here's what's happening with your KFresh store today.</p>
+          <div className="mt-4 pt-4 border-t border-white/30">
+            <p className="text-white font-medium">Here's what's happening with your KFresh store today.</p>
           </div>
         </div>
 

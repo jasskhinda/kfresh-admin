@@ -387,26 +387,31 @@ export default function SettingsPage() {
       {/* Partner Integration Status */}
       <div className="bg-white rounded-lg border p-6">
         <h2 className="text-lg font-semibold mb-4">Delivery Partner Integration</h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-2 bg-black text-white rounded-lg flex items-center justify-center font-bold">U</div>
-            <p className="text-sm font-medium">Uber Eats</p>
-            <p className="text-xs text-gray-500">Coming Soon</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="text-center p-4 border rounded-lg">
+            <div className="w-16 h-16 mx-auto mb-3 bg-black text-white rounded-lg flex items-center justify-center font-bold text-xl">U</div>
+            <p className="text-base font-semibold text-gray-900">Uber Eats</p>
+            <p className="text-sm text-green-600 font-medium">Account Setup in Progress</p>
+            <p className="text-xs text-gray-500 mt-1">Final call scheduled for tomorrow</p>
           </div>
-          <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-2 bg-red-600 text-white rounded-lg flex items-center justify-center font-bold">D</div>
-            <p className="text-sm font-medium">DoorDash</p>
-            <p className="text-xs text-gray-500">Coming Soon</p>
+          <div className="text-center p-4 border rounded-lg">
+            <div className="w-16 h-16 mx-auto mb-3 bg-red-600 text-white rounded-lg flex items-center justify-center font-bold text-xl">D</div>
+            <p className="text-base font-semibold text-gray-900">DoorDash</p>
+            <p className="text-sm text-blue-600 font-medium">Scheduled for Next Month</p>
+            <p className="text-xs text-gray-500 mt-1">Waiting for free first month promotion</p>
           </div>
-          <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-2 bg-orange-500 text-white rounded-lg flex items-center justify-center font-bold">S</div>
-            <p className="text-sm font-medium">Skip</p>
-            <p className="text-xs text-gray-500">Coming Soon</p>
-          </div>
-          <div className="text-center">
-            <div className="w-12 h-12 mx-auto mb-2 bg-green-600 text-white rounded-lg flex items-center justify-center font-bold">I</div>
-            <p className="text-sm font-medium">Instacart</p>
-            <p className="text-xs text-gray-500">Coming Soon</p>
+        </div>
+        
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+            <div>
+              <p className="text-sm font-medium text-blue-900">Partner Strategy Update</p>
+              <p className="text-sm text-blue-700 mt-1">
+                KFresh will focus exclusively on <strong>Uber Eats</strong> and <strong>DoorDash</strong> for delivery services. 
+                Other platforms have been removed to streamline operations and maximize efficiency.
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -216,8 +216,6 @@ export default function OrdersPage() {
     switch (method) {
       case 'uber_eats': return 'Uber Eats'
       case 'doordash': return 'DoorDash'
-      case 'skip': return 'Skip'
-      case 'instacart': return 'Instacart'
       default: return 'N/A'
     }
   }
