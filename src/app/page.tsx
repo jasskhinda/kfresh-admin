@@ -54,6 +54,14 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchDashboardData()
+    
+    // Emergency fallback: force loading to end after 15 seconds
+    const emergencyTimeout = setTimeout(() => {
+      console.log('⚠️ Emergency timeout: Forcing dashboard loading to end')
+      setDataLoading(false)
+    }, 15000)
+
+    return () => clearTimeout(emergencyTimeout)
   }, [])
 
   const fetchDashboardData = async () => {

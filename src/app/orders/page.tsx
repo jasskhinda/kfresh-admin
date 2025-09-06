@@ -42,14 +42,32 @@ export default function OrdersPage() {
 
   useEffect(() => {
     fetchOrders()
+    
+    // Emergency fallback: force loading to end after 15 seconds
+    const emergencyTimeout = setTimeout(() => {
+      console.log('⚠️ Emergency timeout: Forcing orders loading to end')
+      setLoading(false)
+      if (orders.length === 0) {
+        console.log('📦 Using mock orders as fallback')
+        setOrders(getMockOrders())
+      }
+    }, 15000)
+
+    return () => clearTimeout(emergencyTimeout)
   }, [])
 
   const fetchOrders = async () => {
+    console.log('🔄 Starting fetchOrders...')
     try {
       const supabase = createClient()
+      console.log('📡 Making Supabase orders query...')
       
-      // First, let's try to get orders with the expected structure
-      const { data, error } = await supabase
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Orders request timeout')), 10000)
+      )
+      
+      const supabasePromise = supabase
         .from('orders')
         .select(`
           id,
@@ -67,8 +85,11 @@ export default function OrdersPage() {
         .order('created_at', { ascending: false })
         .limit(50)
 
+      const result = await Promise.race([supabasePromise, timeoutPromise])
+      const { data, error } = result as any
+
       if (error) {
-        console.error('Error fetching orders:', error)
+        console.error('❌ Orders Supabase error:', error)
         console.log('Falling back to mock data. Check your orders table structure.')
         setOrders(getMockOrders())
       } else if (data && data.length > 0) {
@@ -89,16 +110,17 @@ export default function OrdersPage() {
           updated_at: order.updated_at || order.created_at
         }))
         
-        console.log('Successfully loaded orders:', transformedOrders.length)
+        console.log('✅ Successfully loaded orders:', transformedOrders.length)
         setOrders(transformedOrders)
       } else {
-        console.log('No orders found in database')
+        console.log('📦 No orders found in database')
         setOrders([])
       }
     } catch (error) {
-      console.error('Error:', error)
+      console.error('❌ Orders fetch error:', error)
       setOrders(getMockOrders())
     } finally {
+      console.log('✅ Setting orders loading to false')
       setLoading(false)
     }
   }
