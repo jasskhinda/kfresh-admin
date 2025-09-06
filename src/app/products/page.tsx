@@ -51,47 +51,83 @@ export default function ProductsPage() {
   useEffect(() => {
     fetchProducts()
     fetchCategories()
+    
+    // Emergency fallback: force loading to end after 15 seconds
+    const emergencyTimeout = setTimeout(() => {
+      console.log('⚠️ Emergency timeout: Forcing loading to end')
+      setLoading(false)
+      if (products.length === 0) {
+        console.log('📦 Using mock data as fallback')
+        setProducts(getMockProducts())
+      }
+    }, 15000)
+
+    return () => clearTimeout(emergencyTimeout)
   }, [])
 
   const fetchProducts = async () => {
+    console.log('🔄 Starting fetchProducts...')
     try {
       const supabase = createClient()
-      const { data, error } = await supabase
+      console.log('📡 Making Supabase query...')
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Request timeout')), 10000)
+      )
+      
+      const supabasePromise = supabase
         .from('products')
         .select('*')
         .order('created_at', { ascending: false })
 
+      const result = await Promise.race([supabasePromise, timeoutPromise])
+      const { data, error } = result as any
+
       if (error) {
-        console.error('Error fetching products:', error)
+        console.error('❌ Supabase error:', error)
         // Use mock data for demo
         setProducts(getMockProducts())
       } else {
+        console.log('✅ Got products:', data?.length || 0)
         setProducts(data || [])
       }
     } catch (error) {
-      console.error('Error:', error)
+      console.error('❌ Fetch error:', error)
       setProducts(getMockProducts())
     } finally {
+      console.log('✅ Setting loading to false')
       setLoading(false)
     }
   }
 
   const fetchCategories = async () => {
+    console.log('🔄 Starting fetchCategories...')
     try {
       const supabase = createClient()
-      const { data, error } = await supabase
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Categories timeout')), 5000)
+      )
+      
+      const supabasePromise = supabase
         .from('categories')
         .select('id, name, slug')
         .eq('is_active', true)
 
+      const result = await Promise.race([supabasePromise, timeoutPromise])
+      const { data, error } = result as any
+
       if (error) {
-        console.error('Error fetching categories:', error)
+        console.error('❌ Categories error:', error)
         setCategories(getMockCategories())
       } else {
+        console.log('✅ Got categories:', data?.length || 0)
         setCategories(data || [])
       }
     } catch (error) {
-      console.error('Error:', error)
+      console.error('❌ Categories fetch error:', error)
       setCategories(getMockCategories())
     }
   }
@@ -173,12 +209,20 @@ export default function ProductsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading products...</p>
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading products...</p>
+            <p className="mt-2 text-sm text-gray-500">
+              If this takes too long, try refreshing the page or{' '}
+              <a href="/test-products-no-auth" className="text-green-600 hover:underline">
+                view without auth
+              </a>
+            </p>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     )
   }
 
