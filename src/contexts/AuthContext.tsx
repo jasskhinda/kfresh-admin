@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     let isMounted = true
     let initializationComplete = false
     
-    // Force loading to false after 1 second regardless of what happens
+    // Force loading to false after 600ms regardless of what happens
     const forceInitTimeout = setTimeout(() => {
       if (!initializationComplete) {
         // console.log('FORCE: Auth initialization timeout - setting loading to false')
@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setLoading(false)
         }
       }
-    }, 1000)
+    }, 600)
     
     // Get initial session
     const getSession = async () => {
@@ -68,9 +68,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         console.log('Supabase client created, calling getSession...')
         
-        // Create a timeout promise that rejects after 500ms
+        // Create a timeout promise that rejects after 800ms (faster than before)
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('getSession timeout')), 500)
+          setTimeout(() => reject(new Error('getSession timeout')), 800)
         })
         
         // Race between getSession and timeout
@@ -89,7 +89,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         if (session?.user) {
           console.log('Fetching profile for user:', session.user.id)
-          await fetchProfile(session.user.id)
+          // Don't await profile fetch to avoid blocking
+          fetchProfile(session.user.id).catch(err => {
+            console.warn('Profile fetch failed during init:', err)
+          })
         }
         
         console.log('Setting loading to false')
@@ -107,7 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log('About to call getSession...')
     getSession()
 
-    // Fallback: ensure loading is set to false after maximum 800ms  
+    // Fallback: ensure loading is set to false after maximum 500ms  
     const loadingTimeout = setTimeout(() => {
       if (!initializationComplete) {
         console.log('Loading timeout reached, forcing loading to false')
@@ -116,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setLoading(false)
         }
       }
-    }, 800)
+    }, 500)
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -201,33 +204,56 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      console.log('Starting signIn process...')
+      
+      // Add timeout to the signIn request
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Sign in timeout - please try again')), 8000)
+      })
+      
+      const signInPromise = supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+      
+      const { data, error } = await Promise.race([signInPromise, timeoutPromise]) as any
 
-    // If there's an email not confirmed error, show helpful message
-    if (error && error.message.includes('Email not confirmed')) {
-      console.log('Email not confirmed error detected')
-      return { error: new Error('This account was created before email verification was disabled. Please create a new account or contact support.') }
-    }
-
-    // For successful login without email confirmation issues
-    if (!error && data.session) {
-      console.log('Login successful')
-      // Manually trigger the auth state change for immediate UI update
-      setSession(data.session)
-      setUser(data.user)
-      setLoading(false)
-      if (data.user) {
-        await fetchProfile(data.user.id)
+      // If there's an email not confirmed error, show helpful message
+      if (error && error.message.includes('Email not confirmed')) {
+        console.log('Email not confirmed error detected')
+        setLoading(false)
+        return { error: new Error('This account was created before email verification was disabled. Please create a new account or contact support.') }
       }
-    } else if (error) {
-      // Ensure loading is false even on error
-      setLoading(false)
-    }
 
-    return { error }
+      // For successful login without email confirmation issues
+      if (!error && data.session) {
+        console.log('Login successful - setting state immediately')
+        // Manually trigger the auth state change for immediate UI update
+        setSession(data.session)
+        setUser(data.user)
+        setLoading(false)
+        
+        // Fetch profile in background without blocking return
+        if (data.user) {
+          fetchProfile(data.user.id).catch(err => {
+            console.warn('Profile fetch failed after login:', err)
+          })
+        }
+        
+        return { error: null }
+      } else if (error) {
+        console.error('Login error:', error)
+        setLoading(false)
+        return { error }
+      }
+
+      return { error: new Error('Unknown login error') }
+    } catch (error: any) {
+      console.error('SignIn catch block:', error)
+      setLoading(false)
+      return { error: error.message?.includes('timeout') ? error : new Error('Login failed - please try again') }
+    }
   }
 
   const signOut = async () => {

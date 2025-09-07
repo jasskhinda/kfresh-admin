@@ -26,20 +26,36 @@ export default function AdminLoginPage() {
     setSuccess('')
 
     try {
-      const { error } = await signIn(formData.email, formData.password)
+      console.log('Attempting login with email:', formData.email)
+      
+      // Add a client-side timeout for the entire login process
+      const loginTimeout = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Login is taking too long - please try again')), 10000)
+      })
+      
+      const loginPromise = signIn(formData.email, formData.password)
+      
+      const result = await Promise.race([loginPromise, loginTimeout]) as any
+      const { error } = result
 
-      if (error) throw error
+      if (error) {
+        console.error('Login error:', error)
+        throw error
+      }
 
+      console.log('Login successful, setting success message')
       setSuccess('Signed in successfully!')
       
-      // Redirect to admin dashboard after 1 second
+      // Redirect to admin dashboard after a shorter delay
       setTimeout(() => {
+        console.log('Redirecting to dashboard...')
         router.push('/')
-      }, 1000)
+      }, 800)
+      
     } catch (error: any) {
-      console.error('Login error:', error)
-      setError(error.message || 'An error occurred during login')
-    } finally {
+      console.error('Login error in handleSubmit:', error)
+      const errorMessage = error.message || 'An error occurred during login'
+      setError(errorMessage)
       setLoading(false)
     }
   }
