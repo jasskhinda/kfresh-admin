@@ -34,7 +34,7 @@ export default function CategoriesPage() {
   useEffect(() => {
     fetchCategories()
     
-    // Emergency fallback: force loading to end after 15 seconds
+    // Reduce emergency fallback to 5 seconds for better UX
     const emergencyTimeout = setTimeout(() => {
       console.log('⚠️ Emergency timeout: Forcing categories loading to end')
       setLoading(false)
@@ -42,7 +42,7 @@ export default function CategoriesPage() {
         console.log('📁 Using mock data as fallback')
         setCategories(getMockCategories())
       }
-    }, 15000)
+    }, 5000)
 
     return () => clearTimeout(emergencyTimeout)
   }, [])
@@ -53,9 +53,9 @@ export default function CategoriesPage() {
       const supabase = createClient()
       console.log('📡 Making Supabase categories query...')
       
-      // Add timeout to prevent hanging
+      // Reduce timeout to 3 seconds for better UX
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Categories request timeout')), 10000)
+        setTimeout(() => reject(new Error('Categories request timeout')), 3000)
       )
       
       const supabasePromise = supabase

@@ -76,9 +76,9 @@ export default function OrdersPage() {
       const supabase = createClient()
       console.log('📡 Making Supabase orders query...')
       
-      // Add timeout to prevent hanging
+      // Reduce timeout to 3 seconds for better UX
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Orders request timeout')), 10000)
+        setTimeout(() => reject(new Error('Orders request timeout')), 3000)
       )
       
       const supabasePromise = supabase

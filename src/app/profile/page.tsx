@@ -72,7 +72,12 @@ export default function AdminProfilePage() {
     setSuccess('')
 
     try {
-      const { error: updateError } = await supabase
+      // Add timeout protection
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile update timeout')), 5000)
+      )
+
+      const updatePromise = supabase
         .from('user_profiles')
         .update({
           first_name: formData.first_name,
@@ -81,6 +86,9 @@ export default function AdminProfilePage() {
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id)
+
+      const result = await Promise.race([updatePromise, timeoutPromise])
+      const { error: updateError } = result as any
 
       if (updateError) throw updateError
 
@@ -145,20 +153,30 @@ export default function AdminProfilePage() {
         throw new Error('New password must be different from current password')
       }
 
-      // First verify current password by attempting to sign in
-      const { error: verifyError } = await supabase.auth.signInWithPassword({
+      // First verify current password by attempting to sign in with timeout
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Password verification timeout')), 5000)
+      )
+
+      const verifyPromise = supabase.auth.signInWithPassword({
         email: user?.email || '',
         password: passwordData.currentPassword
       })
+
+      const verifyResult = await Promise.race([verifyPromise, timeoutPromise])
+      const { error: verifyError } = verifyResult as any
 
       if (verifyError) {
         throw new Error('Current password is incorrect')
       }
 
-      // Update password in Supabase Auth
-      const { error: updateError } = await supabase.auth.updateUser({
+      // Update password in Supabase Auth with timeout
+      const updatePromise = supabase.auth.updateUser({
         password: passwordData.newPassword
       })
+
+      const updateResult = await Promise.race([updatePromise, timeoutPromise])
+      const { error: updateError } = updateResult as any
 
       if (updateError) throw updateError
 

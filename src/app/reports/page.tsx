@@ -58,12 +58,23 @@ export default function ReportsPage() {
 
   useEffect(() => {
     fetchReportsData()
+    
+    // Emergency fallback: force loading to end after 5 seconds
+    const emergencyTimeout = setTimeout(() => {
+      console.log('⚠️ Emergency timeout: Forcing reports loading to end')
+      setLoading(false)
+      setMockData()
+    }, 5000)
+
+    return () => clearTimeout(emergencyTimeout)
   }, [dateRange])
 
   const fetchReportsData = async () => {
+    console.log('🔄 Starting fetchReportsData...')
     setLoading(true)
     try {
       const supabase = createClient()
+      console.log('📡 Making Supabase reports queries...')
       
       // Get date range
       const endDate = new Date()
@@ -84,34 +95,50 @@ export default function ReportsPage() {
           break
       }
 
-      // Fetch orders data
-      const { data: orders, error: ordersError } = await supabase
+      // Add timeout protection for all queries
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Reports request timeout')), 3000)
+      )
+
+      // Fetch orders data with timeout
+      const ordersPromise = supabase
         .from('orders')
         .select('*')
         .gte('created_at', startDate.toISOString())
         .lte('created_at', endDate.toISOString())
 
-      // Fetch products data
-      const { data: products, error: productsError } = await supabase
+      const ordersResult = await Promise.race([ordersPromise, timeoutPromise])
+      const { data: orders, error: ordersError } = ordersResult as any
+
+      // Fetch products data with timeout
+      const productsPromise = supabase
         .from('products')
         .select('*')
 
-      // Fetch categories data
-      const { data: categories, error: categoriesError } = await supabase
+      const productsResult = await Promise.race([productsPromise, timeoutPromise])
+      const { data: products, error: productsError } = productsResult as any
+
+      // Fetch categories data with timeout
+      const categoriesPromise = supabase
         .from('categories')
         .select('*')
         .eq('is_active', true)
 
+      const categoriesResult = await Promise.race([categoriesPromise, timeoutPromise])
+      const { data: categories, error: categoriesError } = categoriesResult as any
+
       if (ordersError || productsError || categoriesError) {
-        console.error('Error fetching data')
+        console.error('❌ Reports data fetch error')
         setMockData()
       } else {
+        console.log('✅ Reports data fetched successfully')
         processReportsData(orders || [], products || [], categories || [])
       }
     } catch (error) {
-      console.error('Error:', error)
+      console.error('❌ Reports fetch error:', error)
       setMockData()
     } finally {
+      console.log('✅ Setting reports loading to false')
       setLoading(false)
     }
   }

@@ -55,52 +55,74 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchDashboardData()
     
-    // Emergency fallback: force loading to end after 15 seconds
+    // Reduce emergency fallback to 5 seconds for better UX
     const emergencyTimeout = setTimeout(() => {
       console.log('⚠️ Emergency timeout: Forcing dashboard loading to end')
       setDataLoading(false)
-    }, 15000)
+    }, 5000)
 
     return () => clearTimeout(emergencyTimeout)
   }, [])
 
   const fetchDashboardData = async () => {
+    console.log('🔄 Starting fetchDashboardData...')
     try {
-      // Fetch total revenue from orders
-      const { data: revenueData } = await supabase
+      // Add timeout protection for all dashboard queries
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Dashboard request timeout')), 3000)
+      )
+
+      // Fetch total revenue from orders with timeout
+      const revenuePromise = supabase
         .from('orders')
         .select('total_amount')
         .eq('status', 'completed')
 
-      const totalRevenue = revenueData?.reduce((sum, order) => sum + Number(order.total_amount), 0) || 0
+      const revenueResult = await Promise.race([revenuePromise, timeoutPromise])
+      const { data: revenueData } = revenueResult as any
 
-      // Fetch orders today
+      const totalRevenue = revenueData?.reduce((sum: number, order: any) => sum + Number(order.total_amount), 0) || 0
+
+      // Fetch orders today with timeout
       const today = new Date().toISOString().split('T')[0]
-      const { data: todayOrders } = await supabase
+      const todayOrdersPromise = supabase
         .from('orders')
         .select('id')
         .gte('created_at', today)
 
-      // Fetch total products
-      const { data: productsData } = await supabase
+      const todayOrdersResult = await Promise.race([todayOrdersPromise, timeoutPromise])
+      const { data: todayOrders } = todayOrdersResult as any
+
+      // Fetch total products with timeout
+      const productsPromise = supabase
         .from('products')
         .select('id')
 
-      // Fetch recent orders
-      const { data: ordersData } = await supabase
+      const productsResult = await Promise.race([productsPromise, timeoutPromise])
+      const { data: productsData } = productsResult as any
+
+      // Fetch recent orders with timeout
+      const ordersPromise = supabase
         .from('orders')
         .select('id, order_number, total_amount, status, created_at, notes')
         .order('created_at', { ascending: false })
         .limit(4)
 
-      // Fetch low stock products
-      const { data: lowStockData } = await supabase
+      const ordersResult = await Promise.race([ordersPromise, timeoutPromise])
+      const { data: ordersData } = ordersResult as any
+
+      // Fetch low stock products with timeout
+      const lowStockPromise = supabase
         .from('products')
         .select('id, name, stock_quantity, unit')
         .lt('stock_quantity', 20)
         .order('stock_quantity', { ascending: true })
         .limit(5)
+        
+      const lowStockResult = await Promise.race([lowStockPromise, timeoutPromise])
+      const { data: lowStockData } = lowStockResult as any
 
+      console.log('✅ Dashboard data fetched successfully')
       setStats({
         totalRevenue,
         ordersToday: todayOrders?.length || 0,
@@ -111,9 +133,10 @@ export default function AdminDashboard() {
       setRecentOrders(ordersData || [])
       setLowStockProducts(lowStockData || [])
     } catch (error) {
-      console.error('Error fetching dashboard data:', error)
+      console.error('❌ Dashboard fetch error:', error)
       // Keep default values on error
     } finally {
+      console.log('✅ Setting dashboard loading to false')
       setDataLoading(false)
     }
   }

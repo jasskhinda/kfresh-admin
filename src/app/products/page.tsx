@@ -71,9 +71,9 @@ export default function ProductsPage() {
       const supabase = createClient()
       console.log('📡 Making Supabase query...')
       
-      // Add timeout to prevent hanging
+      // Reduce timeout to 3 seconds for better UX
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout')), 10000)
+        setTimeout(() => reject(new Error('Request timeout')), 3000)
       )
       
       const supabasePromise = supabase
@@ -106,9 +106,9 @@ export default function ProductsPage() {
     try {
       const supabase = createClient()
       
-      // Add timeout to prevent hanging
+      // Reduce timeout to 3 seconds for better UX
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Categories timeout')), 5000)
+        setTimeout(() => reject(new Error('Categories timeout')), 3000)
       )
       
       const supabasePromise = supabase
