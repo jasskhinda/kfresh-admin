@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { User, Mail, Shield, Calendar, Save, Edit3, X, CheckCircle, Lock, Eye, EyeOff } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import DashboardLayout from '@/components/layout/DashboardLayout'
+import AdminManagement from '@/components/AdminManagement'
 
 export default function AdminProfilePage() {
   const { user, profile, signOut, updateProfile } = useAuth()
@@ -72,9 +73,9 @@ export default function AdminProfilePage() {
     setSuccess('')
 
     try {
-      // Add timeout protection
+      // Shorter timeout for better UX - 3 seconds
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Profile update timeout')), 5000)
+        setTimeout(() => reject(new Error('Profile update timeout - please try again')), 3000)
       )
 
       const updatePromise = supabase
@@ -108,6 +109,7 @@ export default function AdminProfilePage() {
       }, 3000)
 
     } catch (err: any) {
+      console.error('Profile update error:', err)
       setError(err.message || 'Failed to update profile')
     } finally {
       setLoading(false)
@@ -462,6 +464,21 @@ export default function AdminProfilePage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Admin Management Section */}
+        <div className="mt-8 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Shield className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Admin Management</h2>
+              <p className="text-sm text-gray-600">Manage admin users and permissions</p>
+            </div>
+          </div>
+
+          <AdminManagement />
         </div>
 
         {/* Security Section */}

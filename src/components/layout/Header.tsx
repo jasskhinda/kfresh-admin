@@ -127,7 +127,9 @@ export default function Header() {
   const displayName = profile?.first_name && profile?.last_name 
     ? `${profile.first_name} ${profile.last_name}`
     : profile?.first_name || 
-      (profile?.email === 'info@jasskhinda.com' ? 'Jass Khinda' : 'Admin User')
+      (profile?.email === 'admin@kfresh.ca' ? 'KFresh Admin' : 'Admin User')
+
+  const displayEmail = profile?.email || user?.email || 'admin@kfresh.ca'
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -260,7 +262,8 @@ export default function Header() {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                 <div className="p-4 border-b border-gray-200">
                   <p className="text-sm font-medium text-gray-900">{displayName}</p>
-                  <p className="text-xs text-gray-900">{profile?.email}</p>
+                  <p className="text-xs text-gray-600">{displayEmail}</p>
+                  <p className="text-xs text-gray-500">{profile?.role || 'Administrator'}</p>
                 </div>
                 <div className="py-2">
                   <button

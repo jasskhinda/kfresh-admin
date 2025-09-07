@@ -14,6 +14,7 @@ import {
   FolderTree
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -28,6 +29,23 @@ const navigation = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const { profile } = useAuth()
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
+
+  const displayName = profile?.first_name && profile?.last_name 
+    ? `${profile.first_name} ${profile.last_name}`
+    : profile?.first_name || 
+      (profile?.email === 'admin@kfresh.ca' ? 'KFresh Admin' : 'Admin User')
+
+  const displayEmail = profile?.email || 'admin@kfresh.ca'
 
   return (
     <div className="w-64 bg-white shadow-sm border-r border-gray-200 flex flex-col">
@@ -75,13 +93,18 @@ export default function Sidebar() {
       {/* Footer */}
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center space-x-3 px-3 py-2">
-          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-            <span className="text-sm font-medium text-gray-700">A</span>
+          <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+            <span className="text-sm font-medium text-white">
+              {getInitials(displayName)}
+            </span>
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-900">Admin User</p>
-            <p className="text-xs text-gray-500">Administrator</p>
+            <p className="text-sm font-medium text-gray-900 truncate">{displayName}</p>
+            <p className="text-xs text-gray-500 truncate">{profile?.role || 'Administrator'}</p>
           </div>
+        </div>
+        <div className="mt-2 px-3">
+          <p className="text-xs text-gray-400 truncate">{displayEmail}</p>
         </div>
       </div>
     </div>
