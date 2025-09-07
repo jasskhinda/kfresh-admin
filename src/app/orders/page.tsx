@@ -33,6 +33,20 @@ interface Order {
   updated_at: string
 }
 
+interface RawOrderData {
+  id: string
+  order_number: string | null
+  total_amount: number | null
+  status: string | null
+  created_at: string
+  updated_at: string | null
+  notes: string | null
+  user_id: string | null
+  fulfillment_method: string | null
+  delivery_method: string | null
+  payment_status: string | null
+}
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
@@ -94,7 +108,7 @@ export default function OrdersPage() {
         setOrders(getMockOrders())
       } else if (data && data.length > 0) {
         // Transform the data to match the expected interface
-        const transformedOrders = data.map(order => ({
+        const transformedOrders = data.map((order: RawOrderData) => ({
           id: order.id,
           order_number: order.order_number || `KF${order.id.slice(0, 8)}`,
           customer_id: order.user_id || null,
