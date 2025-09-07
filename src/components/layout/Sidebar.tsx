@@ -11,7 +11,8 @@ import {
   Download,
   Settings,
   Store,
-  FolderTree
+  FolderTree,
+  Users
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/contexts/AuthContext'
@@ -24,6 +25,7 @@ const navigation = [
   { name: 'Payments', href: '/payments', icon: CreditCard },
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Downloads', href: '/downloads', icon: Download },
+  { name: 'User Management', href: '/user-management', icon: Users },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
