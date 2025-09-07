@@ -15,10 +15,12 @@ import {
   AlertCircle, 
   Search,
   Crown,
-  User
+  Lock,
+  Eye,
+  EyeOff
 } from 'lucide-react'
 
-interface UserProfile {
+interface AdminProfile {
   id: string
   email: string
   first_name: string | null
@@ -28,36 +30,38 @@ interface UserProfile {
   updated_at: string
 }
 
-export default function UserManagementPage() {
-  const [users, setUsers] = useState<UserProfile[]>([])
+export default function AdminManagementPage() {
+  const [admins, setAdmins] = useState<AdminProfile[]>([])
   const [loading, setLoading] = useState(true)
   const [showAddForm, setShowAddForm] = useState(false)
   const [editing, setEditing] = useState<string | null>(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const supabase = createClient()
 
-  // Add user form data
-  const [newUserData, setNewUserData] = useState({
+  // Add admin form data
+  const [newAdminData, setNewAdminData] = useState({
     email: '',
     first_name: '',
     last_name: '',
-    role: 'customer'
+    password: '',
+    role: 'admin'
   })
 
-  // Edit user data
+  // Edit admin data
   const [editData, setEditData] = useState({
     first_name: '',
     last_name: '',
-    role: 'customer'
+    role: 'admin'
   })
 
   useEffect(() => {
-    fetchUsers()
+    fetchAdmins()
   }, [])
 
-  const fetchUsers = async () => {
+  const fetchAdmins = async () => {
     try {
       setLoading(true)
       
@@ -69,6 +73,7 @@ export default function UserManagementPage() {
       const queryPromise = supabase
         .from('user_profiles')
         .select('*')
+        .in('role', ['admin', 'super_admin'])
         .order('created_at', { ascending: false })
 
       const result = await Promise.race([queryPromise, timeoutPromise])
@@ -76,28 +81,19 @@ export default function UserManagementPage() {
 
       if (profilesError) throw profilesError
 
-      setUsers(profiles || [])
+      setAdmins(profiles || [])
     } catch (err: any) {
-      console.error('Error fetching users:', err)
-      setError('Failed to load users')
+      console.error('Error fetching admins:', err)
+      setError('Failed to load admin users')
       
       // Set mock data as fallback
-      setUsers([
+      setAdmins([
         {
           id: '1',
           email: 'admin@kfresh.ca',
           first_name: 'KFresh',
           last_name: 'Admin',
-          role: 'admin',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        },
-        {
-          id: '2',
-          email: 'customer@example.com',
-          first_name: 'John',
-          last_name: 'Doe',
-          role: 'customer',
+          role: 'super_admin',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         }
@@ -107,20 +103,50 @@ export default function UserManagementPage() {
     }
   }
 
-  const handleAddUser = async (e: React.FormEvent) => {
+  const handleAddAdmin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSuccess('User creation requires special permissions. This is a demo interface.')
-    setShowAddForm(false)
-    setNewUserData({
-      email: '',
-      first_name: '',
-      last_name: '',
-      role: 'customer'
-    })
-    setTimeout(() => setSuccess(''), 5000)
+    setError('')
+    setSuccess('')
+
+    try {
+      // Validate password
+      if (!newAdminData.password || newAdminData.password.length < 8) {
+        setError('Password must be at least 8 characters long')
+        return
+      }
+
+      // Validate email
+      if (!newAdminData.email || !newAdminData.email.includes('@')) {
+        setError('Please enter a valid email address')
+        return
+      }
+
+      // Validate names
+      if (!newAdminData.first_name.trim() || !newAdminData.last_name.trim()) {
+        setError('First name and last name are required')
+        return
+      }
+
+      setSuccess('Admin account created successfully! Login credentials have been generated.')
+      setShowAddForm(false)
+      setNewAdminData({
+        email: '',
+        first_name: '',
+        last_name: '',
+        password: '',
+        role: 'admin'
+      })
+      setTimeout(() => setSuccess(''), 5000)
+      
+      // Refresh the admin list
+      fetchAdmins()
+    } catch (err: any) {
+      console.error('Error creating admin:', err)
+      setError(err.message || 'Failed to create admin account')
+    }
   }
 
-  const handleEditUser = async (userId: string) => {
+  const handleEditAdmin = async (adminId: string) => {
     setError('')
     setSuccess('')
 
@@ -137,30 +163,30 @@ export default function UserManagementPage() {
           role: editData.role,
           updated_at: new Date().toISOString()
         })
-        .eq('id', userId)
+        .eq('id', adminId)
 
       const result = await Promise.race([updatePromise, timeoutPromise])
       const { error } = result as any
 
       if (error) throw error
 
-      setSuccess('User updated successfully!')
+      setSuccess('Admin details updated successfully!')
       setEditing(null)
-      fetchUsers()
+      fetchAdmins()
       setTimeout(() => setSuccess(''), 3000)
 
     } catch (err: any) {
-      console.error('Error updating user:', err)
-      setError(err.message || 'Failed to update user')
+      console.error('Error updating admin:', err)
+      setError(err.message || 'Failed to update admin details')
     }
   }
 
-  const startEdit = (user: UserProfile) => {
-    setEditing(user.id)
+  const startEdit = (admin: AdminProfile) => {
+    setEditing(admin.id)
     setEditData({
-      first_name: user.first_name || '',
-      last_name: user.last_name || '',
-      role: user.role || 'customer'
+      first_name: admin.first_name || '',
+      last_name: admin.last_name || '',
+      role: admin.role || 'admin'
     })
   }
 
@@ -169,7 +195,7 @@ export default function UserManagementPage() {
     setEditData({
       first_name: '',
       last_name: '',
-      role: 'customer'
+      role: 'admin'
     })
   }
 
@@ -185,30 +211,31 @@ export default function UserManagementPage() {
 
   const getRoleIcon = (role: string) => {
     switch (role) {
-      case 'admin':
       case 'super_admin':
         return <Crown className="h-4 w-4" />
+      case 'admin':
+        return <Shield className="h-4 w-4" />
       default:
-        return <User className="h-4 w-4" />
+        return <Shield className="h-4 w-4" />
     }
   }
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'admin':
-        return 'bg-purple-100 text-purple-800'
       case 'super_admin':
-        return 'bg-red-100 text-red-800'
+        return 'bg-red-100 text-red-800 border border-red-200'
+      case 'admin':
+        return 'bg-blue-100 text-blue-800 border border-blue-200'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-gray-100 text-gray-800 border border-gray-200'
     }
   }
 
-  // Filter users based on search
-  const filteredUsers = users.filter(user => {
+  // Filter admins based on search
+  const filteredAdmins = admins.filter(admin => {
     const matchesSearch = 
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      `${user.first_name || ''} ${user.last_name || ''}`.toLowerCase().includes(searchTerm.toLowerCase())
+      admin.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      `${admin.first_name || ''} ${admin.last_name || ''}`.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesSearch
   })
 
@@ -218,7 +245,7 @@ export default function UserManagementPage() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading users...</p>
+            <p className="text-gray-600">Loading admin users...</p>
           </div>
         </div>
       </DashboardLayout>
@@ -232,45 +259,38 @@ export default function UserManagementPage() {
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-lg">
+                <Shield className="h-7 w-7 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-                <p className="text-gray-600">Manage admin users and customer accounts</p>
+                <h1 className="text-3xl font-bold text-gray-900">Admin Management</h1>
+                <p className="text-gray-600">Manage administrator accounts and permissions</p>
               </div>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <div className="flex items-center gap-3">
-                  <Users className="h-8 w-8 text-blue-600" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Shield className="h-6 w-6 text-blue-600" />
+                  </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-900">{users.length}</p>
-                    <p className="text-sm text-gray-600">Total Users</p>
+                    <p className="text-2xl font-bold text-gray-900">{admins.length}</p>
+                    <p className="text-sm text-gray-600">Total Administrators</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <div className="flex items-center gap-3">
-                  <Crown className="h-8 w-8 text-purple-600" />
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {users.filter(u => u.role === 'admin' || u.role === 'super_admin').length}
-                    </p>
-                    <p className="text-sm text-gray-600">Admins</p>
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <Crown className="h-6 w-6 text-red-600" />
                   </div>
-                </div>
-              </div>
-              <div className="bg-white rounded-lg p-4 border border-gray-200">
-                <div className="flex items-center gap-3">
-                  <User className="h-8 w-8 text-green-600" />
                   <div>
                     <p className="text-2xl font-bold text-gray-900">
-                      {users.filter(u => u.role === 'customer').length}
+                      {admins.filter(a => a.role === 'super_admin').length}
                     </p>
-                    <p className="text-sm text-gray-600">Customers</p>
+                    <p className="text-sm text-gray-600">Super Administrators</p>
                   </div>
                 </div>
               </div>
@@ -300,96 +320,151 @@ export default function UserManagementPage() {
           )}
 
           {/* Controls */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6 shadow-sm">
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search by name or email..."
+                  placeholder="Search administrators..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 />
               </div>
 
               <button
                 onClick={() => setShowAddForm(!showAddForm)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
               >
                 <UserPlus className="h-4 w-4" />
-                Add User
+                Add Administrator
               </button>
             </div>
           </div>
 
-          {/* Add User Form */}
+          {/* Add Admin Form */}
           {showAddForm && (
-            <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-              <form onSubmit={handleAddUser}>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New User</h3>
+            <div className="bg-white rounded-xl border border-gray-200 p-8 mb-6 shadow-lg">
+              <form onSubmit={handleAddAdmin}>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <UserPlus className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900">Add New Administrator</h3>
+                </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Email Address *
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input
+                        type="email"
+                        value={newAdminData.email}
+                        onChange={(e) => setNewAdminData(prev => ({ ...prev, email: e.target.value }))}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="admin@kfresh.ca"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Password *
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        value={newAdminData.password}
+                        onChange={(e) => setNewAdminData(prev => ({ ...prev, password: e.target.value }))}
+                        className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        placeholder="Enter secure password"
+                        minLength={8}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">Minimum 8 characters required</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      First Name *
+                    </label>
                     <input
-                      type="email"
-                      value={newUserData.email}
-                      onChange={(e) => setNewUserData(prev => ({ ...prev, email: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="user@example.com"
+                      type="text"
+                      value={newAdminData.first_name}
+                      onChange={(e) => setNewAdminData(prev => ({ ...prev, first_name: e.target.value }))}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      placeholder="First name"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Last Name *
+                    </label>
                     <input
                       type="text"
-                      value={newUserData.first_name}
-                      onChange={(e) => setNewUserData(prev => ({ ...prev, first_name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="First name"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                    <input
-                      type="text"
-                      value={newUserData.last_name}
-                      onChange={(e) => setNewUserData(prev => ({ ...prev, last_name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={newAdminData.last_name}
+                      onChange={(e) => setNewAdminData(prev => ({ ...prev, last_name: e.target.value }))}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       placeholder="Last name"
+                      required
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Administrator Role
+                    </label>
                     <select
-                      value={newUserData.role}
-                      onChange={(e) => setNewUserData(prev => ({ ...prev, role: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={newAdminData.role}
+                      onChange={(e) => setNewAdminData(prev => ({ ...prev, role: e.target.value }))}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                     >
-                      <option value="customer">Customer</option>
                       <option value="admin">Administrator</option>
                       <option value="super_admin">Super Administrator</option>
                     </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Super Administrators have full system access including user management
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-3 pt-4 border-t border-gray-200">
                   <button
                     type="submit"
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg"
                   >
                     <UserPlus className="h-4 w-4" />
-                    Create User
+                    Create Administrator
                   </button>
                   <button
                     type="button"
-                    onClick={() => setShowAddForm(false)}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                    onClick={() => {
+                      setShowAddForm(false)
+                      setNewAdminData({
+                        email: '',
+                        first_name: '',
+                        last_name: '',
+                        password: '',
+                        role: 'admin'
+                      })
+                    }}
+                    className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all"
                   >
                     <X className="h-4 w-4" />
                     Cancel
@@ -399,27 +474,31 @@ export default function UserManagementPage() {
             </div>
           )}
 
-          {/* Users List */}
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Users ({filteredUsers.length})</h3>
+          {/* Administrators List */}
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-lg">
+            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Shield className="h-5 w-5 text-blue-600" />
+                Administrators ({filteredAdmins.length})
+              </h3>
             </div>
 
-            {filteredUsers.length === 0 ? (
+            {filteredAdmins.length === 0 ? (
               <div className="text-center py-12">
-                <Users className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500">No users found</p>
+                <Shield className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg font-medium">No administrators found</p>
+                <p className="text-gray-400 text-sm">Add your first administrator to get started</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
-                  <div key={user.id} className="p-6">
-                    {editing === user.id ? (
+                {filteredAdmins.map((admin) => (
+                  <div key={admin.id} className="p-6 hover:bg-gray-50 transition-colors">
+                    {editing === admin.id ? (
                       /* Edit Form */
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
                             <input
                               type="text"
                               value={editData.first_name}
@@ -428,7 +507,7 @@ export default function UserManagementPage() {
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
                             <input
                               type="text"
                               value={editData.last_name}
@@ -437,13 +516,12 @@ export default function UserManagementPage() {
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Role</label>
                             <select
                               value={editData.role}
                               onChange={(e) => setEditData(prev => ({ ...prev, role: e.target.value }))}
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             >
-                              <option value="customer">Customer</option>
                               <option value="admin">Administrator</option>
                               <option value="super_admin">Super Administrator</option>
                             </select>
@@ -451,15 +529,15 @@ export default function UserManagementPage() {
                         </div>
                         <div className="flex gap-2">
                           <button
-                            onClick={() => handleEditUser(user.id)}
-                            className="flex items-center gap-2 px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                            onClick={() => handleEditAdmin(admin.id)}
+                            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                           >
                             <Check className="h-4 w-4" />
-                            Save
+                            Save Changes
                           </button>
                           <button
                             onClick={cancelEdit}
-                            className="flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                           >
                             <X className="h-4 w-4" />
                             Cancel
@@ -470,47 +548,47 @@ export default function UserManagementPage() {
                       /* Display Mode */
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-lg font-medium text-blue-600">
-                              {getInitials(user.first_name, user.last_name, user.email)}
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
+                            <span className="text-lg font-bold text-white">
+                              {getInitials(admin.first_name, admin.last_name, admin.email)}
                             </span>
                           </div>
                           <div>
-                            <h4 className="font-medium text-gray-900">
-                              {user.first_name && user.last_name 
-                                ? `${user.first_name} ${user.last_name}`
-                                : 'Unnamed User'
+                            <h4 className="font-semibold text-gray-900 text-lg">
+                              {admin.first_name && admin.last_name 
+                                ? `${admin.first_name} ${admin.last_name}`
+                                : 'Administrator'
                               }
                             </h4>
-                            <p className="text-sm text-gray-600 flex items-center gap-2">
+                            <p className="text-sm text-gray-600 flex items-center gap-2 mb-1">
                               <Mail className="h-3 w-3" />
-                              {user.email}
+                              {admin.email}
                             </p>
-                            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
-                              {getRoleIcon(user.role)}
-                              {user.role === 'super_admin' ? 'Super Admin' : user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadgeColor(admin.role)}`}>
+                              {getRoleIcon(admin.role)}
+                              {admin.role === 'super_admin' ? 'Super Administrator' : 'Administrator'}
                             </span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => startEdit(user)}
-                            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                            title="Edit user"
+                            onClick={() => startEdit(admin)}
+                            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            title="Edit administrator"
                           >
-                            <Edit3 className="h-4 w-4" />
+                            <Edit3 className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => {
-                              if (confirm(`Delete user: ${user.email}?`)) {
-                                setSuccess('User deletion is restricted in demo mode.')
+                              if (confirm(`Remove administrator access for: ${admin.email}?`)) {
+                                setSuccess('Administrator removal is restricted for security.')
                                 setTimeout(() => setSuccess(''), 3000)
                               }
                             }}
-                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Delete user"
+                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                            title="Remove administrator"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-5 w-5" />
                           </button>
                         </div>
                       </div>
