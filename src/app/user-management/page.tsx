@@ -187,7 +187,72 @@ export default function AdminManagementPage() {
         return
       }
 
-      setSuccess('Admin account created successfully! Login credentials have been generated.')
+      console.log('Creating admin account:', newAdminData.email)
+
+      // Check if user already exists
+      const { data: existingUser, error: checkError } = await supabase
+        .from('user_profiles')
+        .select('email')
+        .eq('email', newAdminData.email)
+        .maybeSingle()
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('Error checking existing user:', checkError)
+        setError('Error checking existing users. Please try again.')
+        return
+      }
+
+      if (existingUser) {
+        setError('An administrator with this email already exists')
+        return
+      }
+
+      // Create auth user first
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: newAdminData.email,
+        password: newAdminData.password,
+      })
+
+      if (authError) {
+        console.error('Auth signup error:', authError)
+        if (authError.message.includes('already registered')) {
+          setError('This email is already registered. Please use a different email.')
+        } else {
+          setError(`Failed to create auth account: ${authError.message}`)
+        }
+        return
+      }
+
+      console.log('Auth user created:', authData.user?.id)
+
+      // Create user profile with timeout protection
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile creation is taking longer than expected')), 15000)
+      )
+
+      const profilePromise = supabase
+        .from('user_profiles')
+        .insert({
+          id: authData.user?.id,
+          email: newAdminData.email,
+          first_name: newAdminData.first_name,
+          last_name: newAdminData.last_name,
+          role: newAdminData.role,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+
+      const result = await Promise.race([profilePromise, timeoutPromise])
+      const { error: profileError } = result as any
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError)
+        setError(`Failed to create admin profile: ${profileError.message}`)
+        return
+      }
+
+      console.log('Admin profile created successfully')
+      setSuccess(`Admin account created successfully! Login credentials sent to ${newAdminData.email}`)
       setShowAddForm(false)
       setNewAdminData({
         email: '',
@@ -196,13 +261,17 @@ export default function AdminManagementPage() {
         password: '',
         role: 'admin'
       })
-      setTimeout(() => setSuccess(''), 5000)
+      setTimeout(() => setSuccess(''), 8000)
       
       // Refresh the admin list
-      fetchAdmins()
+      await fetchAdmins()
     } catch (err: any) {
       console.error('Error creating admin:', err)
-      setError(err.message || 'Failed to create admin account')
+      if (err.message.includes('longer than expected')) {
+        setError('Admin creation is taking longer than usual. Please check if the account was created and try again.')
+      } else {
+        setError(err.message || 'Failed to create admin account')
+      }
     }
   }
 
