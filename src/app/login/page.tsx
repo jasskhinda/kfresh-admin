@@ -163,7 +163,7 @@ export default function AdminLoginPage() {
             <h1 className="text-4xl font-bold text-black mb-3" style={{ color: '#000000 !important', fontSize: '2.25rem', fontWeight: '900' }}>
               Admin Access
             </h1>
-            <p className="text-lg font-medium text-black mb-6" style={{ color: '#000000 !important', fontSize: '1.125rem', fontWeight: '500' }}>
+            <p className="text-lg font-bold text-black mb-6" style={{ color: '#000000 !important', fontSize: '1.125rem', fontWeight: '700' }}>
               Sign in to KFresh Admin Panel
             </p>
           </div>
@@ -275,11 +275,11 @@ export default function AdminLoginPage() {
             <div className="space-y-3 text-base mb-4">
               <div className="flex justify-between items-center">
                 <span className="text-black font-bold" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>Email:</span>
-                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono" style={{ color: '#000000 !important', backgroundColor: '#fef08a' }}>admin@kfresh.ca</code>
+                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono font-bold" style={{ color: '#000000 !important', backgroundColor: '#fef08a', fontWeight: '700' }}>admin@kfresh.ca</code>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-black font-bold" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>Password:</span>
-                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono" style={{ color: '#000000 !important', backgroundColor: '#fef08a' }}>admin123</code>
+                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono font-bold" style={{ color: '#000000 !important', backgroundColor: '#fef08a', fontWeight: '700' }}>admin123</code>
               </div>
             </div>
             <button
@@ -299,7 +299,7 @@ export default function AdminLoginPage() {
                 Admin Access Only
               </h3>
             </div>
-            <p className="text-sm font-medium text-black" style={{ color: '#000000 !important', fontSize: '0.875rem', fontWeight: '500' }}>
+            <p className="text-sm font-bold text-black" style={{ color: '#000000 !important', fontSize: '0.875rem', fontWeight: '700' }}>
               This panel is restricted to authorized administrators only.
               Unauthorized access attempts are logged and monitored.
             </p>
@@ -307,7 +307,7 @@ export default function AdminLoginPage() {
 
           {/* Footer */}
           <div className="text-center pt-4 border-t border-gray-200">
-            <p className="text-sm font-medium text-black" style={{ color: '#000000 !important', fontSize: '0.875rem', fontWeight: '500' }}>
+            <p className="text-sm font-bold text-black" style={{ color: '#000000 !important', fontSize: '0.875rem', fontWeight: '700' }}>
               KFresh Supermarket Admin Panel © 2025
             </p>
           </div>
