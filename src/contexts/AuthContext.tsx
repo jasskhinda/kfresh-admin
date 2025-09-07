@@ -52,15 +52,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     let isMounted = true
     let initializationComplete = false
     
-    // Force loading to false after 1.5 seconds regardless of what happens
+    // Force loading to false after 3 seconds regardless of what happens (more generous for production)
     const forceInitTimeout = setTimeout(() => {
       if (!initializationComplete) {
-        // console.log('FORCE: Auth initialization timeout - setting loading to false')
+        console.log('FORCE: Auth initialization timeout - setting loading to false')
         if (isMounted) {
           setLoading(false)
         }
       }
-    }, 1500)
+    }, 3000)
     
     // Get initial session
     const getSession = async () => {
@@ -68,9 +68,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         console.log('Supabase client created, calling getSession...')
         
-        // Create a timeout promise that rejects after 2 seconds (more generous for slow networks)
+        // Create a timeout promise that rejects after 5 seconds (production-friendly)
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('getSession timeout')), 2000)
+          setTimeout(() => reject(new Error('getSession timeout - this is normal on slow connections')), 5000)
         })
         
         // Race between getSession and timeout
@@ -110,7 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log('About to call getSession...')
     getSession()
 
-    // Fallback: ensure loading is set to false after maximum 1 second  
+    // Fallback: ensure loading is set to false after maximum 2.5 seconds  
     const loadingTimeout = setTimeout(() => {
       if (!initializationComplete) {
         console.log('Loading timeout reached, forcing loading to false')
@@ -119,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setLoading(false)
         }
       }
-    }, 1000)
+    }, 2500)
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -148,11 +148,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      console.log('Fetching profile for user:', userId)
+      
+      // Add timeout protection for production
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile fetch timeout - using fallback')), 10000)
+      )
+
+      const queryPromise = supabase
         .from('user_profiles')
         .select('*')
         .eq('id', userId)
         .single()
+
+      const result = await Promise.race([queryPromise, timeoutPromise])
+      const { data, error } = result as any
 
       if (error) {
         console.error('Error fetching profile:', error)

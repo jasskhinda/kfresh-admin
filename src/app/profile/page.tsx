@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { User, Mail, Shield, Calendar, Save, Edit3, X, CheckCircle, Lock, Eye, EyeOff } from 'lucide-react'
+import { User, Mail, Shield, Calendar, Save, Edit3, X, CheckCircle, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 
@@ -72,11 +72,12 @@ export default function AdminProfilePage() {
     setSuccess('')
 
     try {
-      // More generous timeout for production - 8 seconds
+      // Production-friendly timeout - 20 seconds
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Profile update is taking longer than expected. Please check your internet connection and try again.')), 8000)
+        setTimeout(() => reject(new Error('Profile update is taking longer than expected. This is normal for the first update or during high traffic. Please wait and try again.')), 20000)
       )
 
+      console.log('Starting profile update...')
       const updatePromise = supabase
         .from('user_profiles')
         .update({
@@ -90,7 +91,12 @@ export default function AdminProfilePage() {
       const result = await Promise.race([updatePromise, timeoutPromise])
       const { error: updateError } = result as any
 
-      if (updateError) throw updateError
+      if (updateError) {
+        console.error('Database update error:', updateError)
+        throw updateError
+      }
+
+      console.log('Profile update successful!')
 
       // Update the profile in AuthContext to refresh header immediately
       await updateProfile({
@@ -102,14 +108,24 @@ export default function AdminProfilePage() {
       setSuccess('Profile updated successfully!')
       setEditing(false)
       
-      // Auto-clear success message after 3 seconds
+      // Auto-clear success message after 5 seconds
       setTimeout(() => {
         setSuccess('')
-      }, 3000)
+      }, 5000)
 
     } catch (err: any) {
       console.error('Profile update error:', err)
-      setError(err.message || 'Failed to update profile. Please try again.')
+      
+      // More helpful error messages
+      if (err.message.includes('longer than expected') || err.message.includes('timeout')) {
+        setError('Update is taking longer than usual. This can happen during high traffic. Please try again in a moment.')
+      } else if (err.code === 'PGRST116') {
+        setError('Profile record not found. Please try logging out and back in.')
+      } else if (err.code === 'PGRST301') {
+        setError('Database table not accessible. Please contact support.')
+      } else {
+        setError(err.message || 'Failed to update profile. Please check your connection and try again.')
+      }
     } finally {
       setLoading(false)
     }
@@ -276,10 +292,38 @@ export default function AdminProfilePage() {
           </div>
         )}
 
-        {/* Error Message */}
+        {/* Enhanced Error Message with Retry for Profile */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-700">{error}</p>
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-red-700 font-medium">Profile Update Issue</p>
+              <p className="text-red-600 text-sm mt-1">{error}</p>
+              {error.includes('longer than') || error.includes('timeout') ? (
+                <div className="mt-3 bg-blue-50 border border-blue-200 rounded p-3">
+                  <p className="text-blue-800 text-sm font-medium">💡 Tips for slow connections:</p>
+                  <ul className="text-blue-700 text-xs mt-1 space-y-1">
+                    <li>• Wait 30 seconds and try again</li>
+                    <li>• Check your internet connection</li>
+                    <li>• Try refreshing the page</li>
+                    <li>• This is common during high traffic</li>
+                  </ul>
+                  <button
+                    onClick={() => setError('')}
+                    className="mt-2 text-blue-600 text-xs underline hover:text-blue-700"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setError('')}
+                  className="mt-2 text-red-600 text-sm underline hover:text-red-700"
+                >
+                  Dismiss
+                </button>
+              )}
+            </div>
           </div>
         )}
 
