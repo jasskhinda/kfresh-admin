@@ -28,15 +28,7 @@ export default function AdminLoginPage() {
     try {
       console.log('Attempting login with email:', formData.email)
       
-      // Add a client-side timeout for the entire login process - increased to 20 seconds
-      const loginTimeout = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Login is taking longer than expected - please check your connection and try again')), 20000)
-      })
-      
-      const loginPromise = signIn(formData.email, formData.password)
-      
-      const result = await Promise.race([loginPromise, loginTimeout]) as any
-      const { error } = result
+      const { error } = await signIn(formData.email, formData.password)
 
       if (error) {
         console.error('Login error:', error)

@@ -204,62 +204,103 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const signIn = async (email: string, password: string) => {
-    try {
-      console.log('Starting signIn process...')
-      
-      // Add timeout to the signIn request - increased to 15 seconds for slow networks
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Sign in is taking longer than expected - please check your connection and try again')), 15000)
-      })
-      
-      const signInPromise = supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-      
-      const { data, error } = await Promise.race([signInPromise, timeoutPromise]) as any
-
-      // If there's an email not confirmed error, show helpful message
-      if (error && error.message.includes('Email not confirmed')) {
-        console.log('Email not confirmed error detected')
+    return new Promise<{ error: AuthError | Error | null }>(async (resolve) => {
+      try {
+        console.log('Starting signIn process...')
+        
+        let resolved = false
+        
+        // Listen for auth state changes during login
+        const authListener = supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_IN' && session && !resolved) {
+            console.log('Auth state change detected - login successful!')
+            resolved = true
+            setSession(session)
+            setUser(session.user)
+            setLoading(false)
+            
+            // Fetch profile in background
+            if (session.user) {
+              fetchProfile(session.user.id).catch(err => {
+                console.warn('Profile fetch failed after login:', err)
+              })
+            }
+            
+            // Clean up listener
+            authListener.data.subscription.unsubscribe()
+            resolve({ error: null })
+          }
+        })
+        
+        // Start the sign in process
+        const signInPromise = supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+        
+        // Handle the sign in response
+        signInPromise.then(({ data, error }) => {
+          if (!resolved) {
+            if (error && error.message.includes('Email not confirmed')) {
+              console.log('Email not confirmed error detected')
+              resolved = true
+              setLoading(false)
+              authListener.data.subscription.unsubscribe()
+              resolve({ error: new Error('This account was created before email verification was disabled. Please create a new account or contact support.') })
+              return
+            }
+            
+            if (!error && data.session) {
+              // Auth state change should handle this, but fallback
+              console.log('Sign in successful via direct response')
+              resolved = true
+              setSession(data.session)
+              setUser(data.user)
+              setLoading(false)
+              
+              if (data.user) {
+                fetchProfile(data.user.id).catch(err => {
+                  console.warn('Profile fetch failed after login:', err)
+                })
+              }
+              
+              authListener.data.subscription.unsubscribe()
+              resolve({ error: null })
+            } else if (error) {
+              console.error('Login error:', error)
+              resolved = true
+              setLoading(false)
+              authListener.data.subscription.unsubscribe()
+              resolve({ error })
+            }
+          }
+        }).catch((error) => {
+          if (!resolved) {
+            console.error('Sign in promise error:', error)
+            resolved = true
+            setLoading(false)
+            authListener.data.subscription.unsubscribe()
+            resolve({ error: new Error('Login failed - please try again') })
+          }
+        })
+        
+        // Timeout after 30 seconds as absolute fallback
+        setTimeout(() => {
+          if (!resolved) {
+            console.log('Login timeout after 30 seconds')
+            resolved = true
+            setLoading(false)
+            authListener.data.subscription.unsubscribe()
+            resolve({ error: new Error('Login is taking too long - please try again') })
+          }
+        }, 30000)
+        
+      } catch (error: any) {
+        console.error('SignIn catch block:', error)
         setLoading(false)
-        return { error: new Error('This account was created before email verification was disabled. Please create a new account or contact support.') }
+        resolve({ error: new Error('Login failed - please try again') })
       }
-
-      // For successful login without email confirmation issues
-      if (!error && data.session) {
-        console.log('Login successful - setting state immediately')
-        // Manually trigger the auth state change for immediate UI update
-        setSession(data.session)
-        setUser(data.user)
-        setLoading(false)
-        
-        // Fetch profile in background without blocking return
-        if (data.user) {
-          fetchProfile(data.user.id).catch(err => {
-            console.warn('Profile fetch failed after login:', err)
-          })
-        }
-        
-        return { error: null }
-      } else if (error) {
-        console.error('Login error:', error)
-        setLoading(false)
-        
-        // Special handling for network/timeout errors
-        if (error.message?.includes('timeout') || error.message?.includes('network')) {
-          return { error: new Error('Connection timeout - please check your internet connection and try again') }
-        }
-        
-        return { error }
-      }
-
-      return { error: new Error('Unknown login error') }
-    } catch (error: any) {
-      console.error('SignIn catch block:', error)
-      setLoading(false)
-      return { error: error.message?.includes('timeout') ? error : new Error('Login failed - please try again') }
-    }
+    })
   }
 
   const signOut = async () => {
