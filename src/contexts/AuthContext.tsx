@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     let isMounted = true
     let initializationComplete = false
     
-    // Force loading to false after 600ms regardless of what happens
+    // Force loading to false after 1.5 seconds regardless of what happens
     const forceInitTimeout = setTimeout(() => {
       if (!initializationComplete) {
         // console.log('FORCE: Auth initialization timeout - setting loading to false')
@@ -60,7 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setLoading(false)
         }
       }
-    }, 600)
+    }, 1500)
     
     // Get initial session
     const getSession = async () => {
@@ -68,9 +68,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         console.log('Supabase client created, calling getSession...')
         
-        // Create a timeout promise that rejects after 800ms (faster than before)
+        // Create a timeout promise that rejects after 2 seconds (more generous for slow networks)
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('getSession timeout')), 800)
+          setTimeout(() => reject(new Error('getSession timeout')), 2000)
         })
         
         // Race between getSession and timeout
@@ -110,7 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log('About to call getSession...')
     getSession()
 
-    // Fallback: ensure loading is set to false after maximum 500ms  
+    // Fallback: ensure loading is set to false after maximum 1 second  
     const loadingTimeout = setTimeout(() => {
       if (!initializationComplete) {
         console.log('Loading timeout reached, forcing loading to false')
@@ -119,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setLoading(false)
         }
       }
-    }, 500)
+    }, 1000)
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -207,9 +207,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       console.log('Starting signIn process...')
       
-      // Add timeout to the signIn request
+      // Add timeout to the signIn request - increased to 15 seconds for slow networks
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Sign in timeout - please try again')), 8000)
+        setTimeout(() => reject(new Error('Sign in is taking longer than expected - please check your connection and try again')), 15000)
       })
       
       const signInPromise = supabase.auth.signInWithPassword({
@@ -245,6 +245,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } else if (error) {
         console.error('Login error:', error)
         setLoading(false)
+        
+        // Special handling for network/timeout errors
+        if (error.message?.includes('timeout') || error.message?.includes('network')) {
+          return { error: new Error('Connection timeout - please check your internet connection and try again') }
+        }
+        
         return { error }
       }
 
