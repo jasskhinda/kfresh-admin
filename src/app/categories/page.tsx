@@ -312,14 +312,27 @@ export default function CategoriesPage() {
             <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
             <p className="text-gray-600">Manage product categories</p>
           </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          Add Category
-        </button>
-      </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                setCategories([])
+                setLoading(true)
+                fetchCategories()
+              }}
+              className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <Search className="h-4 w-4" />
+              Refresh
+            </button>
+            <button
+              onClick={() => setShowModal(true)}
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <Plus className="h-4 w-4" />
+              Add Category
+            </button>
+          </div>
+        </div>
 
       {/* Search */}
       <div className="flex gap-4">
@@ -398,11 +411,30 @@ export default function CategoriesPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {category.image_url ? (
-                      <img
-                        src={category.image_url}
-                        alt={category.name}
-                        className="h-12 w-12 object-cover rounded-lg border border-gray-200"
-                      />
+                      <div className="relative h-12 w-12">
+                        <img
+                          src={category.image_url}
+                          alt={category.name}
+                          className="h-12 w-12 object-cover rounded-lg border border-gray-200"
+                          onError={(e) => {
+                            console.log('Image failed to load:', category.image_url)
+                            const target = e.target as HTMLImageElement
+                            target.style.display = 'none'
+                            if (target.nextElementSibling) {
+                              ;(target.nextElementSibling as HTMLElement).style.display = 'flex'
+                            }
+                          }}
+                          onLoad={() => {
+                            console.log('Image loaded successfully:', category.image_url)
+                          }}
+                        />
+                        <div 
+                          className="hidden h-12 w-12 bg-gray-100 rounded-lg items-center justify-center border border-gray-200"
+                          style={{ display: 'none' }}
+                        >
+                          <ImageIcon className="h-6 w-6 text-gray-400" />
+                        </div>
+                      </div>
                     ) : (
                       <div className="h-12 w-12 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
                         <ImageIcon className="h-6 w-6 text-gray-400" />

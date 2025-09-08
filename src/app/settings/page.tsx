@@ -1,53 +1,47 @@
 'use client'
 
-import { useState } from 'react'
-import { Save, Database, Store, Bell, Shield, Globe, Mail, Phone, MapPin } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Save, Database, Store, Bell, Shield, Mail, Phone, MapPin } from 'lucide-react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
+import { getStoreConfig, saveStoreConfig, type StoreConfig } from '@/lib/store-config'
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState({
-    // Store Settings
-    storeName: 'KFresh Supermarket',
-    storeDescription: 'Your neighborhood African grocery store with fresh produce and cooked meals',
-    storeAddress: '2090 Robertson Rd, Nepean, ON K2H 8V5',
-    storePhone: '+1 (343) 996-9979',
-    storeEmail: 'info@kfresh.ca',
-    
-    // Business Hours
-    businessHours: {
-      monday: { open: '08:00', close: '22:00', closed: false },
-      tuesday: { open: '08:00', close: '22:00', closed: false },
-      wednesday: { open: '08:00', close: '22:00', closed: false },
-      thursday: { open: '08:00', close: '22:00', closed: false },
-      friday: { open: '08:00', close: '22:00', closed: false },
-      saturday: { open: '08:00', close: '22:00', closed: false },
-      sunday: { open: '08:00', close: '22:00', closed: false }
-    },
-    
-    // Order Settings
-    minimumOrder: 25.00,
-    deliveryFee: 5.99,
-    freeDeliveryThreshold: 50.00,
-    taxRate: 0.13,
-    pickupLeadTime: 30, // minutes
-    
-    // Notifications
-    emailNotifications: true,
-    smsNotifications: false,
-    lowStockAlerts: true,
-    newOrderAlerts: true,
-    
-    // Payment Settings
-    acceptCash: true,
-    acceptCard: true,
-    acceptDebit: true,
-    acceptEtransfer: true,
-    
-    // Partner Integration
-    uberEatsEnabled: false,
-    doorDashEnabled: false,
-    skipEnabled: false,
-    instacartEnabled: false
+  // Load settings from configuration
+  const [settings, setSettings] = useState(() => {
+    const config = getStoreConfig()
+    return {
+      // Store Settings
+      storeName: config.store.name,
+      storeDescription: config.store.description,
+      storeAddress: config.store.address,
+      storePhone: config.store.phone,
+      storeEmail: config.store.email,
+      
+      // Order Settings
+      minimumOrder: config.order.minimumOrder,
+      deliveryFee: config.order.deliveryFee,
+      freeDeliveryThreshold: config.order.freeDeliveryThreshold,
+      taxRate: config.order.taxRate,
+      pickupLeadTime: config.order.pickupLeadTime,
+      
+      // Notifications
+      emailNotifications: config.notifications.email,
+      smsNotifications: config.notifications.sms,
+      lowStockAlerts: config.notifications.lowStock,
+      newOrderAlerts: config.notifications.newOrder,
+      
+      // Payment Settings
+      acceptCash: config.payments.cash,
+      acceptCard: config.payments.card,
+      acceptDebit: config.payments.debit,
+      acceptEtransfer: config.payments.etransfer,
+      
+      // Partner Integration
+      uberEatsEnabled: config.partners.uberEats,
+      doorDashEnabled: config.partners.doorDash,
+      skipEnabled: false,
+      instacartEnabled: false
+    }
   })
 
   const [saving, setSaving] = useState(false)
@@ -56,8 +50,46 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      // In a real app, this would save to database
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Create configuration object for client app
+      const clientConfig: StoreConfig = {
+        store: {
+          name: settings.storeName,
+          description: settings.storeDescription,
+          address: settings.storeAddress,
+          phone: settings.storePhone,
+          email: settings.storeEmail
+        },
+        order: {
+          minimumOrder: settings.minimumOrder,
+          deliveryFee: settings.deliveryFee,
+          freeDeliveryThreshold: settings.freeDeliveryThreshold,
+          taxRate: settings.taxRate,
+          pickupLeadTime: settings.pickupLeadTime
+        },
+        notifications: {
+          email: settings.emailNotifications,
+          sms: settings.smsNotifications,
+          lowStock: settings.lowStockAlerts,
+          newOrder: settings.newOrderAlerts
+        },
+        payments: {
+          cash: settings.acceptCash,
+          card: settings.acceptCard,
+          debit: settings.acceptDebit,
+          etransfer: settings.acceptEtransfer
+        },
+        partners: {
+          uberEats: settings.uberEatsEnabled,
+          doorDash: settings.doorDashEnabled
+        },
+        lastUpdated: new Date().toISOString()
+      }
+
+      // Save configuration using the utility function
+      saveStoreConfig(clientConfig)
+      
+      console.log('Settings saved successfully:', clientConfig)
+      
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     } catch (error) {
@@ -71,19 +103,6 @@ export default function SettingsPage() {
     setSettings(prev => ({
       ...prev,
       [key]: value
-    }))
-  }
-
-  const updateBusinessHour = (day: string, field: string, value: any) => {
-    setSettings(prev => ({
-      ...prev,
-      businessHours: {
-        ...prev.businessHours,
-        [day]: {
-          ...prev.businessHours[day as keyof typeof prev.businessHours],
-          [field]: value
-        }
-      }
     }))
   }
 
@@ -249,50 +268,10 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Business Hours */}
-        <div className="bg-white rounded-lg border p-6 lg:col-span-2">
-          <div className="flex items-center gap-2 mb-4">
-            <Globe className="h-5 w-5 text-purple-600" />
-            <h2 className="text-lg font-semibold">Business Hours</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Object.entries(settings.businessHours).map(([day, hours]) => (
-              <div key={day} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700 capitalize">{day}</label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={!hours.closed}
-                      onChange={(e) => updateBusinessHour(day, 'closed', !e.target.checked)}
-                      className="rounded text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="ml-1 text-xs text-gray-500">Open</span>
-                  </label>
-                </div>
-                {!hours.closed && (
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="time"
-                      value={hours.open}
-                      onChange={(e) => updateBusinessHour(day, 'open', e.target.value)}
-                      className="text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    <input
-                      type="time"
-                      value={hours.close}
-                      onChange={(e) => updateBusinessHour(day, 'close', e.target.value)}
-                      className="text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+
 
         {/* Notifications */}
-        <div className="bg-white rounded-lg border p-6">
+        <div className="bg-white rounded-lg border p-6 relative">
           <div className="flex items-center gap-2 mb-4">
             <Bell className="h-5 w-5 text-yellow-600" />
             <h2 className="text-lg font-semibold">Notifications</h2>
@@ -305,6 +284,7 @@ export default function SettingsPage() {
                 checked={settings.emailNotifications}
                 onChange={(e) => updateSetting('emailNotifications', e.target.checked)}
                 className="rounded text-blue-600 focus:ring-blue-500"
+                disabled
               />
             </label>
             <label className="flex items-center justify-between">
@@ -314,6 +294,7 @@ export default function SettingsPage() {
                 checked={settings.smsNotifications}
                 onChange={(e) => updateSetting('smsNotifications', e.target.checked)}
                 className="rounded text-blue-600 focus:ring-blue-500"
+                disabled
               />
             </label>
             <label className="flex items-center justify-between">
@@ -323,6 +304,7 @@ export default function SettingsPage() {
                 checked={settings.lowStockAlerts}
                 onChange={(e) => updateSetting('lowStockAlerts', e.target.checked)}
                 className="rounded text-blue-600 focus:ring-blue-500"
+                disabled
               />
             </label>
             <label className="flex items-center justify-between">
@@ -332,13 +314,29 @@ export default function SettingsPage() {
                 checked={settings.newOrderAlerts}
                 onChange={(e) => updateSetting('newOrderAlerts', e.target.checked)}
                 className="rounded text-blue-600 focus:ring-blue-500"
+                disabled
               />
             </label>
+          </div>
+          {/* Coming Soon Overlay */}
+          <div className="absolute inset-0 bg-gray-50/90 backdrop-blur-sm rounded-lg flex items-center justify-center">
+            <div className="bg-white rounded-lg shadow-lg border-2 border-blue-200 p-6 text-center max-w-xs">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Bell className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Coming Soon</h3>
+              <p className="text-sm text-gray-600 mb-3">
+                Notification settings will be available in the production release
+              </p>
+              <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                In Development
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Payment Methods */}
-        <div className="bg-white rounded-lg border p-6">
+        <div className="bg-white rounded-lg border p-6 relative">
           <div className="flex items-center gap-2 mb-4">
             <Shield className="h-5 w-5 text-red-600" />
             <h2 className="text-lg font-semibold">Payment Methods</h2>
@@ -351,6 +349,7 @@ export default function SettingsPage() {
                 checked={settings.acceptCash}
                 onChange={(e) => updateSetting('acceptCash', e.target.checked)}
                 className="rounded text-blue-600 focus:ring-blue-500"
+                disabled
               />
             </label>
             <label className="flex items-center justify-between">
@@ -360,6 +359,7 @@ export default function SettingsPage() {
                 checked={settings.acceptCard}
                 onChange={(e) => updateSetting('acceptCard', e.target.checked)}
                 className="rounded text-blue-600 focus:ring-blue-500"
+                disabled
               />
             </label>
             <label className="flex items-center justify-between">
@@ -369,6 +369,7 @@ export default function SettingsPage() {
                 checked={settings.acceptDebit}
                 onChange={(e) => updateSetting('acceptDebit', e.target.checked)}
                 className="rounded text-blue-600 focus:ring-blue-500"
+                disabled
               />
             </label>
             <label className="flex items-center justify-between">
@@ -378,8 +379,24 @@ export default function SettingsPage() {
                 checked={settings.acceptEtransfer}
                 onChange={(e) => updateSetting('acceptEtransfer', e.target.checked)}
                 className="rounded text-blue-600 focus:ring-blue-500"
+                disabled
               />
             </label>
+          </div>
+          {/* Coming Soon Overlay */}
+          <div className="absolute inset-0 bg-gray-50/90 backdrop-blur-sm rounded-lg flex items-center justify-center">
+            <div className="bg-white rounded-lg shadow-lg border-2 border-green-200 p-6 text-center max-w-xs">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Shield className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Coming Soon</h3>
+              <p className="text-sm text-gray-600 mb-3">
+                Payment configuration will be enabled in the production deployment
+              </p>
+              <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                Production Ready
+              </div>
+            </div>
           </div>
         </div>
       </div>
