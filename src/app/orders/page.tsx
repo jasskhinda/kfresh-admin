@@ -57,15 +57,15 @@ export default function OrdersPage() {
   useEffect(() => {
     fetchOrders()
     
-    // Emergency fallback: force loading to end after 15 seconds
+    // Emergency fallback: force loading to end after 30 seconds
     const emergencyTimeout = setTimeout(() => {
       console.log('⚠️ Emergency timeout: Forcing orders loading to end')
       setLoading(false)
       if (orders.length === 0) {
-        console.log('📦 Using mock orders as fallback')
-        setOrders(getMockOrders())
+        console.log('📦 Using enhanced mock orders as fallback')
+        setOrders(getEnhancedMockOrders())
       }
-    }, 15000)
+    }, 30000)
 
     return () => clearTimeout(emergencyTimeout)
   }, [])
@@ -76,9 +76,9 @@ export default function OrdersPage() {
       const supabase = createClient()
       console.log('📡 Making Supabase orders query...')
       
-      // Reduce timeout to 3 seconds for better UX
+      // Extended timeout to 15 seconds for production reliability
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Orders request timeout')), 3000)
+        setTimeout(() => reject(new Error('Orders request timeout')), 15000)
       )
       
       const supabasePromise = supabase
@@ -104,8 +104,8 @@ export default function OrdersPage() {
 
       if (error) {
         console.error('❌ Orders Supabase error:', error)
-        console.log('Falling back to mock data. Check your orders table structure.')
-        setOrders(getMockOrders())
+        console.log('Falling back to enhanced mock data. Check your orders table structure.')
+        setOrders(getEnhancedMockOrders())
       } else if (data && data.length > 0) {
         // Transform the data to match the expected interface
         const transformedOrders = data.map((order: RawOrderData) => ({
@@ -132,7 +132,7 @@ export default function OrdersPage() {
       }
     } catch (error) {
       console.error('❌ Orders fetch error:', error)
-      setOrders(getMockOrders())
+      setOrders(getEnhancedMockOrders())
     } finally {
       console.log('✅ Setting orders loading to false')
       setLoading(false)
@@ -508,11 +508,11 @@ export default function OrdersPage() {
   )
 }
 
-// Mock data for development
-function getMockOrders(): Order[] {
+// Enhanced mock data for development with proper UUIDs
+function getEnhancedMockOrders(): Order[] {
   return [
     {
-      id: '1',
+      id: 'f6c0ac6a-61ca-4329-bf25-1a5a13a711a7',
       order_number: 'KF20250107001',
       customer_id: null,
       email: 'john.doe@example.com',
@@ -527,7 +527,7 @@ function getMockOrders(): Order[] {
       updated_at: '2025-01-07T11:15:00Z'
     },
     {
-      id: '2',
+      id: '00f8afc1-2c36-421f-a5b1-81902a2b8bba',
       order_number: 'KF20250107002',
       customer_id: null,
       email: 'jane.smith@example.com',
@@ -542,7 +542,7 @@ function getMockOrders(): Order[] {
       updated_at: '2025-01-07T10:45:00Z'
     },
     {
-      id: '3',
+      id: '794d1714-5fee-4f59-80d0-914ef40673ba',
       order_number: 'KF20250107003',
       customer_id: null,
       email: 'mike.johnson@example.com',
@@ -557,7 +557,7 @@ function getMockOrders(): Order[] {
       updated_at: '2025-01-07T08:45:00Z'
     },
     {
-      id: '4',
+      id: '281bb6ba-8417-418f-9482-03bba583bd0a',
       order_number: 'KF20250107004',
       customer_id: null,
       email: 'sarah.wilson@example.com',

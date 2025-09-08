@@ -52,15 +52,15 @@ export default function ProductsPage() {
     fetchProducts()
     fetchCategories()
     
-    // Emergency fallback: force loading to end after 15 seconds
+    // Emergency fallback: force loading to end after 30 seconds
     const emergencyTimeout = setTimeout(() => {
       console.log('⚠️ Emergency timeout: Forcing loading to end')
       setLoading(false)
       if (products.length === 0) {
-        console.log('📦 Using mock data as fallback')
-        setProducts(getMockProducts())
+        console.log('📦 Using enhanced mock data as fallback')
+        setProducts(getEnhancedMockProducts())
       }
-    }, 15000)
+    }, 30000)
 
     return () => clearTimeout(emergencyTimeout)
   }, [])
@@ -71,9 +71,9 @@ export default function ProductsPage() {
       const supabase = createClient()
       console.log('📡 Making Supabase query...')
       
-      // Reduce timeout to 3 seconds for better UX
+      // Increase timeout to 15 seconds for production reliability
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout')), 3000)
+        setTimeout(() => reject(new Error('Request timeout')), 15000)
       )
       
       const supabasePromise = supabase
@@ -86,15 +86,15 @@ export default function ProductsPage() {
 
       if (error) {
         console.error('❌ Supabase error:', error)
-        // Use mock data for demo
-        setProducts(getMockProducts())
+        // Use enhanced mock data for demo
+        setProducts(getEnhancedMockProducts())
       } else {
         console.log('✅ Got products:', data?.length || 0)
         setProducts(data || [])
       }
     } catch (error) {
       console.error('❌ Fetch error:', error)
-      setProducts(getMockProducts())
+      setProducts(getEnhancedMockProducts())
     } finally {
       console.log('✅ Setting loading to false')
       setLoading(false)
@@ -106,9 +106,9 @@ export default function ProductsPage() {
     try {
       const supabase = createClient()
       
-      // Reduce timeout to 3 seconds for better UX
+      // Increase timeout to 15 seconds for production reliability
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Categories timeout')), 3000)
+        setTimeout(() => reject(new Error('Categories timeout')), 15000)
       )
       
       const supabasePromise = supabase
@@ -121,14 +121,14 @@ export default function ProductsPage() {
 
       if (error) {
         console.error('❌ Categories error:', error)
-        setCategories(getMockCategories())
+        setCategories(getEnhancedMockCategories())
       } else {
         console.log('✅ Got categories:', data?.length || 0)
         setCategories(data || [])
       }
     } catch (error) {
       console.error('❌ Categories fetch error:', error)
-      setCategories(getMockCategories())
+      setCategories(getEnhancedMockCategories())
     }
   }
 
@@ -513,10 +513,10 @@ export default function ProductsPage() {
 }
 
 // Mock data for development
-function getMockProducts(): Product[] {
+function getEnhancedMockProducts(): Product[] {
   return [
     {
-      id: '1',
+      id: 'f6c0ac6a-61ca-4329-bf25-1a5a13a711a7',
       name: 'Ghana Yam',
       slug: 'ghana-yam',
       sku: 'KF-GY-001',
@@ -525,13 +525,13 @@ function getMockProducts(): Product[] {
       stock_quantity: 3,
       is_available: true,
       is_featured: true,
-      category_id: '1',
-      images: [],
+      category_id: '794d1714-5fee-4f59-80d0-914ef40673ba',
+      images: ['https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=400'],
       created_at: '2025-01-07T10:00:00Z',
       updated_at: '2025-01-07T10:00:00Z'
     },
     {
-      id: '2',
+      id: '00f8afc1-2c36-421f-a5b1-81902a2b8bba',
       name: 'Jollof Rice (Ready to Eat)',
       slug: 'jollof-rice-ready',
       sku: 'KF-JR-001',
@@ -540,13 +540,13 @@ function getMockProducts(): Product[] {
       stock_quantity: 20,
       is_available: true,
       is_featured: true,
-      category_id: '4',
-      images: [],
+      category_id: '281bb6ba-8417-418f-9482-03bba583bd0a',
+      images: ['https://images.unsplash.com/photo-1596797038530-2c107229654b?w=400&h=400'],
       created_at: '2025-01-06T15:30:00Z',
       updated_at: '2025-01-07T09:15:00Z'
     },
     {
-      id: '3',
+      id: '794d1714-5fee-4f59-80d0-914ef40673ba',
       name: 'Fresh Ginger Root',
       slug: 'fresh-ginger-root',
       sku: 'KF-GR-001',
@@ -555,13 +555,13 @@ function getMockProducts(): Product[] {
       stock_quantity: 8,
       is_available: true,
       is_featured: false,
-      category_id: '1',
-      images: [],
+      category_id: '794d1714-5fee-4f59-80d0-914ef40673ba',
+      images: ['https://images.unsplash.com/photo-1577217770296-2f0c0a0ffa63?w=400&h=400'],
       created_at: '2025-01-05T12:00:00Z',
       updated_at: '2025-01-05T12:00:00Z'
     },
     {
-      id: '4',
+      id: '281bb6ba-8417-418f-9482-03bba583bd0a',
       name: 'Palm Oil (Red)',
       slug: 'palm-oil-red',
       sku: 'KF-PO-001',
@@ -570,21 +570,21 @@ function getMockProducts(): Product[] {
       stock_quantity: 0,
       is_available: false,
       is_featured: false,
-      category_id: '6',
-      images: [],
+      category_id: 'ebc89b62-4b01-4c8b-8f80-1f1b7b9d7b1f',
+      images: ['https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&h=400'],
       created_at: '2025-01-04T08:45:00Z',
       updated_at: '2025-01-07T11:20:00Z'
     }
   ]
 }
 
-function getMockCategories(): Category[] {
+function getEnhancedMockCategories(): Category[] {
   return [
-    { id: '1', name: 'Fresh Produce', slug: 'fresh-produce' },
-    { id: '2', name: 'Meat & Poultry', slug: 'meat-poultry' },
-    { id: '3', name: 'International Foods', slug: 'international-foods' },
-    { id: '4', name: 'Cooked Meals', slug: 'cooked-meals' },
-    { id: '5', name: 'Dairy & Eggs', slug: 'dairy-eggs' },
-    { id: '6', name: 'Pantry Essentials', slug: 'pantry-essentials' }
+    { id: '794d1714-5fee-4f59-80d0-914ef40673ba', name: 'Fresh Produce', slug: 'fresh-produce' },
+    { id: 'c8f3e2a4-5b6d-4e7f-8c9a-1b2c3d4e5f6g', name: 'Meat & Poultry', slug: 'meat-poultry' },
+    { id: 'a1b2c3d4-5e6f-7g8h-9i0j-1k2l3m4n5o6p', name: 'International Foods', slug: 'international-foods' },
+    { id: '281bb6ba-8417-418f-9482-03bba583bd0a', name: 'Cooked Meals', slug: 'cooked-meals' },
+    { id: 'f7e6d5c4-b3a2-9182-7364-5546372819ab', name: 'Dairy & Eggs', slug: 'dairy-eggs' },
+    { id: 'ebc89b62-4b01-4c8b-8f80-1f1b7b9d7b1f', name: 'Pantry Essentials', slug: 'pantry-essentials' }
   ]
 }

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, Save, Loader2, Upload, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { imageUploadService } from '@/lib/imageUpload'
+import DashboardLayout from '@/components/layout/DashboardLayout'
 
 interface Category {
   id: string
@@ -210,37 +211,41 @@ export default function ProductEditPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-green-600" />
-      </div>
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+        </div>
+      </DashboardLayout>
     )
   }
 
   if (!product) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Product not found</h2>
-        <Link
-          href="/products"
-          className="text-green-600 hover:text-green-700 font-medium"
-        >
-          ← Back to Products
-        </Link>
-      </div>
+      <DashboardLayout>
+        <div className="text-center py-12">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Product not found</h2>
+          <Link
+            href="/products"
+            className="text-green-600 hover:text-green-700 font-medium"
+          >
+            ← Back to Products
+          </Link>
+        </div>
+      </DashboardLayout>
     )
   }
 
   return (
-    <div className="space-y-6">
+    <DashboardLayout>
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center space-x-4">
           <Link
             href="/products"
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Products
+            <ArrowLeft className="h-5 w-5" />
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Edit Product</h1>
@@ -254,24 +259,6 @@ export default function ProductEditPage() {
           <p className="text-red-700">{error}</p>
         </div>
       )}
-
-      {/* Debug Info */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="font-medium text-blue-900 mb-2">Debug Info:</h3>
-        <p className="text-sm text-blue-800">
-          Current images in database: {product?.images?.length || 0}
-        </p>
-        {product?.images && product.images.length > 0 && (
-          <div className="mt-2">
-            <p className="text-xs text-blue-700">Image URLs:</p>
-            <ul className="text-xs text-blue-600 ml-4">
-              {product.images.map((url, index) => (
-                <li key={index} className="truncate">{url}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Images */}
@@ -759,5 +746,6 @@ export default function ProductEditPage() {
         </div>
       </form>
     </div>
+    </DashboardLayout>
   )
 }

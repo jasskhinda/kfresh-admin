@@ -55,11 +55,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchDashboardData()
     
-    // Reduce emergency fallback to 5 seconds for better UX
+    // Extended emergency fallback to 20 seconds for production reliability
     const emergencyTimeout = setTimeout(() => {
       console.log('⚠️ Emergency timeout: Forcing dashboard loading to end')
       setDataLoading(false)
-    }, 5000)
+    }, 20000)
 
     return () => clearTimeout(emergencyTimeout)
   }, [])
@@ -67,9 +67,9 @@ export default function AdminDashboard() {
   const fetchDashboardData = async () => {
     console.log('🔄 Starting fetchDashboardData...')
     try {
-      // Add timeout protection for all dashboard queries
+      // Add timeout protection for all dashboard queries with extended timeout
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Dashboard request timeout')), 3000)
+        setTimeout(() => reject(new Error('Dashboard request timeout')), 15000)
       )
 
       // Fetch total revenue from orders with timeout
