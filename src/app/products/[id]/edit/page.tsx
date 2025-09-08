@@ -29,6 +29,7 @@ interface Product {
   brand: string | null
   unit: string | null
   weight: number | null
+  origin: string | null
   stock_quantity: number
   low_stock_threshold: number
   track_inventory: boolean
@@ -490,14 +491,16 @@ export default function ProductEditPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                SKU
+                Product Slug
               </label>
               <input
                 type="text"
-                value={product.sku || ''}
-                onChange={(e) => updateProduct('sku', e.target.value || null)}
+                value={product.slug || ''}
+                onChange={(e) => updateProduct('slug', e.target.value || null)}
+                placeholder="URL-friendly version of name"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
               />
+              <p className="text-xs text-gray-500 mt-1">Used in the product URL</p>
             </div>
 
             <div className="md:col-span-2">
@@ -624,6 +627,156 @@ export default function ProductEditPage() {
           </div>
         </div>
 
+        {/* Product Specifications */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-lg font-medium text-gray-900 mb-6">Product Specifications</h2>
+          <p className="text-sm text-gray-600 mb-6">These specifications will be displayed on the product detail page</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Weight
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={product.weight || ''}
+                  onChange={(e) => updateProduct('weight', parseFloat(e.target.value) || null)}
+                  placeholder="e.g., 2.5"
+                  className="w-full pr-16 pl-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                />
+                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">
+                  {product.unit === 'lb' ? 'lbs' : product.unit === 'kg' ? 'kg' : 'unit'}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">Leave empty for "Varies per piece"</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Origin
+              </label>
+              <input
+                type="text"
+                value={product.origin || ''}
+                onChange={(e) => updateProduct('origin', e.target.value || null)}
+                placeholder="e.g., Ghana, Canada, Local"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Brand
+              </label>
+              <input
+                type="text"
+                value={product.brand || ''}
+                onChange={(e) => updateProduct('brand', e.target.value || null)}
+                placeholder="e.g., Canadian Food, KFresh"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                SKU (Product Code)
+              </label>
+              <input
+                type="text"
+                value={product.sku || ''}
+                onChange={(e) => updateProduct('sku', e.target.value || null)}
+                placeholder="e.g., 7484784hd"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Unit Type
+              </label>
+              <select
+                value={product.unit || ''}
+                onChange={(e) => updateProduct('unit', e.target.value || null)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              >
+                <option value="">Select unit type</option>
+                <option value="piece">piece</option>
+                <option value="lb">pounds (lb)</option>
+                <option value="kg">kilograms (kg)</option>
+                <option value="g">grams (g)</option>
+                <option value="oz">ounces (oz)</option>
+                <option value="liter">liter</option>
+                <option value="ml">milliliter (ml)</option>
+                <option value="pack">pack</option>
+                <option value="box">box</option>
+                <option value="bottle">bottle</option>
+                <option value="can">can</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Availability Status
+              </label>
+              <div className="flex items-center space-x-4">
+                <div className={`px-3 py-2 rounded-lg border ${
+                  product.is_available && product.stock_quantity > 0 
+                    ? 'bg-green-50 border-green-200 text-green-800' 
+                    : 'bg-red-50 border-red-200 text-red-800'
+                }`}>
+                  {product.is_available && product.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}
+                </div>
+                <span className="text-sm text-gray-500">
+                  ({product.stock_quantity} units)
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Status is automatically determined by availability setting and stock quantity
+              </p>
+            </div>
+          </div>
+
+          {/* Specification Preview */}
+          <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+            <h3 className="text-sm font-medium text-gray-900 mb-3">Preview: How this will appear on product page</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <span className="font-medium text-gray-700">Weight:</span>
+                <span className="ml-2 text-gray-600">
+                  {product.weight ? `${product.weight} ${product.unit || 'unit'}` : 'Varies per piece'}
+                </span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Origin:</span>
+                <span className="ml-2 text-gray-600">{product.origin || 'Not specified'}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Brand:</span>
+                <span className="ml-2 text-gray-600">{product.brand || 'Not specified'}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">SKU:</span>
+                <span className="ml-2 text-gray-600">{product.sku || 'Not specified'}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Unit:</span>
+                <span className="ml-2 text-gray-600">{product.unit || 'Not specified'}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Availability:</span>
+                <span className={`ml-2 font-medium ${
+                  product.is_available && product.stock_quantity > 0 ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {product.is_available && product.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Organization */}
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-6">Organization</h2>
@@ -649,12 +802,13 @@ export default function ProductEditPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Brand
+                Barcode
               </label>
               <input
                 type="text"
-                value={product.brand || ''}
-                onChange={(e) => updateProduct('brand', e.target.value || null)}
+                value={product.barcode || ''}
+                onChange={(e) => updateProduct('barcode', e.target.value || null)}
+                placeholder="Product barcode (optional)"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
               />
             </div>
