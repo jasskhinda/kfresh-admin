@@ -18,6 +18,7 @@ export default function CategoriesPage() {
   const [showModal, setShowModal] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [dataSource, setDataSource] = useState<'database' | 'fallback' | 'unknown'>('unknown') // Track data source
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -34,15 +35,15 @@ export default function CategoriesPage() {
   useEffect(() => {
     fetchCategories()
     
-    // Reduce emergency fallback to 5 seconds for better UX
+    // Extended emergency fallback for production reliability
     const emergencyTimeout = setTimeout(() => {
       console.log('⚠️ Emergency timeout: Forcing categories loading to end')
       setLoading(false)
       if (categories.length === 0) {
-        console.log('📁 Using mock data as fallback')
-        setCategories(getMockCategories())
+        console.log('📁 Using enhanced mock data as fallback')
+        setCategories(getEnhancedMockCategories())
       }
-    }, 5000)
+    }, 15000) // Increased to 15 seconds to avoid premature fallback
 
     return () => clearTimeout(emergencyTimeout)
   }, [])
@@ -53,9 +54,9 @@ export default function CategoriesPage() {
       const supabase = createClient()
       console.log('📡 Making Supabase categories query...')
       
-      // Reduce timeout to 3 seconds for better UX
+      // Extended timeout for production reliability
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Categories request timeout')), 3000)
+        setTimeout(() => reject(new Error('Categories request timeout')), 10000)
       )
       
       const supabasePromise = supabase
@@ -68,14 +69,17 @@ export default function CategoriesPage() {
 
       if (error) {
         console.error('❌ Categories Supabase error:', error)
-        setCategories(getMockCategories())
+        setDataSource('fallback')
+        setCategories(getEnhancedMockCategories())
       } else {
         console.log('✅ Got categories:', data?.length || 0)
+        setDataSource('database')
         setCategories(data || [])
       }
     } catch (error) {
       console.error('❌ Categories fetch error:', error)
-      setCategories(getMockCategories())
+      setDataSource('fallback')
+      setCategories(getEnhancedMockCategories())
     } finally {
       console.log('✅ Setting categories loading to false')
       setLoading(false)
@@ -315,14 +319,25 @@ export default function CategoriesPage() {
           <div className="flex gap-2">
             <button
               onClick={() => {
+                console.log('🔄 Manual refresh triggered')
                 setCategories([])
                 setLoading(true)
                 fetchCategories()
               }}
-              className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               <Search className="h-4 w-4" />
               Refresh
+            </button>
+            <button
+              onClick={() => {
+                console.log('🔄 Hard refresh triggered')
+                window.location.reload()
+              }}
+              className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <Search className="h-4 w-4" />
+              Hard Refresh
             </button>
             <button
               onClick={() => setShowModal(true)}
@@ -350,6 +365,41 @@ export default function CategoriesPage() {
 
       {/* Categories Table */}
       <div className="bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
+        {/* Debug Information */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-yellow-50 border-b border-yellow-200 p-3">
+            <div className="text-xs text-gray-600">
+              <strong>Debug Info:</strong> Categories: {categories.length} | 
+              Loading: {loading.toString()} | 
+              Search: "{searchTerm}" | 
+              Filtered: {filteredCategories.length} |
+              Data Source: <span className={dataSource === 'database' ? 'text-green-600' : 'text-red-600'}>{dataSource}</span>
+            </div>
+          </div>
+        )}
+        
+        {/* Data Source Warning */}
+        {dataSource === 'fallback' && (
+          <div className="bg-orange-50 border-b border-orange-200 p-3">
+            <div className="flex items-center gap-2 text-orange-700">
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+              <span className="text-sm">
+                Showing fallback data due to database connectivity issues. 
+                <button 
+                  onClick={() => {
+                    setCategories([])
+                    setLoading(true)
+                    fetchCategories()
+                  }}
+                  className="ml-2 underline hover:text-orange-800"
+                >
+                  Try reconnecting
+                </button>
+              </span>
+            </div>
+          </div>
+        )}
+        
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -413,7 +463,8 @@ export default function CategoriesPage() {
                     {category.image_url ? (
                       <div className="relative h-12 w-12">
                         <img
-                          src={category.image_url}
+                          key={`${category.id}-${category.updated_at}`} // Cache busting key
+                          src={`${category.image_url}${category.image_url.includes('?') ? '&' : '?'}t=${Date.now()}`}
                           alt={category.name}
                           className="h-12 w-12 object-cover rounded-lg border border-gray-200"
                           onError={(e) => {
@@ -691,8 +742,8 @@ export default function CategoriesPage() {
   )
 }
 
-// Mock data for development
-function getMockCategories(): Category[] {
+// Enhanced mock data with images for development
+function getEnhancedMockCategories(): Category[] {
   return [
     {
       id: '1',
@@ -700,7 +751,7 @@ function getMockCategories(): Category[] {
       slug: 'fresh-produce',
       description: 'Fresh fruits and vegetables',
       parent_id: null,
-      image_url: null,
+      image_url: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 1,
       created_at: '2025-01-07T10:00:00Z',
@@ -712,7 +763,7 @@ function getMockCategories(): Category[] {
       slug: 'meat-poultry',
       description: 'Fresh and frozen meat products',
       parent_id: null,
-      image_url: null,
+      image_url: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 2,
       created_at: '2025-01-07T10:00:00Z',
@@ -724,7 +775,7 @@ function getMockCategories(): Category[] {
       slug: 'pantry-essentials',
       description: 'Rice, flour, spices and cooking ingredients',
       parent_id: null,
-      image_url: null,
+      image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 3,
       created_at: '2025-01-07T10:00:00Z',
@@ -736,11 +787,52 @@ function getMockCategories(): Category[] {
       slug: 'cooked-meals',
       description: 'Ready-to-eat traditional dishes',
       parent_id: null,
-      image_url: null,
+      image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 4,
       created_at: '2025-01-07T10:00:00Z',
       updated_at: '2025-01-07T10:00:00Z'
+    },
+    {
+      id: '5',
+      name: 'International Foods',
+      slug: 'international-foods',
+      description: 'Authentic foods from around the world',
+      parent_id: null,
+      image_url: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=400&fit=crop&crop=center',
+      is_active: true,
+      sort_order: 5,
+      created_at: '2025-01-07T10:00:00Z',
+      updated_at: '2025-01-07T10:00:00Z'
+    },
+    {
+      id: '6',
+      name: 'Dairy & Eggs',
+      slug: 'dairy-eggs',
+      description: 'Fresh dairy products and eggs',
+      parent_id: null,
+      image_url: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=400&h=400&fit=crop&crop=center',
+      is_active: true,
+      sort_order: 6,
+      created_at: '2025-01-07T10:00:00Z',
+      updated_at: '2025-01-07T10:00:00Z'
+    },
+    {
+      id: '7',
+      name: 'Beverages',
+      slug: 'beverages',
+      description: 'Drinks and beverages',
+      parent_id: null,
+      image_url: 'https://images.unsplash.com/photo-1516594798947-e65505dbb29d?w=400&h=400&fit=crop&crop=center',
+      is_active: true,
+      sort_order: 7,
+      created_at: '2025-01-07T10:00:00Z',
+      updated_at: '2025-01-07T10:00:00Z'
     }
   ]
+}
+
+// Legacy mock data for development (kept for compatibility)
+function getMockCategories(): Category[] {
+  return getEnhancedMockCategories()
 }
