@@ -44,7 +44,7 @@ export default function CategoriesPage() {
         console.log('📁 Using enhanced mock data as fallback')
         setCategories(getEnhancedMockCategories())
       }
-    }, 15000) // Increased to 15 seconds to avoid premature fallback
+    }, 45000) // Increased to 45 seconds to avoid premature fallback
 
     return () => clearTimeout(emergencyTimeout)
   }, [])
@@ -55,18 +55,12 @@ export default function CategoriesPage() {
       const supabase = createClient()
       console.log('📡 Making Supabase categories query...')
       
-      // Extended timeout for production reliability
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Categories request timeout')), 30000)
-      )
-      
-      const supabasePromise = supabase
+      // Simplified approach: just make the request with longer timeout
+      const { data, error } = await supabase
         .from('categories')
         .select('*')
         .order('sort_order', { ascending: true })
-
-      const result = await Promise.race([supabasePromise, timeoutPromise])
-      const { data, error } = result as any
+        .abortSignal(AbortSignal.timeout(30000)) // 30 second timeout
 
       if (error) {
         console.error('❌ Categories Supabase error:', error)
