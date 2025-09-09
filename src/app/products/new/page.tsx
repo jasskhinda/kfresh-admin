@@ -323,6 +323,108 @@ export default function NewProductPage() {
                 </label>
               </div>
             </div>
+
+            {/* Product Specifications */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Specifications</h3>
+              <p className="text-sm text-gray-600 mb-6">These specifications will be displayed on the product detail page</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Weight
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formData.weight}
+                      onChange={(e) => setFormData({ ...formData, weight: parseFloat(e.target.value) || 0 })}
+                      placeholder="e.g., 2.5"
+                      className="w-full pr-16 pl-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    />
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">
+                      {formData.unit === 'lb' ? 'lbs' : formData.unit === 'kg' ? 'kg' : 'unit'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Leave empty for "Varies per piece"</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Brand (repeated for specifications)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.brand}
+                    onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                    placeholder="e.g., KFresh, Canadian Food"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    disabled
+                  />
+                  <p className="text-xs text-gray-500 mt-1">This is linked to the brand field in settings</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Availability Status
+                  </label>
+                  <div className="flex items-center space-x-4">
+                    <div className={`px-3 py-2 rounded-lg border ${
+                      formData.is_available && formData.stock_quantity > 0 
+                        ? 'bg-green-50 border-green-200 text-green-800' 
+                        : 'bg-red-50 border-red-200 text-red-800'
+                    }`}>
+                      {formData.is_available && formData.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      ({formData.stock_quantity} units)
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Status is automatically determined by availability setting and stock quantity
+                  </p>
+                </div>
+              </div>
+
+              {/* Specification Preview */}
+              <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-900 mb-3">Preview: How this will appear on product page</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span className="font-medium text-gray-700">Weight:</span>
+                    <span className="ml-2 text-gray-600">
+                      {formData.weight ? `${formData.weight} ${formData.unit || 'unit'}` : 'Varies per piece'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Stock:</span>
+                    <span className="ml-2 text-gray-600">{formData.stock_quantity} units available</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Brand:</span>
+                    <span className="ml-2 text-gray-600">{formData.brand || 'Not specified'}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">SKU:</span>
+                    <span className="ml-2 text-gray-600">{formData.sku || 'Not specified'}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Unit:</span>
+                    <span className="ml-2 text-gray-600">{formData.unit || 'Not specified'}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Availability:</span>
+                    <span className={`ml-2 font-medium ${
+                      formData.is_available && formData.stock_quantity > 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {formData.is_available && formData.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -362,42 +464,28 @@ export default function NewProductPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Unit
-                    </label>
-                    <select
-                      value={formData.unit}
-                      onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    >
-                      <option value="">Select unit</option>
-                      <option value="each">Each</option>
-                      <option value="lb">Pound</option>
-                      <option value="kg">Kilogram</option>
-                      <option value="g">Gram</option>
-                      <option value="ml">Milliliter</option>
-                      <option value="l">Liter</option>
-                      <option value="oz">Ounce</option>
-                      <option value="pack">Pack</option>
-                      <option value="box">Box</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Weight
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={formData.weight}
-                      onChange={(e) => setFormData({ ...formData, weight: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Unit Type
+                  </label>
+                  <select
+                    value={formData.unit}
+                    onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  >
+                    <option value="">Select unit type</option>
+                    <option value="piece">piece</option>
+                    <option value="lb">pounds (lb)</option>
+                    <option value="kg">kilograms (kg)</option>
+                    <option value="g">grams (g)</option>
+                    <option value="oz">ounces (oz)</option>
+                    <option value="liter">liter</option>
+                    <option value="ml">milliliter (ml)</option>
+                    <option value="pack">pack</option>
+                    <option value="box">box</option>
+                    <option value="bottle">bottle</option>
+                    <option value="can">can</option>
+                  </select>
                 </div>
 
                 <div className="space-y-3 pt-2">

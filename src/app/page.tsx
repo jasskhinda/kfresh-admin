@@ -221,7 +221,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/30 rounded-full flex items-center justify-center shadow-md">
-                <span className="text-2xl font-bold text-white">
+                <span className="text-2xl font-bold text-white !text-white" style={{ color: 'white' }}>
                   {profile?.first_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'A'}
                 </span>
               </div>
