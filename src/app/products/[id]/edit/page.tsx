@@ -508,16 +508,16 @@ export default function ProductEditPage() {
                 Description
               </label>
               {product.is_cooked && (
-                <div className="mb-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                   <div className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-white text-xs font-bold">!</span>
-                    </div>
+                    <svg className="w-5 h-5 text-amber-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                     <div>
-                      <p className="text-sm font-medium text-orange-800">Fresh Meals Item Notice</p>
-                      <p className="text-xs text-orange-700 mt-1">
-                        <strong>Recommended:</strong> 152 characters maximum for Fresh Meals descriptions. 
-                        Longer descriptions may not display well on the Fresh Meals page.
+                      <p className="text-sm font-semibold text-amber-900">Fresh Meals Description Guidelines</p>
+                      <p className="text-xs text-amber-700 mt-1">
+                        For optimal display on the Fresh Meals page, please limit descriptions to 152 characters. 
+                        This ensures consistent card layouts and improved readability.
                       </p>
                     </div>
                   </div>
@@ -529,16 +529,23 @@ export default function ProductEditPage() {
                 onChange={(e) => updateProduct('description', e.target.value || null)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 placeholder={product.is_cooked 
-                  ? "Brief description for Fresh Meals (max 152 characters recommended)" 
-                  : "Detailed product description"
+                  ? "Enter a concise description for this Fresh Meal item" 
+                  : "Enter a detailed description of this product"
                 }
               />
               {product.is_cooked && product.description && (
-                <p className={`text-xs mt-1 ${
-                  product.description.length > 152 ? 'text-orange-600' : 'text-gray-500'
-                }`}>
-                  {product.description.length}/152 characters
-                </p>
+                <div className="mt-2 flex items-center justify-between">
+                  <p className={`text-xs ${
+                    product.description.length > 152 ? 'text-amber-600 font-medium' : 'text-gray-500'
+                  }`}>
+                    Character count: {product.description.length}/152
+                  </p>
+                  {product.description.length > 152 && (
+                    <span className="text-xs text-amber-600">
+                      Exceeds recommended length
+                    </span>
+                  )}
+                </div>
               )}
             </div>
 
@@ -547,16 +554,16 @@ export default function ProductEditPage() {
                 Short Description
               </label>
               {product.is_cooked && (
-                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="mb-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <div className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-white text-xs font-bold">i</span>
-                    </div>
+                    <svg className="w-5 h-5 text-slate-600 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                     <div>
-                      <p className="text-sm font-medium text-blue-800">Fresh Meals Item Notice</p>
-                      <p className="text-xs text-blue-700 mt-1">
-                        Short descriptions are <strong>not recommended</strong> for Fresh Meals items. 
-                        They will not display on the Fresh Meals page. Use the main Description instead.
+                      <p className="text-sm font-semibold text-slate-900">Field Not Applicable</p>
+                      <p className="text-xs text-slate-600 mt-1">
+                        Short descriptions are not displayed for Fresh Meals items. 
+                        Please use the main Description field above for all product details.
                       </p>
                     </div>
                   </div>
@@ -570,8 +577,8 @@ export default function ProductEditPage() {
                   product.is_cooked ? 'bg-gray-50' : ''
                 }`}
                 placeholder={product.is_cooked 
-                  ? "Not used for Fresh Meals items" 
-                  : "Brief product summary for product listings"
+                  ? "This field is disabled for Fresh Meals items" 
+                  : "Enter a brief summary for product cards and search results"
                 }
                 disabled={product.is_cooked}
               />
@@ -903,12 +910,24 @@ export default function ProductEditPage() {
                 className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 mt-1"
               />
               <div className="ml-3">
-                <span className="text-sm font-medium text-gray-700">This is a cooked meal (pickup only)</span>
-                <div className="mt-1 text-xs text-gray-600 space-y-1">
-                  <p>• <strong>Fresh Meals page:</strong> Will display on /fresh-meals</p>
-                  <p>• <strong>Products page:</strong> Will be excluded from /products</p>
-                  <p>• <strong>Ordering:</strong> Pickup only, no delivery available</p>
-                  <p>• <strong>Descriptions:</strong> Keep under 152 characters for optimal display</p>
+                <span className="text-sm font-medium text-gray-700">Mark as Fresh Meal Item</span>
+                <div className="mt-2 text-xs text-gray-600 space-y-1.5">
+                  <div className="flex items-start">
+                    <span className="text-gray-400 mr-2">•</span>
+                    <span><strong className="font-semibold">Display Location:</strong> Exclusively on Fresh Meals page</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-gray-400 mr-2">•</span>
+                    <span><strong className="font-semibold">Product Catalog:</strong> Excluded from main products page</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-gray-400 mr-2">•</span>
+                    <span><strong className="font-semibold">Fulfillment:</strong> In-store pickup only</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-gray-400 mr-2">•</span>
+                    <span><strong className="font-semibold">Description Length:</strong> 152 characters recommended</span>
+                  </div>
                 </div>
               </div>
             </label>
