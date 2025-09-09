@@ -507,24 +507,79 @@ export default function ProductEditPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Description
               </label>
+              {product.is_cooked && (
+                <div className="mb-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <div className="w-5 h-5 rounded-full bg-orange-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-white text-xs font-bold">!</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-orange-800">Fresh Meals Item Notice</p>
+                      <p className="text-xs text-orange-700 mt-1">
+                        <strong>Recommended:</strong> 152 characters maximum for Fresh Meals descriptions. 
+                        Longer descriptions may not display well on the Fresh Meals page.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
               <textarea
                 rows={4}
                 value={product.description || ''}
                 onChange={(e) => updateProduct('description', e.target.value || null)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                placeholder={product.is_cooked 
+                  ? "Brief description for Fresh Meals (max 152 characters recommended)" 
+                  : "Detailed product description"
+                }
               />
+              {product.is_cooked && product.description && (
+                <p className={`text-xs mt-1 ${
+                  product.description.length > 152 ? 'text-orange-600' : 'text-gray-500'
+                }`}>
+                  {product.description.length}/152 characters
+                </p>
+              )}
             </div>
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Short Description
               </label>
+              {product.is_cooked && (
+                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-white text-xs font-bold">i</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-blue-800">Fresh Meals Item Notice</p>
+                      <p className="text-xs text-blue-700 mt-1">
+                        Short descriptions are <strong>not recommended</strong> for Fresh Meals items. 
+                        They will not display on the Fresh Meals page. Use the main Description instead.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
               <textarea
                 rows={2}
                 value={product.short_description || ''}
                 onChange={(e) => updateProduct('short_description', e.target.value || null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                  product.is_cooked ? 'bg-gray-50' : ''
+                }`}
+                placeholder={product.is_cooked 
+                  ? "Not used for Fresh Meals items" 
+                  : "Brief product summary for product listings"
+                }
+                disabled={product.is_cooked}
               />
+              {!product.is_cooked && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Appears in product cards and listings. Keep it concise and engaging.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -840,14 +895,22 @@ export default function ProductEditPage() {
               <span className="ml-2 text-sm text-gray-700">Feature this product</span>
             </label>
 
-            <label className="flex items-center">
+            <label className="flex items-start">
               <input
                 type="checkbox"
                 checked={product.is_cooked}
                 onChange={(e) => updateProduct('is_cooked', e.target.checked)}
-                className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200"
+                className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 mt-1"
               />
-              <span className="ml-2 text-sm text-gray-700">This is a cooked meal (pickup only)</span>
+              <div className="ml-3">
+                <span className="text-sm font-medium text-gray-700">This is a cooked meal (pickup only)</span>
+                <div className="mt-1 text-xs text-gray-600 space-y-1">
+                  <p>• <strong>Fresh Meals page:</strong> Will display on /fresh-meals</p>
+                  <p>• <strong>Products page:</strong> Will be excluded from /products</p>
+                  <p>• <strong>Ordering:</strong> Pickup only, no delivery available</p>
+                  <p>• <strong>Descriptions:</strong> Keep under 152 characters for optimal display</p>
+                </div>
+              </div>
             </label>
 
             <label className="flex items-center">
