@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Save, Upload, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { imageUploadService } from '@/lib/imageUpload'
 import { generateSlug } from '@/lib/utils'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 
@@ -20,6 +21,7 @@ export default function NewProductPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<string[]>([])
 
   const [formData, setFormData] = useState({
     name: '',
@@ -125,6 +127,49 @@ export default function NewProductPage() {
       setError('Error creating product. Please try again.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return
+
+    setUploading(true)
+    setUploadProgress([])
+    
+    try {
+      const fileArray = Array.from(files)
+      // Generate a temporary ID for upload (since product doesn't exist yet)
+      const tempId = `temp-${Date.now()}`
+      const uploadResults = await imageUploadService.uploadMultipleImages(fileArray, tempId)
+      
+      const successfulUploads = uploadResults
+        .filter(result => result.success && result.url)
+        .map(result => result.url!)
+
+      const failedUploads = uploadResults
+        .filter(result => !result.success)
+        .map(result => result.error)
+
+      if (successfulUploads.length > 0) {
+        const newImages = [...formData.images, ...successfulUploads]
+        setFormData({ ...formData, images: newImages })
+        setUploadProgress(prev => [...prev, `✅ Uploaded ${successfulUploads.length} image(s) successfully`])
+      }
+
+      if (failedUploads.length > 0) {
+        setUploadProgress(prev => [...prev, `❌ ${failedUploads.length} upload(s) failed`])
+        failedUploads.forEach(error => {
+          setUploadProgress(prev => [...prev, `Error: ${error}`])
+        })
+      }
+
+    } catch (error) {
+      console.error('Upload error:', error)
+      setUploadProgress(['❌ Upload failed. Please try again.'])
+    } finally {
+      setUploading(false)
+      // Clear progress after 5 seconds
+      setTimeout(() => setUploadProgress([]), 5000)
     }
   }
 
@@ -266,10 +311,20 @@ export default function NewProductPage() {
                   </p>
                   <p className="text-sm text-gray-500 mb-4">PNG, JPG, WebP, GIF up to 10MB each</p>
                   
+                  {/* Upload Progress */}
+                  {uploadProgress.length > 0 && (
+                    <div className="mb-4 p-3 bg-gray-50 rounded-lg text-left">
+                      {uploadProgress.map((message, index) => (
+                        <p key={index} className="text-sm text-gray-700">{message}</p>
+                      ))}
+                    </div>
+                  )}
+
                   <input
                     type="file"
                     multiple
                     accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                    onChange={(e) => handleImageUpload(e.target.files)}
                     className="hidden"
                     id="image-upload"
                     disabled={uploading}
