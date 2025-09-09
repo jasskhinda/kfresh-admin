@@ -117,6 +117,7 @@ export interface Database {
           image_url: string | null
           is_active: boolean
           sort_order: number
+          is_fresh_meals: boolean
           created_at: string
           updated_at: string
         }
@@ -129,6 +130,7 @@ export interface Database {
           image_url?: string | null
           is_active?: boolean
           sort_order?: number
+          is_fresh_meals?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -141,6 +143,7 @@ export interface Database {
           image_url?: string | null
           is_active?: boolean
           sort_order?: number
+          is_fresh_meals?: boolean
           created_at?: string
           updated_at?: string
         }

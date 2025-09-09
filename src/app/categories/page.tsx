@@ -817,6 +817,7 @@ function getEnhancedMockCategories(): Category[] {
       image_url: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 1,
+      is_fresh_meals: false,
       created_at: '2025-01-07T10:00:00Z',
       updated_at: '2025-01-07T10:00:00Z'
     },
@@ -829,6 +830,7 @@ function getEnhancedMockCategories(): Category[] {
       image_url: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 2,
+      is_fresh_meals: false,
       created_at: '2025-01-07T10:00:00Z',
       updated_at: '2025-01-07T10:00:00Z'
     },
@@ -841,6 +843,7 @@ function getEnhancedMockCategories(): Category[] {
       image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 3,
+      is_fresh_meals: false,
       created_at: '2025-01-07T10:00:00Z',
       updated_at: '2025-01-07T10:00:00Z'
     },
@@ -853,6 +856,7 @@ function getEnhancedMockCategories(): Category[] {
       image_url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 4,
+      is_fresh_meals: true,
       created_at: '2025-01-07T10:00:00Z',
       updated_at: '2025-01-07T10:00:00Z'
     },
@@ -865,6 +869,7 @@ function getEnhancedMockCategories(): Category[] {
       image_url: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 5,
+      is_fresh_meals: false,
       created_at: '2025-01-07T10:00:00Z',
       updated_at: '2025-01-07T10:00:00Z'
     },
@@ -877,6 +882,7 @@ function getEnhancedMockCategories(): Category[] {
       image_url: 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 6,
+      is_fresh_meals: false,
       created_at: '2025-01-07T10:00:00Z',
       updated_at: '2025-01-07T10:00:00Z'
     },
@@ -889,6 +895,7 @@ function getEnhancedMockCategories(): Category[] {
       image_url: 'https://images.unsplash.com/photo-1516594798947-e65505dbb29d?w=400&h=400&fit=crop&crop=center',
       is_active: true,
       sort_order: 7,
+      is_fresh_meals: false,
       created_at: '2025-01-07T10:00:00Z',
       updated_at: '2025-01-07T10:00:00Z'
     }
