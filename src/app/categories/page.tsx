@@ -35,18 +35,6 @@ export default function CategoriesPage() {
 
   useEffect(() => {
     fetchCategories()
-    
-    // Extended emergency fallback for production reliability
-    const emergencyTimeout = setTimeout(() => {
-      console.log('⚠️ Emergency timeout: Forcing categories loading to end')
-      setLoading(false)
-      if (categories.length === 0) {
-        console.log('📁 Using enhanced mock data as fallback')
-        setCategories(getEnhancedMockCategories())
-      }
-    }, 45000) // Increased to 45 seconds to avoid premature fallback
-
-    return () => clearTimeout(emergencyTimeout)
   }, [])
 
   const fetchCategories = async () => {
@@ -55,17 +43,23 @@ export default function CategoriesPage() {
       const supabase = createClient()
       console.log('📡 Making Supabase categories query...')
       
-      // Simplified approach: just make the request with longer timeout
+      // Simplified approach: just make the request without timeout
       const { data, error } = await supabase
         .from('categories')
         .select('*')
         .order('sort_order', { ascending: true })
-        .abortSignal(AbortSignal.timeout(30000)) // 30 second timeout
 
       if (error) {
         console.error('❌ Categories Supabase error:', error)
-        setDataSource('fallback')
-        setCategories(getEnhancedMockCategories())
+        // Only fall back to mock data in development
+        if (process.env.NODE_ENV === 'development') {
+          setDataSource('fallback')
+          setCategories(getEnhancedMockCategories())
+        } else {
+          // In production, show empty state instead of mock data
+          setDataSource('database')
+          setCategories([])
+        }
       } else {
         console.log('✅ Got categories:', data?.length || 0)
         setDataSource('database')
@@ -73,8 +67,15 @@ export default function CategoriesPage() {
       }
     } catch (error) {
       console.error('❌ Categories fetch error:', error)
-      setDataSource('fallback')
-      setCategories(getEnhancedMockCategories())
+      // Only fall back to mock data in development
+      if (process.env.NODE_ENV === 'development') {
+        setDataSource('fallback')
+        setCategories(getEnhancedMockCategories())
+      } else {
+        // In production, show empty state instead of mock data
+        setDataSource('database')
+        setCategories([])
+      }
     } finally {
       console.log('✅ Setting categories loading to false')
       setLoading(false)
