@@ -10,7 +10,7 @@ const supabaseAdmin = createClient(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, slug, description, image_url, is_active, sort_order, is_fresh_meals } = body
+    const { name, slug, description, image_url, is_active, sort_order, is_fresh_meals, show_in_homepage_hero, homepage_order, icon, color_class } = body
 
     const { data, error } = await supabaseAdmin
       .from('categories')
@@ -21,7 +21,11 @@ export async function POST(request: NextRequest) {
         image_url: image_url || null,
         is_active,
         sort_order,
-        is_fresh_meals: Boolean(is_fresh_meals)
+        is_fresh_meals: Boolean(is_fresh_meals),
+        show_in_homepage_hero: Boolean(show_in_homepage_hero),
+        homepage_order: homepage_order || 999,
+        icon: icon || '🛒',
+        color_class: color_class || 'bg-gray-100 text-gray-600'
       }])
       .select()
 
@@ -40,7 +44,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, name, slug, description, image_url, is_active, sort_order, is_fresh_meals } = body
+    const { id, name, slug, description, image_url, is_active, sort_order, is_fresh_meals, show_in_homepage_hero, homepage_order, icon, color_class } = body
 
     if (!id) {
       return NextResponse.json({ error: 'Category ID is required' }, { status: 400 })
@@ -56,6 +60,10 @@ export async function PUT(request: NextRequest) {
         is_active,
         sort_order,
         is_fresh_meals: Boolean(is_fresh_meals),
+        show_in_homepage_hero: Boolean(show_in_homepage_hero),
+        homepage_order: homepage_order || 999,
+        icon: icon || '🛒',
+        color_class: color_class || 'bg-gray-100 text-gray-600',
         updated_at: new Date().toISOString()
       })
       .eq('id', id)
