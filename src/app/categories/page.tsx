@@ -465,8 +465,8 @@ export default function CategoriesPage() {
                     {category.image_url ? (
                       <div className="relative h-12 w-12">
                         <img
-                          key={`${category.id}-${category.updated_at}`} // Cache busting key
-                          src={`${category.image_url}${category.image_url.includes('?') ? '&' : '?'}t=${Date.now()}`}
+                          key={`${category.id}-${category.updated_at}-${category.image_url}`} // More aggressive cache busting
+                          src={`${category.image_url}${category.image_url.includes('?') ? '&' : '?'}t=${Date.now()}&v=${Math.random()}`}
                           alt={category.name}
                           className="h-12 w-12 object-cover rounded-lg border border-gray-200"
                           onError={(e) => {
