@@ -13,7 +13,8 @@ import {
   Download,
   Calendar,
   Filter,
-  RefreshCw 
+  RefreshCw,
+  AlertCircle 
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice, downloadCSV } from '@/lib/utils'
@@ -40,6 +41,7 @@ interface ProductData {
 export default function ReportsPage() {
   const [dateRange, setDateRange] = useState('7d')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [salesData, setSalesData] = useState<SalesData[]>([])
   const [categoryData, setCategoryData] = useState<CategoryData[]>([])
   const [topProducts, setTopProducts] = useState<ProductData[]>([])
@@ -52,29 +54,19 @@ export default function ReportsPage() {
     totalProducts: 0,
     lowStockItems: 0,
     activeCategories: 0,
-    conversionRate: 12.4,
-    growthRate: 8.7
+    outOfStockItems: 0,
+    wellStockedItems: 0
   })
 
   useEffect(() => {
     fetchReportsData()
-    
-    // Emergency fallback: force loading to end after 5 seconds
-    const emergencyTimeout = setTimeout(() => {
-      console.log('⚠️ Emergency timeout: Forcing reports loading to end')
-      setLoading(false)
-      setMockData()
-    }, 5000)
-
-    return () => clearTimeout(emergencyTimeout)
   }, [dateRange])
 
   const fetchReportsData = async () => {
-    console.log('🔄 Starting fetchReportsData...')
-    setLoading(true)
     try {
+      setLoading(true)
+      setError(null)
       const supabase = createClient()
-      console.log('📡 Making Supabase reports queries...')
       
       // Get date range
       const endDate = new Date()
@@ -95,100 +87,56 @@ export default function ReportsPage() {
           break
       }
 
-      // Add timeout protection for all queries
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Reports request timeout')), 3000)
-      )
-
-      // Fetch orders data with timeout
-      const ordersPromise = supabase
+      // Fetch orders data
+      const { data: orders, error: ordersError } = await supabase
         .from('orders')
-        .select('*')
+        .select('id, order_number, total, payment_method, payment_status, email, created_at, order_items(quantity, unit_price, products(name, category_id, categories(name)))')
         .gte('created_at', startDate.toISOString())
         .lte('created_at', endDate.toISOString())
+        .order('created_at', { ascending: false })
 
-      const ordersResult = await Promise.race([ordersPromise, timeoutPromise])
-      const { data: orders, error: ordersError } = ordersResult as any
-
-      // Fetch products data with timeout
-      const productsPromise = supabase
+      // Fetch products data
+      const { data: products, error: productsError } = await supabase
         .from('products')
-        .select('*')
+        .select('id, name, price, stock_quantity, low_stock_threshold, category_id, categories(name)')
 
-      const productsResult = await Promise.race([productsPromise, timeoutPromise])
-      const { data: products, error: productsError } = productsResult as any
-
-      // Fetch categories data with timeout
-      const categoriesPromise = supabase
+      // Fetch categories data
+      const { data: categories, error: categoriesError } = await supabase
         .from('categories')
-        .select('*')
+        .select('id, name, is_active')
         .eq('is_active', true)
 
-      const categoriesResult = await Promise.race([categoriesPromise, timeoutPromise])
-      const { data: categories, error: categoriesError } = categoriesResult as any
-
       if (ordersError || productsError || categoriesError) {
-        console.error('❌ Reports data fetch error')
-        setMockData()
-      } else {
-        console.log('✅ Reports data fetched successfully')
-        processReportsData(orders || [], products || [], categories || [])
+        console.error('Database errors:', { ordersError, productsError, categoriesError })
+        setError('Failed to load reports data')
+        return
       }
+
+      processReportsData(orders || [], products || [], categories || [])
+
     } catch (error) {
-      console.error('❌ Reports fetch error:', error)
-      setMockData()
+      console.error('Reports fetch error:', error)
+      setError('Failed to load reports data')
     } finally {
-      console.log('✅ Setting reports loading to false')
       setLoading(false)
     }
   }
 
-  const setMockData = () => {
-    // Mock data for demonstration
-    setSalesData([
-      { date: '2025-01-01', total: 1250.00, orders: 15 },
-      { date: '2025-01-02', total: 1890.50, orders: 22 },
-      { date: '2025-01-03', total: 1456.75, orders: 18 },
-      { date: '2025-01-04', total: 2134.25, orders: 28 },
-      { date: '2025-01-05', total: 1678.90, orders: 21 },
-      { date: '2025-01-06', total: 2345.60, orders: 31 },
-      { date: '2025-01-07', total: 1987.30, orders: 25 }
-    ])
-
-    setCategoryData([
-      { category: 'Fresh Produce', sales: 3456.78, orders: 89 },
-      { category: 'Cooked Meals', sales: 2890.45, orders: 67 },
-      { category: 'Meat & Seafood', sales: 2345.67, orders: 45 },
-      { category: 'Rice & Grains', sales: 1876.34, orders: 78 },
-      { category: 'Pantry Essentials', sales: 1567.89, orders: 56 }
-    ])
-
-    setTopProducts([
-      { name: 'Ghana Yam', sales: 567.89, quantity: 95 },
-      { name: 'Jollof Rice Combo', sales: 456.78, quantity: 35 },
-      { name: 'Palm Oil (500ml)', sales: 389.45, quantity: 30 },
-      { name: 'Cassava Flour', sales: 345.67, quantity: 49 },
-      { name: 'Fresh Plantains', sales: 234.56, quantity: 78 }
-    ])
-
-    setMetrics({
-      totalRevenue: 12743.30,
-      totalOrders: 160,
-      averageOrderValue: 79.65,
-      totalProducts: 156,
-      lowStockItems: 12,
-      activeCategories: 10,
-      conversionRate: 12.4,
-      growthRate: 8.7
-    })
-  }
 
   const processReportsData = (orders: any[], products: any[], categories: any[]) => {
-    // Process actual data from database
-    const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0)
+    // Calculate basic metrics
+    const totalRevenue = orders
+      .filter(order => order.payment_status === 'paid')
+      .reduce((sum, order) => sum + order.total, 0)
     const totalOrders = orders.length
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0
-    const lowStockItems = products.filter(p => p.stock_quantity <= p.low_stock_threshold || 5).length
+    
+    // Calculate stock metrics
+    const lowStockItems = products.filter(p => 
+      p.stock_quantity <= (p.low_stock_threshold || 5)
+    ).length
+    const outOfStockItems = products.filter(p => p.stock_quantity === 0).length
+    const wellStockedItems = products.length - lowStockItems - outOfStockItems
 
     setMetrics({
       totalRevenue,
@@ -197,8 +145,8 @@ export default function ReportsPage() {
       totalProducts: products.length,
       lowStockItems,
       activeCategories: categories.length,
-      conversionRate: 12.4, // Would calculate from analytics
-      growthRate: 8.7 // Would calculate from historical data
+      outOfStockItems,
+      wellStockedItems
     })
 
     // Process sales data by date
@@ -208,20 +156,79 @@ export default function ReportsPage() {
       if (!salesByDate[date]) {
         salesByDate[date] = { total: 0, orders: 0 }
       }
-      salesByDate[date].total += order.total
+      if (order.payment_status === 'paid') {
+        salesByDate[date].total += order.total
+      }
       salesByDate[date].orders += 1
     })
 
-    const salesDataArray = Object.entries(salesByDate).map(([date, data]) => ({
-      date,
-      total: data.total,
-      orders: data.orders
-    }))
+    const salesDataArray = Object.entries(salesByDate)
+      .map(([date, data]) => ({
+        date,
+        total: data.total,
+        orders: data.orders
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
     setSalesData(salesDataArray)
     
-    // Use mock data for categories and products if no specific data available
-    setMockData()
+    // Process category performance data
+    const categoryStats: { [key: string]: { sales: number, orders: Set<string> } } = {}
+    
+    orders.forEach(order => {
+      if (order.order_items && order.payment_status === 'paid') {
+        order.order_items.forEach((item: any) => {
+          if (item.products?.categories?.name) {
+            const categoryName = item.products.categories.name
+            if (!categoryStats[categoryName]) {
+              categoryStats[categoryName] = { sales: 0, orders: new Set() }
+            }
+            categoryStats[categoryName].sales += item.quantity * item.unit_price
+            categoryStats[categoryName].orders.add(order.id)
+          }
+        })
+      }
+    })
+
+    const categoryDataArray = Object.entries(categoryStats)
+      .map(([category, stats]) => ({
+        category,
+        sales: stats.sales,
+        orders: stats.orders.size
+      }))
+      .sort((a, b) => b.sales - a.sales)
+      .slice(0, 5)
+
+    setCategoryData(categoryDataArray)
+
+    // Process top products data
+    const productStats: { [key: string]: { sales: number, quantity: number } } = {}
+    
+    orders.forEach(order => {
+      if (order.order_items && order.payment_status === 'paid') {
+        order.order_items.forEach((item: any) => {
+          if (item.products?.name) {
+            const productName = item.products.name
+            if (!productStats[productName]) {
+              productStats[productName] = { sales: 0, quantity: 0 }
+            }
+            productStats[productName].sales += item.quantity * item.unit_price
+            productStats[productName].quantity += item.quantity
+          }
+        })
+      }
+    })
+
+    const topProductsArray = Object.entries(productStats)
+      .map(([name, stats]) => ({
+        name,
+        sales: stats.sales,
+        quantity: stats.quantity
+      }))
+      .sort((a, b) => b.sales - a.sales)
+      .slice(0, 5)
+
+    setTopProducts(topProductsArray)
   }
 
   const handleExportReport = () => {
@@ -292,7 +299,7 @@ export default function ReportsPage() {
               <p className="text-2xl font-bold text-gray-900">{formatPrice(metrics.totalRevenue)}</p>
               <div className="flex items-center mt-1">
                 <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-                <span className="text-xs text-green-600 font-medium">+{metrics.growthRate}%</span>
+                <span className="text-xs text-green-600 font-medium">Revenue</span>
               </div>
             </div>
             <div className="bg-green-100 p-3 rounded-full">
@@ -308,7 +315,7 @@ export default function ReportsPage() {
               <p className="text-2xl font-bold text-gray-900">{metrics.totalOrders}</p>
               <div className="flex items-center mt-1">
                 <TrendingUp className="h-4 w-4 text-blue-500 mr-1" />
-                <span className="text-xs text-blue-600 font-medium">+{metrics.conversionRate}%</span>
+                <span className="text-xs text-blue-600 font-medium">Total orders</span>
               </div>
             </div>
             <div className="bg-blue-100 p-3 rounded-full">
@@ -465,7 +472,7 @@ export default function ReportsPage() {
                     <div className="flex items-center space-x-2">
                       <TrendingUp className="h-4 w-4 text-green-500" />
                       <span className="text-sm text-green-600 font-medium">
-                        +{Math.floor(Math.random() * 15 + 5)}%
+                        {product.quantity} sold
                       </span>
                     </div>
                   </td>
@@ -491,55 +498,80 @@ export default function ReportsPage() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Out of Stock</span>
-              <span className="font-medium text-red-600">3</span>
+              <span className="font-medium text-red-600">{metrics.outOfStockItems}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Well Stocked</span>
-              <span className="font-medium text-green-600">{metrics.totalProducts - metrics.lowStockItems - 3}</span>
+              <span className="font-medium text-green-600">{metrics.wellStockedItems}</span>
             </div>
           </div>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Fulfillment</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Pickup Orders</span>
-              <span className="font-medium">67%</span>
+              <span className="text-sm text-gray-600">Paid Orders</span>
+              <span className="font-medium text-green-600">
+                {metrics.totalOrders > 0 ? 
+                  Math.round((salesData.reduce((sum, day) => sum + day.orders, 0) / metrics.totalOrders) * 100) : 0
+                }%
+              </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Delivery Orders</span>
-              <span className="font-medium">33%</span>
+              <span className="text-sm text-gray-600">Pending Orders</span>
+              <span className="font-medium text-orange-600">
+                {metrics.totalOrders > 0 ? 
+                  100 - Math.round((salesData.reduce((sum, day) => sum + day.orders, 0) / metrics.totalOrders) * 100) : 0
+                }%
+              </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Average Prep Time</span>
-              <span className="font-medium">25 min</span>
+              <span className="text-sm text-gray-600">Daily Average</span>
+              <span className="font-medium">
+                {salesData.length > 0 ? 
+                  Math.round(salesData.reduce((sum, day) => sum + day.orders, 0) / salesData.length) : 0
+                } orders
+              </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">On-Time Rate</span>
-              <span className="font-medium text-green-600">94%</span>
+              <span className="text-sm text-gray-600">Peak Day Revenue</span>
+              <span className="font-medium text-green-600">
+                {salesData.length > 0 ? 
+                  formatPrice(Math.max(...salesData.map(day => day.total))) : 
+                  formatPrice(0)
+                }
+              </span>
             </div>
           </div>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Customer Insights</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance Insights</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Repeat Customers</span>
-              <span className="font-medium">42%</span>
+              <span className="text-sm text-gray-600">Categories Active</span>
+              <span className="font-medium">{metrics.activeCategories}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">New Customers</span>
-              <span className="font-medium">58%</span>
+              <span className="text-sm text-gray-600">Best Category</span>
+              <span className="font-medium text-green-600">
+                {categoryData.length > 0 ? categoryData[0].category : 'No data'}
+              </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Avg. Order Frequency</span>
-              <span className="font-medium">2.3/month</span>
+              <span className="text-sm text-gray-600">Top Product Sales</span>
+              <span className="font-medium">
+                {topProducts.length > 0 ? formatPrice(topProducts[0].sales) : formatPrice(0)}
+              </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Customer Satisfaction</span>
-              <span className="font-medium text-green-600">4.6/5</span>
+              <span className="text-sm text-gray-600">Stock Health</span>
+              <span className="font-medium text-green-600">
+                {metrics.totalProducts > 0 ? 
+                  Math.round((metrics.wellStockedItems / metrics.totalProducts) * 100) : 0
+                }% Good
+              </span>
             </div>
           </div>
         </div>
