@@ -12,8 +12,13 @@ export class ImageUploadService {
 
   async uploadImage(file: File, folder: string = 'products'): Promise<UploadResult> {
     try {
+      console.log('📁 Starting image upload to folder:', folder)
+      console.log('📄 File info:', { name: file.name, size: file.size, type: file.type })
+      
       // Check if user is authenticated
       const { data: { user }, error: authError } = await this.supabase.auth.getUser()
+      console.log('👤 Auth check:', { user: !!user, error: authError })
+      
       if (authError || !user) {
         return {
           success: false,
@@ -40,6 +45,8 @@ export class ImageUploadService {
       const fileExt = file.name.split('.').pop()
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`
       const filePath = `${folder}/${fileName}`
+      
+      console.log('📤 Upload details:', { fileName, filePath, bucketName: this.bucketName })
 
       // Upload to Supabase Storage with explicit options
       const { data, error } = await this.supabase.storage
@@ -50,8 +57,10 @@ export class ImageUploadService {
           duplex: 'half'
         })
 
+      console.log('🔄 Upload response:', { data, error })
+
       if (error) {
-        console.error('Upload error:', error)
+        console.error('❌ Upload error:', error)
         
         // Provide more specific error messages
         if (error.message.includes('row-level security')) {
@@ -71,6 +80,8 @@ export class ImageUploadService {
       const { data: urlData } = this.supabase.storage
         .from(this.bucketName)
         .getPublicUrl(filePath)
+
+      console.log('🔗 Public URL generated:', urlData.publicUrl)
 
       return {
         success: true,
@@ -96,7 +107,8 @@ export class ImageUploadService {
       // Extract file path from URL
       const urlParts = imageUrl.split('/')
       const fileName = urlParts[urlParts.length - 1]
-      const filePath = `products/${fileName}`
+      const folderName = urlParts[urlParts.length - 2] // Get folder from URL path
+      const filePath = `${folderName}/${fileName}`
 
       const { error } = await this.supabase.storage
         .from(this.bucketName)
