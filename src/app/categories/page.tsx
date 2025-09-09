@@ -30,6 +30,8 @@ export default function CategoriesPage() {
   })
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<string[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [bulkDeleting, setBulkDeleting] = useState(false)
 
   const supabase = createClient()
 
@@ -282,6 +284,56 @@ export default function CategoriesPage() {
     setUploadProgress([])
   }
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedCategories(filteredCategories.map(category => category.id))
+    } else {
+      setSelectedCategories([])
+    }
+  }
+
+  const handleSelectCategory = (categoryId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedCategories(prev => [...prev, categoryId])
+    } else {
+      setSelectedCategories(prev => prev.filter(id => id !== categoryId))
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedCategories.length === 0) {
+      alert('Please select categories to delete')
+      return
+    }
+
+    const confirmed = confirm(`Are you sure you want to delete ${selectedCategories.length} category(s)?`)
+    if (!confirmed) return
+
+    setBulkDeleting(true)
+    
+    try {
+      for (const categoryId of selectedCategories) {
+        const response = await fetch(`/api/categories?id=${categoryId}`, {
+          method: 'DELETE'
+        })
+
+        if (!response.ok) {
+          const result = await response.json()
+          throw new Error(result.error || 'Failed to delete category')
+        }
+      }
+      
+      await fetchCategories()
+      setSelectedCategories([])
+      alert(`Successfully deleted ${selectedCategories.length} category(s)`)
+    } catch (error) {
+      console.error('Error deleting categories:', error)
+      alert('Error deleting categories. Please try again.')
+    } finally {
+      setBulkDeleting(false)
+    }
+  }
+
   const filteredCategories = categories.filter(category =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     category.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -316,6 +368,16 @@ export default function CategoriesPage() {
             <p className="text-gray-600">Manage product categories</p>
           </div>
           <div className="flex gap-2">
+            {selectedCategories.length > 0 && (
+              <button
+                onClick={handleBulkDelete}
+                disabled={bulkDeleting}
+                className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Trash2 className="h-4 w-4" />
+                {bulkDeleting ? 'Deleting...' : `Delete ${selectedCategories.length}`}
+              </button>
+            )}
             <button
               onClick={() => {
                 console.log('🔄 Manual refresh triggered')
@@ -327,16 +389,6 @@ export default function CategoriesPage() {
             >
               <Search className="h-4 w-4" />
               Refresh
-            </button>
-            <button
-              onClick={() => {
-                console.log('🔄 Hard refresh triggered')
-                window.location.reload()
-              }}
-              className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              <Search className="h-4 w-4" />
-              Hard Refresh
             </button>
             <button
               onClick={() => setShowModal(true)}
@@ -403,6 +455,15 @@ export default function CategoriesPage() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <input
+                  type="checkbox"
+                  checked={selectedCategories.length === filteredCategories.length && filteredCategories.length > 0}
+                  onChange={(e) => handleSelectAll(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                  aria-label="Select all categories"
+                />
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Category
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -431,7 +492,7 @@ export default function CategoriesPage() {
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredCategories.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center">
+                <td colSpan={8} className="px-6 py-12 text-center">
                   <FolderTree className="mx-auto h-12 w-12 text-gray-400" />
                   <h3 className="mt-4 text-sm font-medium text-gray-900">No categories found</h3>
                   <p className="mt-2 text-sm text-gray-500">
@@ -449,6 +510,15 @@ export default function CategoriesPage() {
             ) : (
               filteredCategories.map((category) => (
                 <tr key={category.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      checked={selectedCategories.includes(category.id)}
+                      onChange={(e) => handleSelectCategory(category.id, e.target.checked)}
+                      className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                      aria-label={`Select ${category.name}`}
+                    />
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">
