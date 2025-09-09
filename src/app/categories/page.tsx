@@ -57,7 +57,7 @@ export default function CategoriesPage() {
       
       // Extended timeout for production reliability
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Categories request timeout')), 10000)
+        setTimeout(() => reject(new Error('Categories request timeout')), 30000)
       )
       
       const supabasePromise = supabase
