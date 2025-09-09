@@ -26,7 +26,11 @@ export default function CategoriesPage() {
     image_url: '',
     is_active: true,
     sort_order: 0,
-    is_fresh_meals: false
+    is_fresh_meals: false,
+    show_in_homepage_hero: false,
+    homepage_order: 999,
+    icon: '🛒',
+    color_class: 'bg-gray-100 text-gray-600'
   })
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<string[]>([])
@@ -127,8 +131,12 @@ export default function CategoriesPage() {
         image_url: formData.image_url || null,
         is_active: formData.is_active,
         sort_order: formData.sort_order,
-        is_fresh_meals: formData.is_fresh_meals
-      }
+        is_fresh_meals: formData.is_fresh_meals,
+        show_in_homepage_hero: formData.show_in_homepage_hero,
+        homepage_order: formData.homepage_order,
+        icon: formData.icon,
+        color_class: formData.color_class
+      } as any
 
       console.log('Submitting category data:', categoryData)
       console.log('Editing category:', editingCategory)
@@ -195,7 +203,11 @@ export default function CategoriesPage() {
       image_url: category.image_url || '',
       is_active: category.is_active,
       sort_order: category.sort_order,
-      is_fresh_meals: (category as any).is_fresh_meals || false
+      is_fresh_meals: (category as any).is_fresh_meals || false,
+      show_in_homepage_hero: (category as any).show_in_homepage_hero || false,
+      homepage_order: (category as any).homepage_order || 999,
+      icon: (category as any).icon || '🛒',
+      color_class: (category as any).color_class || 'bg-gray-100 text-gray-600'
     })
     setShowModal(true)
   }
@@ -278,7 +290,11 @@ export default function CategoriesPage() {
       image_url: '',
       is_active: true,
       sort_order: 0,
-      is_fresh_meals: false
+      is_fresh_meals: false,
+      show_in_homepage_hero: false,
+      homepage_order: 999,
+      icon: '🛒',
+      color_class: 'bg-gray-100 text-gray-600'
     })
     setEditingCategory(null)
     setUploadProgress([])
@@ -799,6 +815,90 @@ export default function CategoriesPage() {
                                     <li>• <strong>Fulfillment:</strong> In-store pickup only</li>
                                     <li>• <strong>Menu Display:</strong> Products show as Food Menu on fresh-meals page</li>
                                   </ul>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Homepage Hero Section */}
+                    <div className="border-t pt-6">
+                      <div className="flex items-start space-x-3">
+                        <div className="flex-shrink-0">
+                          <svg className="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <label className="flex items-center space-x-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={formData.show_in_homepage_hero}
+                                onChange={(e) => setFormData({ ...formData, show_in_homepage_hero: e.target.checked })}
+                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                              />
+                              <span className="text-sm font-medium text-gray-900">
+                                Show in Homepage Hero Section
+                              </span>
+                            </label>
+                          </div>
+                          
+                          {formData.show_in_homepage_hero && (
+                            <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                              <div className="space-y-3">
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                                      Icon (Emoji)
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={formData.icon}
+                                      onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                                      className="w-full px-2 py-1 border border-gray-300 rounded text-lg text-center bg-white"
+                                      placeholder="🛒"
+                                      maxLength={2}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                                      Homepage Order
+                                    </label>
+                                    <input
+                                      type="number"
+                                      value={formData.homepage_order}
+                                      onChange={(e) => setFormData({ ...formData, homepage_order: parseInt(e.target.value) || 999 })}
+                                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                                      min="1"
+                                      max="999"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                                    Color Theme
+                                  </label>
+                                  <select
+                                    value={formData.color_class}
+                                    onChange={(e) => setFormData({ ...formData, color_class: e.target.value })}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm bg-white"
+                                  >
+                                    <option value="bg-gray-100 text-gray-600">Gray (Default)</option>
+                                    <option value="bg-orange-100 text-orange-600">Orange</option>
+                                    <option value="bg-red-100 text-red-600">Red</option>
+                                    <option value="bg-blue-100 text-blue-600">Blue</option>
+                                    <option value="bg-green-100 text-green-600">Green</option>
+                                    <option value="bg-yellow-100 text-yellow-600">Yellow</option>
+                                    <option value="bg-purple-100 text-purple-600">Purple</option>
+                                    <option value="bg-indigo-100 text-indigo-600">Indigo</option>
+                                    <option value="bg-amber-100 text-amber-600">Amber</option>
+                                  </select>
+                                </div>
+                                <div className="text-xs text-blue-700 bg-blue-100 p-2 rounded">
+                                  <strong>Note:</strong> This category will appear on the homepage for quick access. Maximum 9 categories can be shown.
                                 </div>
                               </div>
                             </div>
