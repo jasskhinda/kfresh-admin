@@ -10,7 +10,7 @@ const supabaseAdmin = createClient(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, slug, description, is_active, sort_order } = body
+    const { name, slug, description, is_active, sort_order, is_fresh_meals } = body
 
     const { data, error } = await supabaseAdmin
       .from('categories')
@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
         slug: slug.trim(),
         description: description?.trim() || null,
         is_active,
-        sort_order
+        sort_order,
+        is_fresh_meals: Boolean(is_fresh_meals)
       }])
       .select()
 
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, name, slug, description, is_active, sort_order } = body
+    const { id, name, slug, description, is_active, sort_order, is_fresh_meals } = body
 
     if (!id) {
       return NextResponse.json({ error: 'Category ID is required' }, { status: 400 })
@@ -51,7 +52,8 @@ export async function PUT(request: NextRequest) {
         slug: slug.trim(),
         description: description?.trim() || null,
         is_active,
-        sort_order
+        sort_order,
+        is_fresh_meals: Boolean(is_fresh_meals)
       })
       .eq('id', id)
       .select()
