@@ -809,7 +809,7 @@ export default function CategoriesPage() {
 function getEnhancedMockCategories(): Category[] {
   return [
     {
-      id: '1',
+      id: '11111111-1111-1111-1111-111111111111',
       name: 'Fresh Produce',
       slug: 'fresh-produce',
       description: 'Fresh fruits and vegetables',
@@ -822,7 +822,7 @@ function getEnhancedMockCategories(): Category[] {
       updated_at: '2025-01-07T10:00:00Z'
     },
     {
-      id: '2',
+      id: '22222222-2222-2222-2222-222222222222',
       name: 'Meat & Poultry',
       slug: 'meat-poultry',
       description: 'Fresh and frozen meat products',
@@ -835,7 +835,7 @@ function getEnhancedMockCategories(): Category[] {
       updated_at: '2025-01-07T10:00:00Z'
     },
     {
-      id: '3',
+      id: '33333333-3333-3333-3333-333333333333',
       name: 'Pantry Essentials',
       slug: 'pantry-essentials',
       description: 'Rice, flour, spices and cooking ingredients',
@@ -848,7 +848,7 @@ function getEnhancedMockCategories(): Category[] {
       updated_at: '2025-01-07T10:00:00Z'
     },
     {
-      id: '4',
+      id: '44444444-4444-4444-4444-444444444444',
       name: 'Cooked Meals',
       slug: 'cooked-meals',
       description: 'Ready-to-eat traditional dishes',
@@ -861,7 +861,7 @@ function getEnhancedMockCategories(): Category[] {
       updated_at: '2025-01-07T10:00:00Z'
     },
     {
-      id: '5',
+      id: '55555555-5555-5555-5555-555555555555',
       name: 'International Foods',
       slug: 'international-foods',
       description: 'Authentic foods from around the world',
@@ -874,7 +874,7 @@ function getEnhancedMockCategories(): Category[] {
       updated_at: '2025-01-07T10:00:00Z'
     },
     {
-      id: '6',
+      id: '66666666-6666-6666-6666-666666666666',
       name: 'Dairy & Eggs',
       slug: 'dairy-eggs',
       description: 'Fresh dairy products and eggs',
@@ -887,7 +887,7 @@ function getEnhancedMockCategories(): Category[] {
       updated_at: '2025-01-07T10:00:00Z'
     },
     {
-      id: '7',
+      id: '77777777-7777-7777-7777-777777777777',
       name: 'Beverages',
       slug: 'beverages',
       description: 'Drinks and beverages',
