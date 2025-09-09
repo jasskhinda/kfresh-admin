@@ -10,7 +10,7 @@ export class ImageUploadService {
   private supabase = createClient()
   private bucketName = 'product-images'
 
-  async uploadImage(file: File, productId?: string): Promise<UploadResult> {
+  async uploadImage(file: File, folder: string = 'products'): Promise<UploadResult> {
     try {
       // Check if user is authenticated
       const { data: { user }, error: authError } = await this.supabase.auth.getUser()
@@ -38,8 +38,8 @@ export class ImageUploadService {
 
       // Generate unique filename
       const fileExt = file.name.split('.').pop()
-      const fileName = `${productId || 'temp'}_${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`
-      const filePath = `products/${fileName}`
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`
+      const filePath = `${folder}/${fileName}`
 
       // Upload to Supabase Storage with explicit options
       const { data, error } = await this.supabase.storage
@@ -86,8 +86,8 @@ export class ImageUploadService {
     }
   }
 
-  async uploadMultipleImages(files: File[], productId?: string): Promise<UploadResult[]> {
-    const uploadPromises = files.map(file => this.uploadImage(file, productId))
+  async uploadMultipleImages(files: File[], folder: string = 'products'): Promise<UploadResult[]> {
+    const uploadPromises = files.map(file => this.uploadImage(file, folder))
     return Promise.all(uploadPromises)
   }
 
