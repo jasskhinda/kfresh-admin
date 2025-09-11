@@ -877,61 +877,97 @@ export default function ProductEditPage() {
           </div>
         </div>
 
-        {/* Delivery Configuration */}
+        {/* Delivery & Purchase Options */}
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-6">Delivery Configuration</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+              <span className="text-blue-600">🚚</span>
+            </div>
+            <h2 className="text-lg font-medium text-gray-900">Delivery & Purchase Options</h2>
+          </div>
           
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Delivery Type
+                Product Type
               </label>
               <select
                 value={product.delivery_type || 'partner_delivery'}
                 onChange={(e) => updateProduct('delivery_type', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
               >
-                <option value="partner_delivery">Groceries (In-store + Partner Delivery)</option>
-                <option value="fresh_meals">Fresh Meals (Pickup Only)</option>
+                <option value="partner_delivery">🛒 Groceries & Products (In-store + Online Partners)</option>
+                <option value="fresh_meals">🍽️ Fresh Meals & Cooked Foods (Pickup Only)</option>
               </select>
-              <p className="mt-2 text-sm text-gray-600">
-                {product.delivery_type === 'fresh_meals' 
-                  ? 'Customers can add to cart and schedule pickup time'
-                  : 'Available in-store and through Uber Eats/DoorDash'}
-              </p>
+              <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-700">
+                  {product.delivery_type === 'fresh_meals' 
+                    ? '🍽️ Fresh Meals: Customers can add to cart and select pickup time. Perfect for hot, ready-to-eat dishes.'
+                    : '🛒 Groceries: Available for in-store shopping. Add partner URLs below to enable online ordering through delivery apps.'}
+                </p>
+              </div>
             </div>
 
-            {/* Partner URLs - Only show for partner_delivery type */}
+            {/* Partner Purchase URLs - Only show for groceries */}
             {product.delivery_type !== 'fresh_meals' && (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Uber Eats Product URL
-                  </label>
-                  <input
-                    type="url"
-                    value={product.uber_eats_url || ''}
-                    onChange={(e) => updateProduct('uber_eats_url', e.target.value || null)}
-                    placeholder="https://www.ubereats.com/..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">Direct link to this product on Uber Eats</p>
+              <div className="border-t pt-6">
+                <h3 className="text-md font-semibold text-gray-900 mb-4">Online Partner Purchase Links</h3>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-amber-800">
+                    <strong>💡 Pro Tip:</strong> If you don't have your own partner URLs yet, you can use competitor URLs as placeholders. 
+                    When customers click "Buy from Uber Eats" or "Buy from DoorDash", they'll be taken to the URL you enter below.
+                  </p>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                      <span className="w-6 h-6 bg-green-100 rounded flex items-center justify-center text-xs">🍃</span>
+                      Uber Eats Buy URL
+                    </label>
+                    <input
+                      type="url"
+                      value={product.uber_eats_url || ''}
+                      onChange={(e) => updateProduct('uber_eats_url', e.target.value || null)}
+                      placeholder="e.g., https://www.ubereats.com/stores/metro-1234"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      {product.uber_eats_url 
+                        ? '✅ "Buy from Uber Eats" button will appear for customers' 
+                        : 'Leave empty to hide Uber Eats option'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                      <span className="w-6 h-6 bg-red-100 rounded flex items-center justify-center text-xs">🚗</span>
+                      DoorDash Buy URL
+                    </label>
+                    <input
+                      type="url"
+                      value={product.doordash_url || ''}
+                      onChange={(e) => updateProduct('doordash_url', e.target.value || null)}
+                      placeholder="e.g., https://www.doordash.com/store/loblaws-5678"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      {product.doordash_url 
+                        ? '✅ "Buy from DoorDash" button will appear for customers' 
+                        : 'Leave empty to hide DoorDash option'}
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    DoorDash Product URL
-                  </label>
-                  <input
-                    type="url"
-                    value={product.doordash_url || ''}
-                    onChange={(e) => updateProduct('doordash_url', e.target.value || null)}
-                    placeholder="https://www.doordash.com/..."
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  />
-                  <p className="mt-1 text-xs text-gray-500">Direct link to this product on DoorDash</p>
+                {/* Example URLs */}
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-xs font-medium text-blue-900 mb-2">📋 Quick Example URLs (for testing):</p>
+                  <div className="space-y-1 text-xs text-blue-800">
+                    <div><strong>Metro Uber:</strong> https://www.ubereats.com/stores/metro</div>
+                    <div><strong>Loblaws DoorDash:</strong> https://www.doordash.com/store/loblaws</div>
+                  </div>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
