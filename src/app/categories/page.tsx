@@ -36,6 +36,7 @@ export default function CategoriesPage() {
   const [uploadProgress, setUploadProgress] = useState<string[]>([])
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
   const [bulkDeleting, setBulkDeleting] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
 
   const supabase = createClient()
 
@@ -264,6 +265,27 @@ export default function CategoriesPage() {
       setUploadProgress([])
     } finally {
       setUploading(false)
+    }
+  }
+
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      // Categories only upload one image at a time
+      handleImageUpload(files[0])
     }
   }
 
@@ -733,12 +755,20 @@ export default function CategoriesPage() {
                           </div>
                         </div>
                       ) : (
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <div 
+                          className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                            uploading ? 'border-blue-400 bg-blue-50' : 
+                            isDragging ? 'border-green-400 bg-green-50' : 'border-gray-300'
+                          }`}
+                          onDragOver={handleDragOver}
+                          onDragLeave={handleDragLeave}
+                          onDrop={handleDrop}
+                        >
                           <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
                           <div className="mt-2">
                             <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700">
                               <Upload className="h-4 w-4" />
-                              Upload Image
+                              {isDragging ? 'Drop image here' : 'Upload Image'}
                               <input
                                 type="file"
                                 accept="image/*"
@@ -751,7 +781,7 @@ export default function CategoriesPage() {
                             </label>
                           </div>
                           <p className="mt-2 text-xs text-gray-500">
-                            PNG, JPG, GIF up to 10MB
+                            {isDragging ? 'Drop your image here' : 'Drag & drop or click to upload • PNG, JPG, GIF up to 10MB'}
                           </p>
                         </div>
                       )}

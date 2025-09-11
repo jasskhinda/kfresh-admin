@@ -22,6 +22,7 @@ export default function NewProductPage() {
   const [error, setError] = useState('')
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<string[]>([])
+  const [isDragging, setIsDragging] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -191,6 +192,27 @@ export default function NewProductPage() {
     setFormData({ ...formData, images: newImages })
   }
 
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      handleImageUpload(files)
+    }
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -306,14 +328,21 @@ export default function NewProductPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Add New Images
                 </label>
-                <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                  uploading ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
-                }`}>
+                <div 
+                  className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
+                    uploading ? 'border-blue-400 bg-blue-50' : 
+                    isDragging ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
                   <Upload className={`h-12 w-12 mx-auto mb-4 ${
                     uploading ? 'text-blue-500 animate-pulse' : 'text-gray-400'
                   }`} />
                   <p className="text-gray-600 mb-2">
-                    {uploading ? 'Uploading images...' : 'Upload product images'}
+                    {uploading ? 'Uploading images...' : 
+                     isDragging ? 'Drop images here' : 'Drag & drop images here or click to upload'}
                   </p>
                   <p className="text-sm text-gray-500 mb-4">PNG, JPG, WebP, GIF up to 10MB each</p>
                   
