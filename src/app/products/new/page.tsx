@@ -47,7 +47,10 @@ export default function NewProductPage() {
     tax_exempt: false,
     images: [] as string[],
     seo_title: '',
-    seo_description: ''
+    seo_description: '',
+    delivery_type: 'partner_delivery',
+    uber_eats_url: '',
+    doordash_url: ''
   })
 
   const supabase = createClient()
@@ -112,7 +115,10 @@ export default function NewProductPage() {
         images: formData.images,
         metadata: {},
         seo_title: formData.seo_title || null,
-        seo_description: formData.seo_description || null
+        seo_description: formData.seo_description || null,
+        delivery_type: formData.delivery_type || 'partner_delivery',
+        uber_eats_url: formData.uber_eats_url || null,
+        doordash_url: formData.doordash_url || null
       }
 
       const { error } = await supabase

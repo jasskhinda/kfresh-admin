@@ -41,6 +41,9 @@ interface Product {
   is_cooked: boolean
   seo_title: string | null
   seo_description: string | null
+  delivery_type?: string | null
+  uber_eats_url?: string | null
+  doordash_url?: string | null
 }
 
 export default function ProductEditPage() {
