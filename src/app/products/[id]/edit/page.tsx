@@ -931,7 +931,7 @@ export default function ProductEditPage() {
                     <input
                       type="url"
                       value={product.uber_eats_url || ''}
-                      onChange={(e) => updateProduct('uber_eats_url', e.target.value || null)}
+                      onChange={(e) => updateProduct('uber_eats_url', e.target.value)}
                       placeholder="e.g., https://www.ubereats.com/stores/metro-1234"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     />
@@ -950,7 +950,7 @@ export default function ProductEditPage() {
                     <input
                       type="url"
                       value={product.doordash_url || ''}
-                      onChange={(e) => updateProduct('doordash_url', e.target.value || null)}
+                      onChange={(e) => updateProduct('doordash_url', e.target.value)}
                       placeholder="e.g., https://www.doordash.com/store/loblaws-5678"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                     />

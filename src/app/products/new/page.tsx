@@ -117,8 +117,8 @@ export default function NewProductPage() {
         seo_title: formData.seo_title || null,
         seo_description: formData.seo_description || null,
         delivery_type: formData.delivery_type || 'partner_delivery',
-        uber_eats_url: formData.uber_eats_url || null,
-        doordash_url: formData.doordash_url || null
+        uber_eats_url: formData.uber_eats_url.trim() || null,
+        doordash_url: formData.doordash_url.trim() || null
       }
 
       const { error } = await supabase
@@ -830,7 +830,7 @@ export default function NewProductPage() {
                       <input
                         type="url"
                         value={formData.uber_eats_url || ''}
-                        onChange={(e) => setFormData({ ...formData, uber_eats_url: e.target.value || null })}
+                        onChange={(e) => setFormData({ ...formData, uber_eats_url: e.target.value })}
                         placeholder="e.g., https://www.ubereats.com/stores/metro-1234"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                       />
@@ -849,7 +849,7 @@ export default function NewProductPage() {
                       <input
                         type="url"
                         value={formData.doordash_url || ''}
-                        onChange={(e) => setFormData({ ...formData, doordash_url: e.target.value || null })}
+                        onChange={(e) => setFormData({ ...formData, doordash_url: e.target.value })}
                         placeholder="e.g., https://www.doordash.com/store/loblaws-5678"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                       />
