@@ -877,6 +877,65 @@ export default function ProductEditPage() {
           </div>
         </div>
 
+        {/* Delivery Configuration */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-lg font-medium text-gray-900 mb-6">Delivery Configuration</h2>
+          
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Delivery Type
+              </label>
+              <select
+                value={product.delivery_type || 'partner_delivery'}
+                onChange={(e) => updateProduct('delivery_type', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              >
+                <option value="partner_delivery">Groceries (In-store + Partner Delivery)</option>
+                <option value="fresh_meals">Fresh Meals (Pickup Only)</option>
+              </select>
+              <p className="mt-2 text-sm text-gray-600">
+                {product.delivery_type === 'fresh_meals' 
+                  ? 'Customers can add to cart and schedule pickup time'
+                  : 'Available in-store and through Uber Eats/DoorDash'}
+              </p>
+            </div>
+
+            {/* Partner URLs - Only show for partner_delivery type */}
+            {product.delivery_type !== 'fresh_meals' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Uber Eats Product URL
+                  </label>
+                  <input
+                    type="url"
+                    value={product.uber_eats_url || ''}
+                    onChange={(e) => updateProduct('uber_eats_url', e.target.value || null)}
+                    placeholder="https://www.ubereats.com/..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Direct link to this product on Uber Eats</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    DoorDash Product URL
+                  </label>
+                  <input
+                    type="url"
+                    value={product.doordash_url || ''}
+                    onChange={(e) => updateProduct('doordash_url', e.target.value || null)}
+                    placeholder="https://www.doordash.com/..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Direct link to this product on DoorDash</p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
         {/* Settings */}
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-6">Settings</h2>
