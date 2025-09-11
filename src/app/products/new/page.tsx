@@ -451,6 +451,59 @@ export default function NewProductPage() {
                 <p className="text-xs text-gray-500 mt-1">Used in the product URL</p>
               </div>
 
+              {/* Product Type Section */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Product Type
+                </label>
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <input
+                      type="checkbox"
+                      id="is-fresh-meal"
+                      checked={formData.is_cooked}
+                      onChange={(e) => {
+                        const isChecked = e.target.checked
+                        // If switching to Fresh Meal and description is too long, truncate it
+                        const newDescription = isChecked && formData.description.length > 152 
+                          ? formData.description.substring(0, 152)
+                          : formData.description
+                        
+                        setFormData({ 
+                          ...formData, 
+                          is_cooked: isChecked,
+                          description: newDescription
+                        })
+                      }}
+                      className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 mt-1"
+                    />
+                    <div className="ml-3">
+                      <label htmlFor="is-fresh-meal" className="text-sm font-medium text-gray-700 cursor-pointer">
+                        Mark as Fresh Meal Item
+                      </label>
+                      <div className="mt-2 text-xs text-gray-600 space-y-1.5">
+                        <div className="flex items-start">
+                          <span className="text-gray-400 mr-2">•</span>
+                          <span><strong className="font-semibold">Display Location:</strong> Exclusively on Fresh Meals page</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="text-gray-400 mr-2">•</span>
+                          <span><strong className="font-semibold">Product Catalog:</strong> Excluded from main products page</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="text-gray-400 mr-2">•</span>
+                          <span><strong className="font-semibold">Fulfillment:</strong> In-store pickup only</span>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="text-gray-400 mr-2">•</span>
+                          <span><strong className="font-semibold">Description Length:</strong> 152 characters maximum</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Description
@@ -935,35 +988,6 @@ export default function NewProductPage() {
                 <span className="ml-2 text-sm text-gray-700">Feature this product</span>
               </label>
 
-              <label className="flex items-start">
-                <input
-                  type="checkbox"
-                  checked={formData.is_cooked}
-                  onChange={(e) => setFormData({ ...formData, is_cooked: e.target.checked })}
-                  className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 mt-1"
-                />
-                <div className="ml-3">
-                  <span className="text-sm font-medium text-gray-700">Mark as Fresh Meal Item</span>
-                  <div className="mt-2 text-xs text-gray-600 space-y-1.5">
-                    <div className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      <span><strong className="font-semibold">Display Location:</strong> Exclusively on Fresh Meals page</span>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      <span><strong className="font-semibold">Product Catalog:</strong> Excluded from main products page</span>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      <span><strong className="font-semibold">Fulfillment:</strong> In-store pickup only</span>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-gray-400 mr-2">•</span>
-                      <span><strong className="font-semibold">Description Length:</strong> 152 characters recommended</span>
-                    </div>
-                  </div>
-                </div>
-              </label>
 
               <label className="flex items-center">
                 <input
