@@ -899,14 +899,13 @@ export default function NewProductPage() {
                 </div>
               </div>
 
-              {/* Partner Purchase URLs - Only show for groceries */}
-              {formData.delivery_type !== 'fresh_meals' && (
-                <div className="border-t pt-6">
+              {/* Partner Purchase URLs - Show for all products */}
+              <div className="border-t pt-6">
                   <h3 className="text-md font-semibold text-gray-900 mb-4">Online Partner Purchase Links</h3>
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
                     <p className="text-sm text-amber-800">
-                      <strong>💡 Pro Tip:</strong> If you don't have your own partner URLs yet, you can use competitor URLs as placeholders. 
-                      When customers click "Buy from Uber Eats" or "Buy from DoorDash", they'll be taken to the URL you enter below.
+                      <strong>💡 Pro Tip:</strong> Add partner URLs for delivery options. Fresh Meals can be both pickup AND delivered through partners. 
+                      If you don't have your own partner URLs yet, you can use competitor URLs as placeholders.
                     </p>
                   </div>
                   
@@ -959,7 +958,7 @@ export default function NewProductPage() {
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
