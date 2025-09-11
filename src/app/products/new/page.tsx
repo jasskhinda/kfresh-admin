@@ -957,7 +957,6 @@ export default function NewProductPage() {
                       <div><strong>Loblaws DoorDash:</strong> https://www.doordash.com/store/loblaws</div>
                     </div>
                   </div>
-                </div>
               </div>
             </div>
           </div>
