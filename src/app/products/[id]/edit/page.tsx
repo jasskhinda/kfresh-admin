@@ -557,7 +557,14 @@ export default function ProductEditPage() {
               <textarea
                 rows={4}
                 value={product.description || ''}
-                onChange={(e) => updateProduct('description', e.target.value || null)}
+                onChange={(e) => {
+                  const value = e.target.value
+                  // For Fresh Meals (is_cooked), limit to 152 characters
+                  if (product.is_cooked && value.length > 152) {
+                    return // Don't update if it exceeds limit for Fresh Meals
+                  }
+                  updateProduct('description', value || null)
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 placeholder={product.is_cooked 
                   ? "Enter a concise description for this Fresh Meal item" 

@@ -474,7 +474,14 @@ export default function NewProductPage() {
                 <textarea
                   rows={4}
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value
+                    // For Fresh Meals (is_cooked), limit to 152 characters
+                    if (formData.is_cooked && value.length > 152) {
+                      return // Don't update if it exceeds limit for Fresh Meals
+                    }
+                    setFormData({ ...formData, description: value })
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                   placeholder={formData.is_cooked 
                     ? "Enter a concise description for this Fresh Meal item" 
