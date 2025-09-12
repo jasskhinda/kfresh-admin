@@ -248,7 +248,8 @@ export default function MediaGalleryPage() {
 
           if (!error && records) {
             for (const record of records) {
-              if (record[column] && imageUrls.includes(record[column])) {
+              const imageUrl = (record as any)[column]
+              if (imageUrl && imageUrls.includes(imageUrl)) {
                 await supabase
                   .from(table)
                   .update({ [column]: null })

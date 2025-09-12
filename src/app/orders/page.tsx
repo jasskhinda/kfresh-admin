@@ -20,31 +20,29 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 interface Order {
   id: string
   order_number: string
-  customer_id: string | null
-  email: string | null
-  phone: string | null
+  customer_email: string | null
+  customer_phone: string | null
+  customer_name: string | null
+  user_id: string | null
   status: string
   fulfillment_status: string
   payment_status: string
-  total: number
+  payment_intent_id: string | null
+  payment_method: string | null
+  subtotal_cents: number
+  tax_cents: number
+  shipping_cents: number
+  discount_cents: number
+  total_cents: number
   fulfillment_method: string
   delivery_method: string | null
+  delivery_address: any
+  items: any
+  notes: string | null
+  special_instructions: string | null
   created_at: string
   updated_at: string
-}
-
-interface RawOrderData {
-  id: string
-  order_number: string | null
-  total_amount: number | null
-  status: string | null
-  created_at: string
-  updated_at: string | null
-  notes: string | null
-  user_id: string | null
-  fulfillment_method: string | null
-  delivery_method: string | null
-  payment_status: string | null
+  completed_at: string | null
 }
 
 export default function OrdersPage() {
@@ -56,101 +54,66 @@ export default function OrdersPage() {
 
   useEffect(() => {
     fetchOrders()
-    
-    // Emergency fallback: force loading to end after 30 seconds
-    const emergencyTimeout = setTimeout(() => {
-      console.log('⚠️ Emergency timeout: Forcing orders loading to end')
-      setLoading(false)
-      if (orders.length === 0) {
-        console.log('📦 Using enhanced mock orders as fallback')
-        setOrders(getEnhancedMockOrders())
-      }
-    }, 30000)
-
-    return () => clearTimeout(emergencyTimeout)
   }, [])
 
   const fetchOrders = async () => {
     console.log('🔄 Starting fetchOrders...')
     try {
       const supabase = createClient()
-      console.log('📡 Making Supabase orders query...')
+      console.log('📡 Making Supabase orders query with new structure...')
       
-      // Extended timeout to 15 seconds for production reliability
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Orders request timeout')), 15000)
-      )
-      
-      const supabasePromise = supabase
+      const { data, error } = await supabase
         .from('orders')
         .select(`
           id,
           order_number,
-          total_amount,
-          status,
-          created_at,
-          updated_at,
-          notes,
+          customer_email,
+          customer_phone,
+          customer_name,
           user_id,
+          status,
+          fulfillment_status,
+          payment_status,
+          payment_intent_id,
+          payment_method,
+          subtotal_cents,
+          tax_cents,
+          shipping_cents,
+          discount_cents,
+          total_cents,
           fulfillment_method,
           delivery_method,
-          payment_status
+          delivery_address,
+          items,
+          notes,
+          special_instructions,
+          created_at,
+          updated_at,
+          completed_at
         `)
         .order('created_at', { ascending: false })
-        .limit(50)
-
-      const result = await Promise.race([supabasePromise, timeoutPromise])
-      const { data, error } = result as any
+        .limit(100)
 
       if (error) {
         console.error('❌ Orders Supabase error:', error)
-        console.log('Falling back to enhanced mock data. Check your orders table structure.')
-        setOrders(getEnhancedMockOrders())
-      } else if (data && data.length > 0) {
-        // Transform the data to match the expected interface
-        const transformedOrders = data.map((order: RawOrderData) => ({
-          id: order.id,
-          order_number: order.order_number || `KF${order.id.slice(0, 8)}`,
-          customer_id: order.user_id || null,
-          email: extractEmailFromNotes(order.notes),
-          phone: extractPhoneFromNotes(order.notes),
-          status: order.status || 'pending',
-          fulfillment_status: 'unfulfilled', // Default value
-          payment_status: order.payment_status || 'pending',
-          total: order.total_amount || 0,
-          fulfillment_method: order.fulfillment_method || 'pickup',
-          delivery_method: order.delivery_method || null,
-          created_at: order.created_at,
-          updated_at: order.updated_at || order.created_at
-        }))
-        
-        console.log('✅ Successfully loaded orders:', transformedOrders.length)
-        setOrders(transformedOrders)
+        console.log('Database table might not exist yet. Please run the create-orders-table.sql script.')
+        setOrders([]) // Show empty state instead of mock data
       } else {
-        console.log('📦 No orders found in database')
-        setOrders([])
+        console.log(`✅ Successfully loaded ${data?.length || 0} real orders from database`)
+        setOrders(data || [])
       }
     } catch (error) {
       console.error('❌ Orders fetch error:', error)
-      setOrders(getEnhancedMockOrders())
+      setOrders([]) // Show empty state instead of mock data
     } finally {
       console.log('✅ Setting orders loading to false')
       setLoading(false)
     }
   }
 
-  // Helper function to extract email from notes
-  const extractEmailFromNotes = (notes: string | null): string | null => {
-    if (!notes) return null
-    const emailMatch = notes.match(/Customer: ([^,]+)/)
-    return emailMatch ? emailMatch[1] : null
-  }
-
-  // Helper function to extract phone from notes
-  const extractPhoneFromNotes = (notes: string | null): string | null => {
-    if (!notes) return null
-    const phoneMatch = notes.match(/Phone: ([^,]+)/)
-    return phoneMatch ? phoneMatch[1] : null
+  // Helper function to convert cents to dollars for display
+  const formatCentsToPrice = (cents: number): string => {
+    return formatPrice(cents / 100)
   }
 
   const updateOrderStatus = async (orderId: string, status: string) => {
@@ -180,14 +143,19 @@ export default function OrdersPage() {
   const handleExportOrders = () => {
     const exportData = orders.map(order => ({
       'Order Number': order.order_number,
-      'Email': order.email || '',
-      'Phone': order.phone || '',
+      'Customer Name': order.customer_name || '',
+      'Email': order.customer_email || '',
+      'Phone': order.customer_phone || '',
       'Status': order.status,
+      'Payment Status': order.payment_status,
+      'Payment Method': order.payment_method || '',
       'Fulfillment': order.fulfillment_method,
       'Delivery Method': order.delivery_method || '',
-      'Total': order.total,
-      'Payment Status': order.payment_status,
+      'Subtotal': formatCentsToPrice(order.subtotal_cents),
+      'Tax': formatCentsToPrice(order.tax_cents),
+      'Total': formatCentsToPrice(order.total_cents),
       'Created Date': new Date(order.created_at).toLocaleDateString(),
+      'Payment Intent': order.payment_intent_id || '',
     }))
 
     downloadCSV(exportData, `kfresh-orders-${new Date().toISOString().split('T')[0]}.csv`)
@@ -195,8 +163,9 @@ export default function OrdersPage() {
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.phone?.includes(searchTerm)
+                         order.customer_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         order.customer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         order.customer_phone?.includes(searchTerm)
     const matchesStatus = !statusFilter || order.status === statusFilter
     return matchesSearch && matchesStatus
   })
@@ -411,12 +380,13 @@ export default function OrdersPage() {
                     </td>
                     <td className="p-4">
                       <div>
-                        {order.email && <p className="text-sm text-gray-900">{order.email}</p>}
-                        {order.phone && <p className="text-xs text-gray-500">{order.phone}</p>}
+                        {order.customer_name && <p className="text-sm font-medium text-gray-900">{order.customer_name}</p>}
+                        {order.customer_email && <p className="text-sm text-gray-700">{order.customer_email}</p>}
+                        {order.customer_phone && <p className="text-xs text-gray-500">{order.customer_phone}</p>}
                       </div>
                     </td>
                     <td className="p-4 font-medium text-gray-900">
-                      {formatPrice(order.total)}
+                      {formatCentsToPrice(order.total_cents)}
                     </td>
                     <td className="p-4">
                       <div className="flex items-center space-x-2">
@@ -484,7 +454,15 @@ export default function OrdersPage() {
             <div className="h-12 w-12 bg-gray-200 rounded-lg mx-auto mb-4 flex items-center justify-center">
               <Clock className="h-6 w-6 text-gray-400" />
             </div>
-            <p className="text-gray-500">No orders found</p>
+            {orders.length === 0 ? (
+              <div>
+                <p className="text-gray-500 mb-2">No orders in the system yet</p>
+                <p className="text-sm text-gray-400">Orders will appear here once customers make purchases</p>
+                <p className="text-xs text-gray-400 mt-2">Make sure to run create-orders-table.sql if you see database errors</p>
+              </div>
+            ) : (
+              <p className="text-gray-500">No orders match your search criteria</p>
+            )}
           </div>
         )}
         
@@ -513,68 +491,3 @@ export default function OrdersPage() {
   )
 }
 
-// Enhanced mock data for development with proper UUIDs
-function getEnhancedMockOrders(): Order[] {
-  return [
-    {
-      id: 'f6c0ac6a-61ca-4329-bf25-1a5a13a711a7',
-      order_number: 'KF20250107001',
-      customer_id: null,
-      email: 'john.doe@example.com',
-      phone: '+1-416-555-0123',
-      status: 'processing',
-      fulfillment_status: 'unfulfilled',
-      payment_status: 'paid',
-      total: 45.99,
-      fulfillment_method: 'pickup',
-      delivery_method: null,
-      created_at: '2025-01-07T10:30:00Z',
-      updated_at: '2025-01-07T11:15:00Z'
-    },
-    {
-      id: '00f8afc1-2c36-421f-a5b1-81902a2b8bba',
-      order_number: 'KF20250107002',
-      customer_id: null,
-      email: 'jane.smith@example.com',
-      phone: '+1-416-555-0124',
-      status: 'completed',
-      fulfillment_status: 'fulfilled',
-      payment_status: 'paid',
-      total: 32.50,
-      fulfillment_method: 'delivery',
-      delivery_method: 'uber_eats',
-      created_at: '2025-01-07T09:15:00Z',
-      updated_at: '2025-01-07T10:45:00Z'
-    },
-    {
-      id: '794d1714-5fee-4f59-80d0-914ef40673ba',
-      order_number: 'KF20250107003',
-      customer_id: null,
-      email: 'mike.johnson@example.com',
-      phone: '+1-416-555-0125',
-      status: 'pending',
-      fulfillment_status: 'unfulfilled',
-      payment_status: 'pending',
-      total: 78.25,
-      fulfillment_method: 'delivery',
-      delivery_method: 'doordash',
-      created_at: '2025-01-07T08:45:00Z',
-      updated_at: '2025-01-07T08:45:00Z'
-    },
-    {
-      id: '281bb6ba-8417-418f-9482-03bba583bd0a',
-      order_number: 'KF20250107004',
-      customer_id: null,
-      email: 'sarah.wilson@example.com',
-      phone: '+1-416-555-0126',
-      status: 'ready',
-      fulfillment_status: 'partial',
-      payment_status: 'paid',
-      total: 23.99,
-      fulfillment_method: 'pickup',
-      delivery_method: null,
-      created_at: '2025-01-07T07:20:00Z',
-      updated_at: '2025-01-07T12:30:00Z'
-    }
-  ]
-}
