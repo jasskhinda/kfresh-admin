@@ -9,6 +9,7 @@ import { imageUploadService } from '@/lib/imageUpload'
 import { generateSlug } from '@/lib/utils'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import RichTextEditor from '@/components/ui/RichTextEditor'
+import MediaGallerySelector from '@/components/ui/MediaGallerySelector'
 
 interface Category {
   id: string
@@ -21,9 +22,6 @@ export default function NewProductPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [uploading, setUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState<string[]>([])
-  const [isDragging, setIsDragging] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -220,81 +218,6 @@ export default function NewProductPage() {
     }
   }
 
-  const handleImageUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0) return
-
-    setUploading(true)
-    setUploadProgress([])
-    
-    try {
-      const fileArray = Array.from(files)
-      // Generate a temporary ID for upload (since product doesn't exist yet)
-      const tempId = `temp-${Date.now()}`
-      const uploadResults = await imageUploadService.uploadMultipleImages(fileArray, tempId)
-      
-      const successfulUploads = uploadResults
-        .filter(result => result.success && result.url)
-        .map(result => result.url!)
-
-      const failedUploads = uploadResults
-        .filter(result => !result.success)
-        .map(result => result.error)
-
-      if (successfulUploads.length > 0) {
-        const newImages = [...formData.images, ...successfulUploads]
-        setFormData({ ...formData, images: newImages })
-        setUploadProgress(prev => [...prev, `✅ Uploaded ${successfulUploads.length} image(s) successfully`])
-      }
-
-      if (failedUploads.length > 0) {
-        setUploadProgress(prev => [...prev, `❌ ${failedUploads.length} upload(s) failed`])
-        failedUploads.forEach(error => {
-          setUploadProgress(prev => [...prev, `Error: ${error}`])
-        })
-      }
-
-    } catch (error) {
-      console.error('Upload error:', error)
-      setUploadProgress(['❌ Upload failed. Please try again.'])
-    } finally {
-      setUploading(false)
-      // Clear progress after 5 seconds
-      setTimeout(() => setUploadProgress([]), 5000)
-    }
-  }
-
-  const handleImageAdd = (url: string) => {
-    setFormData({
-      ...formData,
-      images: [...formData.images, url]
-    })
-  }
-
-  const handleImageDelete = (index: number) => {
-    const newImages = formData.images.filter((_, i) => i !== index)
-    setFormData({ ...formData, images: newImages })
-  }
-
-  // Drag and drop handlers
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-  }
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    
-    const files = e.dataTransfer.files
-    if (files && files.length > 0) {
-      handleImageUpload(files)
-    }
-  }
 
   return (
     <DashboardLayout>
@@ -322,184 +245,14 @@ export default function NewProductPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Images */}
+          {/* Images - Media Gallery */}
           <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-6">Product Images</h2>
-            
-            <div className="space-y-6">
-              {/* Featured Image Section */}
-              {formData.images.length > 0 && (
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Featured Image
-                    </label>
-                    <span className="text-xs text-gray-500">
-                      This image appears in product listings and cards
-                    </span>
-                  </div>
-                  <div className="relative group inline-block">
-                    <img
-                      src={formData.images[0]}
-                      alt="Featured product image"
-                      className="w-48 h-32 object-cover rounded-lg border-2 border-green-500 shadow-sm"
-                    />
-                    <div className="absolute top-2 left-2 bg-green-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                      Featured
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleImageDelete(0)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Product Gallery Section */}
-              {formData.images.length > 1 && (
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Product Gallery ({formData.images.length - 1} additional images)
-                    </label>
-                    <span className="text-xs text-gray-500">
-                      These images appear on the product detail page
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {formData.images.slice(1).map((image, index) => (
-                      <div key={index + 1} className="relative group">
-                        <img
-                          src={image}
-                          alt={`Gallery image ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg border border-gray-200"
-                        />
-                        <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                          Gallery #{index + 1}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleImageDelete(index + 1)}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* No Images State */}
-              {formData.images.length === 0 && (
-                <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-                  <div className="text-gray-400 mb-2">
-                    <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-500 text-sm">No images uploaded yet</p>
-                  <p className="text-gray-400 text-xs">Add images below to create a featured image and gallery</p>
-                </div>
-              )}
-
-              {/* Image Upload */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Add New Images
-                </label>
-                <div 
-                  className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                    uploading ? 'border-blue-400 bg-blue-50' : 
-                    isDragging ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                >
-                  <Upload className={`h-12 w-12 mx-auto mb-4 ${
-                    uploading ? 'text-blue-500 animate-pulse' : 'text-gray-400'
-                  }`} />
-                  <p className="text-gray-600 mb-2">
-                    {uploading ? 'Uploading images...' : 
-                     isDragging ? 'Drop images here' : 'Drag & drop images here or click to upload'}
-                  </p>
-                  <p className="text-sm text-gray-500 mb-4">PNG, JPG, WebP, GIF up to 10MB each</p>
-                  
-                  {/* Upload Progress */}
-                  {uploadProgress.length > 0 && (
-                    <div className="mb-4 p-3 bg-gray-50 rounded-lg text-left">
-                      {uploadProgress.map((message, index) => (
-                        <p key={index} className="text-sm text-gray-700">{message}</p>
-                      ))}
-                    </div>
-                  )}
-
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-                    onChange={(e) => handleImageUpload(e.target.files)}
-                    className="hidden"
-                    id="image-upload"
-                    disabled={uploading}
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className={`inline-flex items-center gap-2 border rounded-lg px-4 py-2 text-sm font-medium cursor-pointer transition-colors ${
-                      uploading 
-                        ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Upload className="h-4 w-4" />
-                    {uploading ? 'Uploading...' : 'Choose Images'}
-                  </label>
-                </div>
-              </div>
-
-              {/* Manual Image URL Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Or Add Image URL
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    placeholder="https://example.com/image.jpg"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        const input = e.target as HTMLInputElement
-                        const url = input.value.trim()
-                        if (url) {
-                          handleImageAdd(url)
-                          input.value = ''
-                        }
-                      }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      const input = (e.target as HTMLButtonElement).previousElementSibling as HTMLInputElement
-                      const url = input.value.trim()
-                      if (url) {
-                        handleImageAdd(url)
-                        input.value = ''
-                      }
-                    }}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            </div>
+            <MediaGallerySelector
+              selectedImages={formData.images}
+              onImagesChange={(images) => setFormData({ ...formData, images })}
+              multiple={true}
+            />
           </div>
 
           {/* Basic Information */}
