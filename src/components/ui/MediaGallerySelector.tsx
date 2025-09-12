@@ -75,6 +75,13 @@ export function MediaGallerySelector({
         created_at: file.created_at
       }))
 
+      // Sort by created_at date in descending order (most recent first)
+      mediaItems.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0).getTime()
+        const dateB = new Date(b.created_at || 0).getTime()
+        return dateB - dateA // Most recent first
+      })
+
       setMedia(mediaItems)
     } catch (error) {
       console.error('Error fetching media:', error)
@@ -410,6 +417,11 @@ export function MediaGallerySelector({
                         <CloudUpload className="h-4 w-4 text-green-500" />
                         <span>Drag & drop to upload new images</span>
                       </div>
+                      <div className="w-px h-4 bg-gray-300"></div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span>Most recent uploads first</span>
+                      </div>
                     </div>
                     <button
                       onClick={triggerFileUpload}
@@ -425,36 +437,59 @@ export function MediaGallerySelector({
 
                   {/* Media Grid */}
                   <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-3">
-                    {filteredMedia.map((item) => (
-                      <div
-                        key={item.id}
-                        className={`relative group cursor-pointer border-2 rounded-lg overflow-hidden transition-all ${
-                          selectedImages.includes(item.url)
-                            ? 'border-green-500 ring-2 ring-green-200'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        onClick={() => handleImageSelect(item.url)}
-                      >
-                        <div className="aspect-square">
-                          <img
-                            src={item.url}
-                            alt={item.name}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                          />
-                        </div>
-                        {selectedImages.includes(item.url) && (
-                          <div className="absolute inset-0 bg-green-500 bg-opacity-20 flex items-center justify-center">
-                            <div className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                              <Check className="h-3 w-3" />
-                            </div>
+                    {filteredMedia.map((item, index) => {
+                      // Check if image was uploaded in the last 24 hours
+                      const isNew = item.created_at && 
+                        (new Date().getTime() - new Date(item.created_at).getTime()) < 24 * 60 * 60 * 1000;
+                      
+                      return (
+                        <div
+                          key={item.id}
+                          className={`relative group cursor-pointer border-2 rounded-lg overflow-hidden transition-all ${
+                            selectedImages.includes(item.url)
+                              ? 'border-green-500 ring-2 ring-green-200'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                          onClick={() => handleImageSelect(item.url)}
+                        >
+                          <div className="aspect-square">
+                            <img
+                              src={item.url}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
                           </div>
-                        )}
-                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <p className="text-xs truncate">{item.name}</p>
+
+                          {/* NEW Badge for recent uploads */}
+                          {isNew && (
+                            <div className="absolute top-1 left-1 bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold shadow-sm animate-pulse">
+                              NEW
+                            </div>
+                          )}
+
+                          {/* Recent upload indicator (top 5 most recent) */}
+                          {index < 5 && (
+                            <div className="absolute top-1 right-1 w-2 h-2 bg-green-400 rounded-full shadow-sm"></div>
+                          )}
+
+                          {selectedImages.includes(item.url) && (
+                            <div className="absolute inset-0 bg-green-500 bg-opacity-20 flex items-center justify-center">
+                              <div className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                <Check className="h-3 w-3" />
+                              </div>
+                            </div>
+                          )}
+                          
+                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p className="text-xs truncate">{item.name}</p>
+                            {isNew && (
+                              <p className="text-xs text-green-300">Recently uploaded</p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </>
               )}
