@@ -267,10 +267,14 @@ export function MediaGallerySelector({
           </label>
           
           {dragActive && (
-            <div className="absolute inset-0 pointer-events-none rounded-lg bg-green-100 bg-opacity-50 flex items-center justify-center">
-              <div className="text-center">
-                <CloudUpload className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                <p className="text-sm text-green-700 font-medium">Drop to upload</p>
+            <div className="absolute inset-0 pointer-events-none rounded-lg bg-gradient-to-r from-green-100 to-emerald-100 bg-opacity-90 flex items-center justify-center backdrop-blur-sm">
+              <div className="text-center animate-in zoom-in duration-200">
+                <div className="relative mb-3">
+                  <div className="absolute inset-0 bg-green-200 rounded-full blur-lg opacity-40"></div>
+                  <CloudUpload className="h-10 w-10 text-green-600 mx-auto relative animate-bounce" />
+                </div>
+                <p className="text-sm text-green-800 font-semibold">Drop to upload</p>
+                <p className="text-xs text-green-600 mt-1">Multiple files supported</p>
               </div>
             </div>
           )}
@@ -322,21 +326,28 @@ export function MediaGallerySelector({
 
             {/* Upload Area & Media Grid */}
             <div 
-              className={`relative p-4 max-h-96 overflow-y-auto transition-all ${
-                dragActive ? 'bg-green-50 border-2 border-dashed border-green-400' : ''
-              }`}
+              className="relative p-4 max-h-96 overflow-y-auto transition-all duration-200"
               onDragEnter={handleDragIn}
               onDragLeave={handleDragOut}
               onDragOver={handleDrag}
               onDrop={handleDrop}
             >
-              {/* Drag and Drop Overlay */}
+              {/* Beautiful Drag and Drop Overlay */}
               {dragActive && (
-                <div className="absolute inset-0 bg-green-50 bg-opacity-90 flex items-center justify-center z-10 border-2 border-dashed border-green-400 rounded-lg">
-                  <div className="text-center">
-                    <CloudUpload className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                    <p className="text-lg font-medium text-green-800 mb-2">Drop images here to upload</p>
-                    <p className="text-sm text-green-600">JPG, PNG, GIF, WEBP up to 10MB each</p>
+                <div className="absolute inset-2 bg-gradient-to-br from-green-50 to-emerald-50 bg-opacity-95 flex items-center justify-center z-50 border-2 border-dashed border-green-400 rounded-xl backdrop-blur-sm">
+                  <div className="text-center p-8 animate-in zoom-in duration-200">
+                    <div className="relative mb-6">
+                      <div className="absolute inset-0 bg-green-100 rounded-full blur-xl opacity-60"></div>
+                      <CloudUpload className="h-20 w-20 text-green-500 mx-auto relative animate-bounce" />
+                    </div>
+                    <p className="text-xl font-semibold text-green-800 mb-2">Drop your images here</p>
+                    <p className="text-sm text-green-600 mb-4">Upload multiple images at once</p>
+                    <div className="flex items-center justify-center gap-2 text-xs text-green-500">
+                      <span className="px-2 py-1 bg-green-100 rounded-full">JPG</span>
+                      <span className="px-2 py-1 bg-green-100 rounded-full">PNG</span>
+                      <span className="px-2 py-1 bg-green-100 rounded-full">GIF</span>
+                      <span className="px-2 py-1 bg-green-100 rounded-full">WEBP</span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -356,30 +367,54 @@ export function MediaGallerySelector({
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
                 </div>
               ) : filteredMedia.length === 0 ? (
-                <div className="text-center py-12">
-                  <CloudUpload className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 mb-2">No images found</p>
-                  <p className="text-sm text-gray-400 mb-4">Drag and drop images here or click to upload</p>
+                <div className="text-center py-16 px-8">
+                  <div className="relative mb-8">
+                    <div className="absolute inset-0 bg-gray-100 rounded-full blur-xl opacity-40"></div>
+                    <CloudUpload className="h-20 w-20 text-gray-400 mx-auto relative" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No images found</h3>
+                  <p className="text-gray-500 mb-6">Get started by uploading your first images</p>
+                  
+                  {/* Drag and drop area */}
+                  <div className="max-w-md mx-auto mb-6 p-8 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:border-green-400 hover:bg-green-50 transition-all duration-200 cursor-pointer"
+                       onClick={triggerFileUpload}>
+                    <div className="text-center">
+                      <Upload className="h-8 w-8 text-gray-400 mx-auto mb-3" />
+                      <p className="text-sm font-medium text-gray-700 mb-1">Click to upload or drag and drop</p>
+                      <p className="text-xs text-gray-500">JPG, PNG, GIF, WEBP up to 10MB each</p>
+                    </div>
+                  </div>
+
                   <button
                     onClick={triggerFileUpload}
                     disabled={uploading}
-                    className={`inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors ${
+                    className={`inline-flex items-center gap-2 px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm hover:shadow-md ${
                       uploading ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
                   >
                     <Plus className="h-4 w-4" />
-                    {uploading ? `Uploading ${uploadingCount} files...` : 'Upload Images'}
+                    {uploading ? `Uploading ${uploadingCount} files...` : 'Choose Images'}
                   </button>
                 </div>
               ) : (
                 <>
                   {/* Upload Button Row */}
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
-                    <p className="text-sm text-gray-600">Click images to select • Drag & drop to upload new images</p>
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 bg-gray-50 -mx-4 px-4 py-3 rounded-t-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span>Click images to select</span>
+                      </div>
+                      <div className="w-px h-4 bg-gray-300"></div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <CloudUpload className="h-4 w-4 text-green-500" />
+                        <span>Drag & drop to upload new images</span>
+                      </div>
+                    </div>
                     <button
                       onClick={triggerFileUpload}
                       disabled={uploading}
-                      className={`inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm ${
+                      className={`inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm shadow-sm hover:shadow-md ${
                         uploading ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
@@ -426,9 +461,13 @@ export function MediaGallerySelector({
 
               {/* Upload Progress in Modal */}
               {uploadProgress.length > 0 && (
-                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl shadow-sm animate-in slide-in-from-top duration-300">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-green-800">Upload Results</span>
+                  </div>
                   {uploadProgress.map((message, index) => (
-                    <p key={index} className="text-sm text-green-800">{message}</p>
+                    <p key={index} className="text-sm text-green-700 ml-4">{message}</p>
                   ))}
                 </div>
               )}
