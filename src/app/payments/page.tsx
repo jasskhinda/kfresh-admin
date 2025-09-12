@@ -17,10 +17,9 @@ import DashboardLayout from '@/components/layout/DashboardLayout'
 interface Order {
   id: string
   order_number: string
-  total: number
-  payment_method: string | null
+  total_cents: number
+  customer_email: string | null
   payment_status: string
-  email: string | null
   created_at: string
 }
 
@@ -55,7 +54,7 @@ export default function PaymentsPage() {
       // Fetch recent orders with payment information
       const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
-        .select('id, order_number, total, payment_method, payment_status, email, created_at')
+        .select('id, order_number, total_cents, customer_email, payment_status, created_at')
         .order('created_at', { ascending: false })
         .limit(10)
 
@@ -71,7 +70,7 @@ export default function PaymentsPage() {
       if (ordersData && ordersData.length > 0) {
         const totalRevenue = ordersData
           .filter(order => order.payment_status === 'paid')
-          .reduce((sum, order) => sum + order.total, 0)
+          .reduce((sum, order) => sum + (order.total_cents / 100), 0)
 
         const today = new Date().toISOString().split('T')[0]
         const todaySales = ordersData
@@ -79,11 +78,11 @@ export default function PaymentsPage() {
             order.created_at.startsWith(today) && 
             order.payment_status === 'paid'
           )
-          .reduce((sum, order) => sum + order.total, 0)
+          .reduce((sum, order) => sum + (order.total_cents / 100), 0)
 
         const pendingPayments = ordersData
           .filter(order => order.payment_status === 'pending')
-          .reduce((sum, order) => sum + order.total, 0)
+          .reduce((sum, order) => sum + (order.total_cents / 100), 0)
 
         setStats({
           totalRevenue,
@@ -255,15 +254,15 @@ export default function PaymentsPage() {
                         </p>
                       </td>
                       <td className="p-4">
-                        <p className="text-sm text-gray-900">{order.email || 'Guest Customer'}</p>
+                        <p className="text-sm text-gray-900">{order.customer_email || 'Guest Customer'}</p>
                       </td>
                       <td className="p-4">
-                        <p className="font-semibold text-gray-900">{formatPrice(order.total)}</p>
+                        <p className="font-semibold text-gray-900">{formatPrice(order.total_cents / 100)}</p>
                       </td>
                       <td className="p-4">
                         <span className="inline-flex items-center space-x-1">
                           <CreditCard className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm text-gray-700">{order.payment_method || 'Not specified'}</span>
+                          <span className="text-sm text-gray-700">Not specified</span>
                         </span>
                       </td>
                       <td className="p-4">
@@ -287,48 +286,46 @@ export default function PaymentsPage() {
           )}
         </div>
 
-      {/* Payment Methods Distribution */}
+      {/* Payment Status Distribution */}
       {orders.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Payment Methods</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Payment Status</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(() => {
-              const methodCounts = orders.reduce((acc, order) => {
-                const method = order.payment_method || 'Not specified'
-                acc[method] = (acc[method] || 0) + 1
+              const statusCounts = orders.reduce((acc, order) => {
+                const status = order.payment_status || 'unknown'
+                acc[status] = (acc[status] || 0) + 1
                 return acc
               }, {} as Record<string, number>)
 
               const total = orders.length
-              const methods = Object.entries(methodCounts)
+              const statuses = Object.entries(statusCounts)
                 .sort(([,a], [,b]) => b - a)
                 .slice(0, 3)
 
-              const getMethodIcon = (method: string) => {
-                if (method.toLowerCase().includes('credit')) return CreditCard
-                if (method.toLowerCase().includes('debit')) return CreditCard
-                if (method.toLowerCase().includes('cash')) return DollarSign
-                return CreditCard
+              const getStatusIcon = (status: string) => {
+                if (status.toLowerCase() === 'paid') return DollarSign
+                if (status.toLowerCase() === 'pending') return Calendar
+                return AlertCircle
               }
 
-              const getMethodColor = (index: number) => {
-                const colors = [
-                  { text: 'text-blue-600', bg: 'bg-blue-50' },
-                  { text: 'text-green-600', bg: 'bg-green-50' },
-                  { text: 'text-purple-600', bg: 'bg-purple-50' }
-                ]
-                return colors[index] || colors[0]
+              const getStatusColor = (status: string) => {
+                switch (status.toLowerCase()) {
+                  case 'paid': return { text: 'text-green-600', bg: 'bg-green-50' }
+                  case 'pending': return { text: 'text-yellow-600', bg: 'bg-yellow-50' }
+                  default: return { text: 'text-red-600', bg: 'bg-red-50' }
+                }
               }
 
-              return methods.map(([method, count], index) => {
+              return statuses.map(([status, count]) => {
                 const percentage = Math.round((count / total) * 100)
-                const colors = getMethodColor(index)
-                const Icon = getMethodIcon(method)
+                const colors = getStatusColor(status)
+                const Icon = getStatusIcon(status)
 
                 return (
-                  <div key={method} className={`text-center p-4 ${colors.bg} rounded-lg`}>
+                  <div key={status} className={`text-center p-4 ${colors.bg} rounded-lg`}>
                     <Icon className={`h-8 w-8 ${colors.text} mx-auto mb-2`} />
-                    <p className="font-medium text-gray-900">{method}</p>
+                    <p className="font-medium text-gray-900 capitalize">{status}</p>
                     <p className={`text-2xl font-bold ${colors.text}`}>{percentage}%</p>
                     <p className="text-sm text-gray-600">{count} orders</p>
                   </div>

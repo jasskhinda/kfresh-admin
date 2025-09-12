@@ -87,10 +87,10 @@ export default function ReportsPage() {
           break
       }
 
-      // Fetch orders data
+      // Fetch orders data with new database structure
       const { data: orders, error: ordersError } = await supabase
         .from('orders')
-        .select('id, order_number, total, payment_method, payment_status, email, created_at, order_items(quantity, unit_price, products(name, category_id, categories(name)))')
+        .select('id, order_number, total_cents, payment_status, customer_email, created_at, items')
         .gte('created_at', startDate.toISOString())
         .lte('created_at', endDate.toISOString())
         .order('created_at', { ascending: false })
@@ -127,7 +127,7 @@ export default function ReportsPage() {
     // Calculate basic metrics
     const totalRevenue = orders
       .filter(order => order.payment_status === 'paid')
-      .reduce((sum, order) => sum + order.total, 0)
+      .reduce((sum, order) => sum + (order.total_cents / 100), 0)
     const totalOrders = orders.length
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0
     
@@ -157,7 +157,7 @@ export default function ReportsPage() {
         salesByDate[date] = { total: 0, orders: 0 }
       }
       if (order.payment_status === 'paid') {
-        salesByDate[date].total += order.total
+        salesByDate[date].total += (order.total_cents / 100)
       }
       salesByDate[date].orders += 1
     })
@@ -172,18 +172,18 @@ export default function ReportsPage() {
 
     setSalesData(salesDataArray)
     
-    // Process category performance data
+    // Process category performance data (simplified for JSON structure)
     const categoryStats: { [key: string]: { sales: number, orders: Set<string> } } = {}
     
     orders.forEach(order => {
-      if (order.order_items && order.payment_status === 'paid') {
-        order.order_items.forEach((item: any) => {
-          if (item.products?.categories?.name) {
-            const categoryName = item.products.categories.name
+      if (order.items && order.payment_status === 'paid') {
+        order.items.forEach((item: any) => {
+          if (item.category) {
+            const categoryName = item.category
             if (!categoryStats[categoryName]) {
               categoryStats[categoryName] = { sales: 0, orders: new Set() }
             }
-            categoryStats[categoryName].sales += item.quantity * item.unit_price
+            categoryStats[categoryName].sales += (item.total_price_cents / 100)
             categoryStats[categoryName].orders.add(order.id)
           }
         })
@@ -201,18 +201,18 @@ export default function ReportsPage() {
 
     setCategoryData(categoryDataArray)
 
-    // Process top products data
+    // Process top products data (simplified for JSON structure)
     const productStats: { [key: string]: { sales: number, quantity: number } } = {}
     
     orders.forEach(order => {
-      if (order.order_items && order.payment_status === 'paid') {
-        order.order_items.forEach((item: any) => {
-          if (item.products?.name) {
-            const productName = item.products.name
+      if (order.items && order.payment_status === 'paid') {
+        order.items.forEach((item: any) => {
+          if (item.name) {
+            const productName = item.name
             if (!productStats[productName]) {
               productStats[productName] = { sales: 0, quantity: 0 }
             }
-            productStats[productName].sales += item.quantity * item.unit_price
+            productStats[productName].sales += (item.total_price_cents / 100)
             productStats[productName].quantity += item.quantity
           }
         })
