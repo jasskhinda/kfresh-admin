@@ -28,6 +28,7 @@ export default function MediaGalleryPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [previewImage, setPreviewImage] = useState<MediaItem | null>(null)
   const [uploadProgress, setUploadProgress] = useState<string[]>([])
+  const [dragActive, setDragActive] = useState(false)
 
   const supabase = createClient()
 
@@ -113,6 +114,35 @@ export default function MediaGalleryPage() {
     } finally {
       setUploading(false)
       setTimeout(() => setUploadProgress([]), 5000)
+    }
+  }
+
+  // Drag and drop handlers
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      handleBulkUpload(files)
     }
   }
 
@@ -358,15 +388,45 @@ export default function MediaGalleryPage() {
           <h2 className="text-lg font-medium text-gray-900 mb-4">Bulk Upload Images</h2>
           
           <div 
-            className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-              uploading ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+            className={`border-2 border-dashed rounded-lg p-6 text-center transition-all duration-200 relative ${
+              dragActive 
+                ? 'border-green-400 bg-gradient-to-br from-green-50 to-emerald-50 scale-[1.02]' 
+                : uploading 
+                ? 'border-blue-400 bg-blue-50' 
+                : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
             }`}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
           >
-            <Upload className={`h-12 w-12 mx-auto mb-4 ${uploading ? 'text-blue-500 animate-pulse' : 'text-gray-400'}`} />
-            <p className="text-gray-600 mb-2">
-              {uploading ? 'Uploading images...' : 'Drag & drop images here or click to select'}
+            {dragActive && (
+              <div className="absolute inset-2 bg-gradient-to-br from-green-50 to-emerald-50 bg-opacity-95 flex items-center justify-center z-10 border-2 border-dashed border-green-400 rounded-xl backdrop-blur-sm">
+                <div className="text-center p-8 animate-in zoom-in duration-200">
+                  <div className="relative mb-6">
+                    <div className="absolute inset-0 bg-green-100 rounded-full blur-xl opacity-60"></div>
+                    <Upload className="h-20 w-20 text-green-500 mx-auto relative animate-bounce" />
+                  </div>
+                  <p className="text-xl font-semibold text-green-800 mb-2">Drop your images here</p>
+                  <p className="text-green-600">Release to upload to media gallery</p>
+                </div>
+              </div>
+            )}
+            
+            <Upload className={`h-12 w-12 mx-auto mb-4 transition-all duration-200 ${
+              dragActive ? 'text-green-500 scale-110' : 
+              uploading ? 'text-blue-500 animate-pulse' : 'text-gray-400'
+            }`} />
+            <p className={`mb-2 transition-colors duration-200 ${
+              dragActive ? 'text-green-700 font-medium' :
+              uploading ? 'text-blue-600' : 'text-gray-600'
+            }`}>
+              {dragActive ? 'Drop images here to upload' :
+               uploading ? 'Uploading images...' : 'Drag & drop images here or click to select'}
             </p>
-            <p className="text-sm text-gray-500 mb-4">PNG, JPG, WebP, GIF up to 10MB each</p>
+            <p className={`text-sm mb-4 transition-colors duration-200 ${
+              dragActive ? 'text-green-600' : 'text-gray-500'
+            }`}>PNG, JPG, WebP, GIF up to 10MB each</p>
             
             {uploadProgress.length > 0 && (
               <div className="mb-4 p-3 bg-gray-50 rounded-lg text-left">
@@ -383,18 +443,21 @@ export default function MediaGalleryPage() {
               onChange={(e) => e.target.files && handleBulkUpload(e.target.files)}
               className="hidden"
               id="bulk-upload"
-              disabled={uploading}
+              disabled={uploading || dragActive}
             />
             <label
               htmlFor="bulk-upload"
-              className={`inline-flex items-center gap-2 border rounded-lg px-4 py-2 text-sm font-medium cursor-pointer transition-colors ${
+              className={`inline-flex items-center gap-2 border rounded-lg px-4 py-2 text-sm font-medium cursor-pointer transition-all duration-200 ${
+                dragActive 
+                  ? 'bg-green-100 border-green-300 text-green-700 shadow-lg' :
                 uploading 
                   ? 'bg-gray-100 border-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 hover:shadow-sm'
               }`}
             >
               <Upload className="h-4 w-4" />
-              {uploading ? 'Uploading...' : 'Select Images'}
+              {dragActive ? 'Drop files here' :
+               uploading ? 'Uploading...' : 'Select Images'}
             </label>
           </div>
         </div>
