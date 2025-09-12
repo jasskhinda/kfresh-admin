@@ -294,6 +294,15 @@ export default function MediaGalleryPage() {
     setSelectedItems(newSelection)
   }
 
+  const selectAllItems = () => {
+    const allIds = new Set(filteredMedia.map(item => item.id))
+    setSelectedItems(allIds)
+  }
+
+  const deselectAllItems = () => {
+    setSelectedItems(new Set())
+  }
+
   const filteredMedia = media.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
@@ -383,6 +392,24 @@ export default function MediaGalleryPage() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
                 />
+              </div>
+              <div className="flex items-center gap-2">
+                {selectedItems.size === filteredMedia.length && filteredMedia.length > 0 ? (
+                  <button
+                    onClick={deselectAllItems}
+                    className="text-sm text-gray-600 hover:text-gray-800 font-medium"
+                  >
+                    Deselect All
+                  </button>
+                ) : (
+                  <button
+                    onClick={selectAllItems}
+                    className="text-sm text-green-600 hover:text-green-700 font-medium"
+                    disabled={filteredMedia.length === 0}
+                  >
+                    Select All
+                  </button>
+                )}
               </div>
               <span className="text-sm text-gray-500">
                 {filteredMedia.length} of {media.length} images
