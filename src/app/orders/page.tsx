@@ -454,8 +454,13 @@ export default function OrdersPage() {
                           <Eye className="h-4 w-4" />
                         </button>
                         <select
-                          onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                          value=""
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              updateOrderStatus(order.id, e.target.value)
+                              e.target.value = "" // Reset select after update
+                            }
+                          }}
+                          defaultValue=""
                           className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         >
                           <option value="" disabled>Update Status</option>
