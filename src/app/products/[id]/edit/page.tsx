@@ -693,7 +693,7 @@ export default function ProductEditPage() {
             </div>
             <div>
               <h2 className="text-lg font-medium text-gray-900">Content & Information</h2>
-              <p className="text-sm text-gray-600">Copy & paste product details from any source - AI friendly!</p>
+              <p className="text-sm text-gray-600">Product details with rich text formatting</p>
             </div>
           </div>
           

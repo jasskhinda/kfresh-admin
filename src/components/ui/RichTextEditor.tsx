@@ -251,16 +251,6 @@ export function RichTextEditor({
         </p>
       )}
 
-      {/* Paste Instructions */}
-      <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-        <p className="text-xs text-green-800 font-medium">✨ WordPress-style Copy & Paste:</p>
-        <ul className="text-xs text-green-700 mt-1 space-y-1">
-          <li>• Paste from Excel/Google Sheets → Automatically becomes a table</li>
-          <li>• Paste from Word/Google Docs → Keeps formatting (bold, italic, lists)</li>
-          <li>• Paste HTML → Preserves structure and styling</li>
-          <li>• Paste plain text → Clean formatting applied</li>
-        </ul>
-      </div>
     </div>
   )
 }

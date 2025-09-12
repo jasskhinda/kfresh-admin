@@ -232,7 +232,7 @@ export default function NewProductPage() {
             </Link>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Add New Product</h1>
-              <p className="text-gray-600">Enhanced with copy & paste content sections - AI friendly! 🚀</p>
+              <p className="text-gray-600">Create a new product for your store</p>
             </div>
           </div>
         </div>
@@ -589,7 +589,7 @@ export default function NewProductPage() {
               </div>
               <div>
                 <h2 className="text-lg font-medium text-gray-900">Content & Information</h2>
-                <p className="text-sm text-gray-600">Copy & paste product details from any source - AI friendly!</p>
+                <p className="text-sm text-gray-600">Product details with rich text formatting</p>
               </div>
             </div>
             
