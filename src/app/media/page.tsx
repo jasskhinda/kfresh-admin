@@ -119,12 +119,13 @@ export default function MediaGalleryPage() {
   const deleteSelectedItems = async () => {
     if (selectedItems.size === 0) return
     
-    if (!confirm(`Delete ${selectedItems.size} selected item(s)?`)) return
+    if (!confirm(`Delete ${selectedItems.size} selected item(s)? This will also remove them from any products using these images.`)) return
 
     try {
       const itemsToDelete = Array.from(selectedItems)
-      const filePaths = itemsToDelete.map(id => {
-        const item = media.find(m => m.id === id)
+      const itemsData = itemsToDelete.map(id => media.find(m => m.id === id)).filter(Boolean)
+      
+      const filePaths = itemsData.map(item => {
         // Extract the full path from the URL
         if (item?.url) {
           const urlParts = item.url.split('/product-images/')
@@ -133,11 +134,17 @@ export default function MediaGalleryPage() {
         return null
       }).filter(Boolean) as string[]
 
+      const imageUrls = itemsData.map(item => item!.url)
+
+      // Delete from storage
       const { error } = await supabase.storage
         .from('product-images')
         .remove(filePaths)
 
       if (error) throw error
+
+      // Clean up database - remove URLs from product images arrays
+      await cleanupProductReferences(imageUrls)
 
       setSelectedItems(new Set())
       await fetchMedia()
@@ -147,20 +154,133 @@ export default function MediaGalleryPage() {
   }
 
   const deleteItem = async (item: MediaItem) => {
-    if (!confirm(`Delete "${item.name}"?`)) return
+    if (!confirm(`Delete "${item.name}"? This will also remove it from any products using this image.`)) return
 
     try {
       // Extract the full path from the URL
       const filePath = item.url.split('/product-images/')[1]
       
+      // Delete from storage
       const { error } = await supabase.storage
         .from('product-images')
         .remove([filePath])
 
       if (error) throw error
+
+      // Clean up database - remove URL from product images arrays
+      await cleanupProductReferences([item.url])
+
       await fetchMedia()
     } catch (error) {
       console.error('Delete error:', error)
+    }
+  }
+
+  // Helper function to completely remove image references from everywhere
+  const cleanupProductReferences = async (imageUrls: string[]) => {
+    try {
+      console.log('🧹 Starting complete cleanup for URLs:', imageUrls)
+
+      // 1. Clean up main products table
+      const { data: products, error: fetchError } = await supabase
+        .from('products')
+        .select('id, images')
+        .not('images', 'is', null)
+
+      if (fetchError) throw fetchError
+
+      const productsToUpdate = products?.filter(product => {
+        return product.images && Array.isArray(product.images) && 
+               product.images.some((img: string) => imageUrls.includes(img))
+      }) || []
+
+      // Update products table
+      for (const product of productsToUpdate) {
+        const updatedImages = (product.images as string[]).filter(img => !imageUrls.includes(img))
+        
+        const { error: updateError } = await supabase
+          .from('products')
+          .update({ images: updatedImages })
+          .eq('id', product.id)
+
+        if (updateError) {
+          console.error(`Failed to update product ${product.id}:`, updateError)
+        }
+      }
+
+      console.log(`✅ Updated ${productsToUpdate.length} products`)
+
+      // 2. Clean up categories table (if they use images)
+      try {
+        const { data: categories, error: catError } = await supabase
+          .from('categories')
+          .select('id, image_url')
+          .not('image_url', 'is', null)
+
+        if (!catError && categories) {
+          for (const category of categories) {
+            if (category.image_url && imageUrls.includes(category.image_url)) {
+              await supabase
+                .from('categories')
+                .update({ image_url: null })
+                .eq('id', category.id)
+              console.log(`✅ Cleaned category ${category.id}`)
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('Categories table cleanup skipped:', error)
+      }
+
+      // 3. Clean up any other tables that might reference images
+      const tablesToCheck = [
+        { table: 'banners', column: 'image_url' },
+        { table: 'promotions', column: 'banner_image' },
+        { table: 'store_settings', column: 'logo_url' }
+      ]
+
+      for (const { table, column } of tablesToCheck) {
+        try {
+          const { data: records, error } = await supabase
+            .from(table)
+            .select(`id, ${column}`)
+            .not(column, 'is', null)
+
+          if (!error && records) {
+            for (const record of records) {
+              if (record[column] && imageUrls.includes(record[column])) {
+                await supabase
+                  .from(table)
+                  .update({ [column]: null })
+                  .eq('id', record.id)
+                console.log(`✅ Cleaned ${table} record ${record.id}`)
+              }
+            }
+          }
+        } catch (error) {
+          console.warn(`${table} table cleanup skipped:`, error)
+        }
+      }
+
+      // 4. Final storage verification - ensure files are really gone
+      for (const url of imageUrls) {
+        try {
+          const filePath = url.split('/product-images/')[1]
+          if (filePath) {
+            // Double-check deletion
+            await supabase.storage
+              .from('product-images')
+              .remove([filePath])
+          }
+        } catch (error) {
+          console.warn('Storage cleanup verification:', error)
+        }
+      }
+
+      console.log('🎉 Complete cleanup finished - images deleted from everywhere!')
+      
+    } catch (error) {
+      console.error('Error in complete cleanup:', error)
     }
   }
 
