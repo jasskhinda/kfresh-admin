@@ -15,6 +15,17 @@ interface Category {
   slug: string
 }
 
+interface ProductVariant {
+  id: string
+  product_id: string
+  size_name: string
+  price: number
+  compare_price: number | null
+  stock_quantity: number
+  sku: string | null
+  is_default: boolean
+}
+
 interface Product {
   id: string
   name: string
