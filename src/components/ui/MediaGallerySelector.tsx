@@ -39,24 +39,38 @@ export function MediaGallerySelector({
     try {
       setLoading(true)
       
-      const { data: files, error } = await supabase.storage
-        .from('product-images')
-        .list('', {
-          limit: 1000,
-          sortBy: { column: 'created_at', order: 'desc' }
-        })
+      // Get files from all folders
+      const folders = ['', 'products', 'media-gallery', 'product-gallery']
+      const allFiles: any[] = []
 
-      if (error) throw error
+      for (const folder of folders) {
+        const { data: files, error } = await supabase.storage
+          .from('product-images')
+          .list(folder, {
+            limit: 1000,
+            sortBy: { column: 'created_at', order: 'desc' }
+          })
 
-      const mediaItems: MediaItem[] = files
-        .filter(file => file.name !== '.emptyFolderPlaceholder')
-        .map(file => ({
-          id: file.id || file.name,
-          name: file.name,
-          url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/${file.name}`,
-          size: file.metadata?.size,
-          created_at: file.created_at
-        }))
+        if (!error && files) {
+          // Add folder info to each file
+          const folderFiles = files
+            .filter(file => file.name !== '.emptyFolderPlaceholder')
+            .map(file => ({
+              ...file,
+              folder: folder,
+              fullPath: folder ? `${folder}/${file.name}` : file.name
+            }))
+          allFiles.push(...folderFiles)
+        }
+      }
+
+      const mediaItems: MediaItem[] = allFiles.map(file => ({
+        id: file.id || file.fullPath,
+        name: file.name,
+        url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/${file.fullPath}`,
+        size: file.metadata?.size,
+        created_at: file.created_at
+      }))
 
       setMedia(mediaItems)
     } catch (error) {

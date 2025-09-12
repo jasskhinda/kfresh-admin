@@ -39,31 +39,44 @@ export default function MediaGalleryPage() {
     try {
       setLoading(true)
       
-      // Get all files from storage
-      const { data: files, error } = await supabase.storage
-        .from('product-images')
-        .list('', {
-          limit: 1000,
-          sortBy: { column: 'created_at', order: 'desc' }
-        })
+      // Get files from all folders
+      const folders = ['', 'products', 'media-gallery', 'product-gallery']
+      const allFiles: any[] = []
 
-      if (error) throw error
+      for (const folder of folders) {
+        const { data: files, error } = await supabase.storage
+          .from('product-images')
+          .list(folder, {
+            limit: 1000,
+            sortBy: { column: 'created_at', order: 'desc' }
+          })
+
+        if (!error && files) {
+          // Add folder info to each file
+          const folderFiles = files
+            .filter(file => file.name !== '.emptyFolderPlaceholder')
+            .map(file => ({
+              ...file,
+              folder: folder,
+              fullPath: folder ? `${folder}/${file.name}` : file.name
+            }))
+          allFiles.push(...folderFiles)
+        }
+      }
 
       // Convert to MediaItem format with public URLs
-      const mediaItems: MediaItem[] = files
-        .filter(file => file.name !== '.emptyFolderPlaceholder') // Filter out placeholder
-        .map(file => ({
-          id: file.id || file.name,
-          name: file.name,
-          url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/${file.name}`,
-          size: file.metadata?.size,
-          created_at: file.created_at,
-          metadata: {
-            width: file.metadata?.width,
-            height: file.metadata?.height,
-            type: file.metadata?.mimetype
-          }
-        }))
+      const mediaItems: MediaItem[] = allFiles.map(file => ({
+        id: file.id || file.fullPath,
+        name: file.name,
+        url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/${file.fullPath}`,
+        size: file.metadata?.size,
+        created_at: file.created_at,
+        metadata: {
+          width: file.metadata?.width,
+          height: file.metadata?.height,
+          type: file.metadata?.mimetype
+        }
+      }))
 
       setMedia(mediaItems)
     } catch (error) {
@@ -110,14 +123,19 @@ export default function MediaGalleryPage() {
 
     try {
       const itemsToDelete = Array.from(selectedItems)
-      const filenames = itemsToDelete.map(id => {
+      const filePaths = itemsToDelete.map(id => {
         const item = media.find(m => m.id === id)
-        return item?.name
+        // Extract the full path from the URL
+        if (item?.url) {
+          const urlParts = item.url.split('/product-images/')
+          return urlParts[1] // This gives us the full path like 'products/filename.jpg'
+        }
+        return null
       }).filter(Boolean) as string[]
 
       const { error } = await supabase.storage
         .from('product-images')
-        .remove(filenames)
+        .remove(filePaths)
 
       if (error) throw error
 
@@ -132,9 +150,12 @@ export default function MediaGalleryPage() {
     if (!confirm(`Delete "${item.name}"?`)) return
 
     try {
+      // Extract the full path from the URL
+      const filePath = item.url.split('/product-images/')[1]
+      
       const { error } = await supabase.storage
         .from('product-images')
-        .remove([item.name])
+        .remove([filePath])
 
       if (error) throw error
       await fetchMedia()
