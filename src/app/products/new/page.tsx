@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { imageUploadService } from '@/lib/imageUpload'
 import { generateSlug } from '@/lib/utils'
 import DashboardLayout from '@/components/layout/DashboardLayout'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface Category {
   id: string
@@ -509,9 +510,6 @@ export default function NewProductPage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
-                </label>
                 {formData.is_cooked && (
                   <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                     <div className="flex items-start gap-2">
@@ -521,44 +519,23 @@ export default function NewProductPage() {
                       <div>
                         <p className="text-sm font-semibold text-amber-900">Fresh Meals Description Guidelines</p>
                         <p className="text-xs text-amber-700 mt-1">
-                          For optimal display on the Fresh Meals page, please limit descriptions to 152 characters. 
-                          This ensures consistent card layouts and improved readability.
+                          For optimal display on the Fresh Meals page, please keep descriptions concise. 
+                          Use the rich text editor for better formatting.
                         </p>
                       </div>
                     </div>
                   </div>
                 )}
-                <textarea
-                  rows={4}
-                  value={formData.description}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    // For Fresh Meals (is_cooked), limit to 152 characters
-                    if (formData.is_cooked && value.length > 152) {
-                      return // Don't update if it exceeds limit for Fresh Meals
-                    }
-                    setFormData({ ...formData, description: value })
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                <RichTextEditor
+                  content={formData.description}
+                  onChange={(content) => setFormData({ ...formData, description: content })}
+                  label="📄 Description"
                   placeholder={formData.is_cooked 
                     ? "Enter a concise description for this Fresh Meal item" 
                     : "Enter a detailed description of this product"
                   }
+                  description="Main product description that appears on product pages. Supports rich formatting, tables, lists, and more!"
                 />
-                {formData.is_cooked && formData.description && (
-                  <div className="mt-2 flex items-center justify-between">
-                    <p className={`text-xs ${
-                      formData.description.length > 152 ? 'text-amber-600 font-medium' : 'text-gray-500'
-                    }`}>
-                      Character count: {formData.description.length}/152
-                    </p>
-                    {formData.description.length > 152 && (
-                      <span className="text-xs text-amber-600">
-                        Exceeds recommended length
-                      </span>
-                    )}
-                  </div>
-                )}
               </div>
 
               <div className="md:col-span-2">
@@ -618,35 +595,23 @@ export default function NewProductPage() {
             
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  🥬 Ingredients
-                </label>
-                <textarea
-                  rows={3}
-                  value={formData.ingredients}
-                  onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  placeholder="List all ingredients (copy & paste friendly)..."
+                <RichTextEditor
+                  content={formData.ingredients}
+                  onChange={(content) => setFormData({ ...formData, ingredients: content })}
+                  label="🥬 Ingredients"
+                  placeholder="List all ingredients - supports tables, lists, and formatting..."
+                  description="Complete ingredient list - paste from anywhere! Tables and lists are automatically formatted."
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Complete ingredient list - copy and paste from any source
-                </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  📊 Nutrition & Other Information
-                </label>
-                <textarea
-                  rows={6}
-                  value={formData.nutrition_info}
-                  onChange={(e) => setFormData({ ...formData, nutrition_info: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                  placeholder="Nutrition facts, allergen information, storage instructions, important notes, or any other product details..."
+                <RichTextEditor
+                  content={formData.nutrition_info}
+                  onChange={(content) => setFormData({ ...formData, nutrition_info: content })}
+                  label="📊 Nutrition & Other Information"
+                  placeholder="Nutrition facts, allergen info, storage instructions, or any other details..."
+                  description="🌟 Perfect for: Nutrition tables (paste from Excel!), allergen warnings, certifications, storage instructions, or any additional product information."
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  📋 Perfect for: Nutrition tables, allergen warnings, storage instructions, certifications, or any additional product info
-                </p>
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { ArrowLeft, Save, Loader2, Upload, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { imageUploadService } from '@/lib/imageUpload'
 import DashboardLayout from '@/components/layout/DashboardLayout'
+import RichTextEditor from '@/components/ui/RichTextEditor'
 
 interface Category {
   id: string
@@ -698,35 +699,23 @@ export default function ProductEditPage() {
           
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                🥬 Ingredients
-              </label>
-              <textarea
-                rows={3}
-                value={product?.ingredients || ''}
-                onChange={(e) => updateProduct('ingredients', e.target.value || null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                placeholder="List all ingredients (copy & paste friendly)..."
+              <RichTextEditor
+                content={product?.ingredients || ''}
+                onChange={(content) => updateProduct('ingredients', content || null)}
+                label="🥬 Ingredients"
+                placeholder="List all ingredients - supports tables, lists, and formatting..."
+                description="Complete ingredient list - paste from anywhere! Tables and lists are automatically formatted."
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Complete ingredient list - copy and paste from any source
-              </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                📊 Nutrition & Other Information
-              </label>
-              <textarea
-                rows={6}
-                value={product?.nutrition_info || ''}
-                onChange={(e) => updateProduct('nutrition_info', e.target.value || null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                placeholder="Nutrition facts, allergen information, storage instructions, important notes, or any other product details..."
+              <RichTextEditor
+                content={product?.nutrition_info || ''}
+                onChange={(content) => updateProduct('nutrition_info', content || null)}
+                label="📊 Nutrition & Other Information"
+                placeholder="Nutrition facts, allergen info, storage instructions, or any other details..."
+                description="🌟 Perfect for: Nutrition tables (paste from Excel!), allergen warnings, certifications, storage instructions, or any additional product information."
               />
-              <p className="text-xs text-gray-500 mt-1">
-                📋 Perfect for: Nutrition tables, allergen warnings, storage instructions, certifications, or any additional product info
-              </p>
             </div>
           </div>
         </div>

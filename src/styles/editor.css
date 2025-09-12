@@ -1,0 +1,100 @@
+/* TipTap Editor Styles */
+.ProseMirror {
+  outline: none !important;
+  padding: 1rem;
+  min-height: 120px;
+}
+
+.ProseMirror p {
+  margin: 0.5rem 0;
+}
+
+.ProseMirror h1, .ProseMirror h2, .ProseMirror h3, .ProseMirror h4, .ProseMirror h5, .ProseMirror h6 {
+  font-weight: bold;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.ProseMirror h1 { font-size: 1.5rem; }
+.ProseMirror h2 { font-size: 1.375rem; }
+.ProseMirror h3 { font-size: 1.25rem; }
+.ProseMirror h4 { font-size: 1.125rem; }
+
+.ProseMirror ul, .ProseMirror ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror li {
+  margin: 0.25rem 0;
+}
+
+.ProseMirror strong {
+  font-weight: bold;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+/* Table Styles */
+.ProseMirror table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  overflow: hidden;
+  margin: 1rem 0;
+  border: 1px solid #ddd;
+}
+
+.ProseMirror td, .ProseMirror th {
+  min-width: 1em;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+  background-color: white;
+}
+
+.ProseMirror th {
+  font-weight: bold;
+  background-color: #f8f9fa;
+}
+
+.ProseMirror .selectedCell:after {
+  z-index: 2;
+  position: absolute;
+  content: "";
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(200, 200, 255, 0.4);
+  pointer-events: none;
+}
+
+.ProseMirror .column-resize-handle {
+  position: absolute;
+  right: -2px; top: 0; bottom: 0;
+  width: 4px;
+  z-index: 20;
+  background-color: #adf;
+  pointer-events: none;
+}
+
+.ProseMirror.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
+
+/* Placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+/* Focus styles */
+.ProseMirror:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
