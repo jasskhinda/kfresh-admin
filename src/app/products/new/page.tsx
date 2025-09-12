@@ -791,6 +791,26 @@ export default function NewProductPage() {
                 </select>
               </div>
 
+              {/* Size Options - Simple Implementation */}
+              {formData.unit && (
+                <div className="md:col-span-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    📏 Size Options
+                  </label>
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-sm text-blue-800 mb-3">
+                      <strong>Unit Type Selected:</strong> {formData.unit}
+                    </p>
+                    <p className="text-xs text-blue-700 mb-2">
+                      💡 <strong>For Multiple Sizes:</strong> Add size variations in the description (e.g., "Available in 200g, 400g, and 1kg sizes")
+                    </p>
+                    <p className="text-xs text-blue-600">
+                      <strong>Examples:</strong> 200g, 400g, 1kg • 500ml, 1L, 2L • Small, Medium, Large • Pack of 6, Pack of 12
+                    </p>
+                  </div>
+                </div>
+              )}
+
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Availability Status
