@@ -62,13 +62,18 @@ export default function ProductEditPage() {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<string[]>([])
   const [isDragging, setIsDragging] = useState(false)
+  
+  // Product variants state
+  const [variants, setVariants] = useState<ProductVariant[]>([])
+  const [useVariants, setUseVariants] = useState(false)
 
   const supabase = createClient()
 
   useEffect(() => {
     Promise.all([
       fetchProduct(),
-      fetchCategories()
+      fetchCategories(),
+      fetchVariants()
     ]).finally(() => setLoading(false))
   }, [productId])
 
@@ -101,6 +106,76 @@ export default function ProductEditPage() {
     } catch (error) {
       console.error('Error fetching categories:', error)
     }
+  }
+
+  const fetchVariants = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('product_variants')
+        .select('*')
+        .eq('product_id', productId)
+        .order('size_name')
+
+      if (error && error.code !== 'PGRST116') throw error // Ignore table not found error
+      
+      if (data && data.length > 0) {
+        setVariants(data)
+        setUseVariants(true)
+      }
+    } catch (error) {
+      console.error('Error fetching variants:', error)
+    }
+  }
+
+  const addVariant = () => {
+    const newVariant: ProductVariant = {
+      id: `new-${Date.now()}`,
+      product_id: productId,
+      size_name: '',
+      price: 0,
+      compare_price: null,
+      stock_quantity: 0,
+      sku: null,
+      is_default: variants.length === 0
+    }
+    setVariants([...variants, newVariant])
+  }
+
+  const removeVariant = async (variantId: string) => {
+    if (variants.length <= 1) return
+    
+    // If it's an existing variant (not new), delete from database
+    if (!variantId.startsWith('new-')) {
+      try {
+        const { error } = await supabase
+          .from('product_variants')
+          .delete()
+          .eq('id', variantId)
+        
+        if (error) throw error
+      } catch (error) {
+        console.error('Error deleting variant:', error)
+        setError('Failed to delete variant')
+        return
+      }
+    }
+    
+    setVariants(variants.filter(v => v.id !== variantId))
+  }
+
+  const updateVariant = (variantId: string, field: keyof ProductVariant, value: any) => {
+    setVariants(variants.map(v => {
+      if (v.id === variantId) {
+        // If setting as default, unset all others
+        if (field === 'is_default' && value === true) {
+          variants.forEach(variant => {
+            if (variant.id !== variantId) variant.is_default = false
+          })
+        }
+        return { ...v, [field]: value }
+      }
+      return v
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
