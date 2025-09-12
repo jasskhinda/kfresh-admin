@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Upload, X, Search, Check } from 'lucide-react'
+import { Upload, X, Search, Check, CloudUpload, Plus } from 'lucide-react'
 import { imageUploadService } from '@/lib/imageUpload'
 
 interface MediaItem {
@@ -32,6 +32,9 @@ export function MediaGallerySelector({
   const [uploading, setUploading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [uploadProgress, setUploadProgress] = useState<string[]>([])
+  const [dragActive, setDragActive] = useState(false)
+  const [uploadingCount, setUploadingCount] = useState(0)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   
   const supabase = createClient()
 
@@ -99,11 +102,12 @@ export function MediaGallerySelector({
     }
   }
 
-  const handleUpload = async (files: FileList) => {
+  const handleUpload = async (files: FileList, showInGallery = false) => {
     if (!files || files.length === 0) return
 
     setUploading(true)
     setUploadProgress([])
+    setUploadingCount(files.length)
 
     try {
       const fileArray = Array.from(files)
@@ -133,8 +137,53 @@ export function MediaGallerySelector({
       setUploadProgress(['❌ Upload failed. Please try again.'])
     } finally {
       setUploading(false)
+      setUploadingCount(0)
       setTimeout(() => setUploadProgress([]), 3000)
     }
+  }
+
+  // Drag and drop handlers
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDragIn = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setDragActive(true)
+    }
+  }
+
+  const handleDragOut = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      // Filter for image files only
+      const imageFiles = Array.from(files).filter(file => 
+        file.type.startsWith('image/')
+      )
+      
+      if (imageFiles.length > 0) {
+        const dt = new DataTransfer()
+        imageFiles.forEach(file => dt.items.add(file))
+        handleUpload(dt.files, true)
+      }
+    }
+  }
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click()
   }
 
   const removeImage = (url: string) => {
@@ -185,7 +234,15 @@ export function MediaGallerySelector({
           📸 Add from Media Gallery
         </button>
         
-        <div className="relative">
+        <div 
+          className={`relative border-2 border-dashed rounded-lg transition-all ${
+            dragActive ? 'border-green-400 bg-green-50' : 'border-gray-300'
+          }`}
+          onDragEnter={handleDragIn}
+          onDragLeave={handleDragOut}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+        >
           <input
             type="file"
             multiple={multiple}
@@ -197,13 +254,26 @@ export function MediaGallerySelector({
           />
           <label
             htmlFor={`upload-${Date.now()}`}
-            className={`flex items-center gap-2 border border-gray-300 rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors ${
+            className={`flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors rounded-lg ${
               uploading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            } ${dragActive ? 'text-green-700' : ''}`}
           >
-            <Upload className="h-4 w-4" />
-            {uploading ? 'Uploading...' : 'Upload New Images'}
+            {dragActive ? (
+              <CloudUpload className="h-4 w-4" />
+            ) : (
+              <Upload className="h-4 w-4" />
+            )}
+            {dragActive ? 'Drop images here' : (uploading ? `Uploading ${uploadingCount} files...` : 'Upload New Images')}
           </label>
+          
+          {dragActive && (
+            <div className="absolute inset-0 pointer-events-none rounded-lg bg-green-100 bg-opacity-50 flex items-center justify-center">
+              <div className="text-center">
+                <CloudUpload className="h-8 w-8 text-green-500 mx-auto mb-2" />
+                <p className="text-sm text-green-700 font-medium">Drop to upload</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -250,61 +320,145 @@ export function MediaGallerySelector({
               </div>
             </div>
 
-            {/* Media Grid */}
-            <div className="p-4 max-h-96 overflow-y-auto">
+            {/* Upload Area & Media Grid */}
+            <div 
+              className={`relative p-4 max-h-96 overflow-y-auto transition-all ${
+                dragActive ? 'bg-green-50 border-2 border-dashed border-green-400' : ''
+              }`}
+              onDragEnter={handleDragIn}
+              onDragLeave={handleDragOut}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+            >
+              {/* Drag and Drop Overlay */}
+              {dragActive && (
+                <div className="absolute inset-0 bg-green-50 bg-opacity-90 flex items-center justify-center z-10 border-2 border-dashed border-green-400 rounded-lg">
+                  <div className="text-center">
+                    <CloudUpload className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                    <p className="text-lg font-medium text-green-800 mb-2">Drop images here to upload</p>
+                    <p className="text-sm text-green-600">JPG, PNG, GIF, WEBP up to 10MB each</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Hidden File Input for Drag & Drop */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                onChange={(e) => e.target.files && handleUpload(e.target.files, true)}
+                className="hidden"
+              />
+
               {loading ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
                 </div>
               ) : filteredMedia.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">No images found</p>
-                  <p className="text-sm text-gray-400">Try uploading some images first</p>
+                <div className="text-center py-12">
+                  <CloudUpload className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 mb-2">No images found</p>
+                  <p className="text-sm text-gray-400 mb-4">Drag and drop images here or click to upload</p>
+                  <button
+                    onClick={triggerFileUpload}
+                    disabled={uploading}
+                    className={`inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors ${
+                      uploading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    <Plus className="h-4 w-4" />
+                    {uploading ? `Uploading ${uploadingCount} files...` : 'Upload Images'}
+                  </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-3">
-                  {filteredMedia.map((item) => (
-                    <div
-                      key={item.id}
-                      className={`relative group cursor-pointer border-2 rounded-lg overflow-hidden transition-all ${
-                        selectedImages.includes(item.url)
-                          ? 'border-green-500 ring-2 ring-green-200'
-                          : 'border-gray-200 hover:border-gray-300'
+                <>
+                  {/* Upload Button Row */}
+                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
+                    <p className="text-sm text-gray-600">Click images to select • Drag & drop to upload new images</p>
+                    <button
+                      onClick={triggerFileUpload}
+                      disabled={uploading}
+                      className={`inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm ${
+                        uploading ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
-                      onClick={() => handleImageSelect(item.url)}
                     >
-                      <div className="aspect-square">
-                        <img
-                          src={item.url}
-                          alt={item.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      {selectedImages.includes(item.url) && (
-                        <div className="absolute inset-0 bg-green-500 bg-opacity-20 flex items-center justify-center">
-                          <div className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                            <Check className="h-3 w-3" />
-                          </div>
+                      <Plus className="h-4 w-4" />
+                      {uploading ? `Uploading ${uploadingCount}...` : 'Upload More'}
+                    </button>
+                  </div>
+
+                  {/* Media Grid */}
+                  <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-3">
+                    {filteredMedia.map((item) => (
+                      <div
+                        key={item.id}
+                        className={`relative group cursor-pointer border-2 rounded-lg overflow-hidden transition-all ${
+                          selectedImages.includes(item.url)
+                            ? 'border-green-500 ring-2 ring-green-200'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        onClick={() => handleImageSelect(item.url)}
+                      >
+                        <div className="aspect-square">
+                          <img
+                            src={item.url}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
                         </div>
-                      )}
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <p className="text-xs truncate">{item.name}</p>
+                        {selectedImages.includes(item.url) && (
+                          <div className="absolute inset-0 bg-green-500 bg-opacity-20 flex items-center justify-center">
+                            <div className="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                              <Check className="h-3 w-3" />
+                            </div>
+                          </div>
+                        )}
+                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <p className="text-xs truncate">{item.name}</p>
+                        </div>
                       </div>
-                    </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Upload Progress in Modal */}
+              {uploadProgress.length > 0 && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  {uploadProgress.map((message, index) => (
+                    <p key={index} className="text-sm text-green-800">{message}</p>
                   ))}
                 </div>
               )}
             </div>
 
             {/* Modal Footer */}
-            <div className="flex items-center justify-between p-4 border-t">
-              <span className="text-sm text-gray-600">
-                {selectedImages.length} image{selectedImages.length !== 1 ? 's' : ''} selected
-              </span>
+            <div className="flex items-center justify-between p-4 border-t bg-gray-50">
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-600">
+                  {selectedImages.length} image{selectedImages.length !== 1 ? 's' : ''} selected
+                </span>
+                {uploading && (
+                  <div className="flex items-center gap-2 text-sm text-green-600">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600"></div>
+                    Uploading {uploadingCount} file{uploadingCount !== 1 ? 's' : ''}...
+                  </div>
+                )}
+              </div>
               <div className="flex gap-2">
                 <button
+                  onClick={() => onImagesChange([])}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  disabled={uploading}
+                >
+                  Clear All
+                </button>
+                <button
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  disabled={uploading}
                 >
                   Done
                 </button>
