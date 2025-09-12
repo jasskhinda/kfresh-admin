@@ -19,6 +19,8 @@ interface Product {
   name: string
   slug: string
   description: string | null
+  ingredients: string | null
+  nutrition_info: string | null
   short_description: string | null
   price: number
   compare_price: number | null
@@ -678,6 +680,53 @@ export default function ProductEditPage() {
                   Appears in product cards and listings. Keep it concise and engaging.
                 </p>
               )}
+            </div>
+          </div>
+        </div>
+
+        {/* Content & Information - COPY & PASTE SECTIONS */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+              <span className="text-green-600">📄</span>
+            </div>
+            <div>
+              <h2 className="text-lg font-medium text-gray-900">Content & Information</h2>
+              <p className="text-sm text-gray-600">Copy & paste product details from any source - AI friendly!</p>
+            </div>
+          </div>
+          
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                🥬 Ingredients
+              </label>
+              <textarea
+                rows={3}
+                value={product?.ingredients || ''}
+                onChange={(e) => updateProduct('ingredients', e.target.value || null)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                placeholder="List all ingredients (copy & paste friendly)..."
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Complete ingredient list - copy and paste from any source
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                📊 Nutrition & Other Information
+              </label>
+              <textarea
+                rows={6}
+                value={product?.nutrition_info || ''}
+                onChange={(e) => updateProduct('nutrition_info', e.target.value || null)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                placeholder="Nutrition facts, allergen information, storage instructions, important notes, or any other product details..."
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                📋 Perfect for: Nutrition tables, allergen warnings, storage instructions, certifications, or any additional product info
+              </p>
             </div>
           </div>
         </div>

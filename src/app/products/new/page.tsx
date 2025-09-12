@@ -28,6 +28,8 @@ export default function NewProductPage() {
     name: '',
     slug: '',
     description: '',
+    ingredients: '',
+    nutrition_info: '',
     short_description: '',
     price: 0,
     compare_price: 0,
@@ -95,6 +97,8 @@ export default function NewProductPage() {
         name: formData.name,
         slug: formData.slug,
         description: formData.description || null,
+        ingredients: formData.ingredients || null,
+        nutrition_info: formData.nutrition_info || null,
         short_description: formData.short_description || null,
         price: formData.price,
         compare_price: formData.compare_price || null,
@@ -227,7 +231,7 @@ export default function NewProductPage() {
             </Link>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Add New Product</h1>
-              <p className="text-gray-600">Create a new product for your store</p>
+              <p className="text-gray-600">Enhanced with copy & paste content sections - AI friendly! 🚀</p>
             </div>
           </div>
         </div>
@@ -595,6 +599,54 @@ export default function NewProductPage() {
                     Appears in product cards and listings. Keep it concise and engaging.
                   </p>
                 )}
+              </div>
+
+            </div>
+          </div>
+
+          {/* Content & Information - NEW COPY & PASTE SECTIONS */}
+          <div className="bg-white shadow rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                <span className="text-green-600">📄</span>
+              </div>
+              <div>
+                <h2 className="text-lg font-medium text-gray-900">Content & Information</h2>
+                <p className="text-sm text-gray-600">Copy & paste product details from any source - AI friendly!</p>
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  🥬 Ingredients
+                </label>
+                <textarea
+                  rows={3}
+                  value={formData.ingredients}
+                  onChange={(e) => setFormData({ ...formData, ingredients: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  placeholder="List all ingredients (copy & paste friendly)..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Complete ingredient list - copy and paste from any source
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  📊 Nutrition & Other Information
+                </label>
+                <textarea
+                  rows={6}
+                  value={formData.nutrition_info}
+                  onChange={(e) => setFormData({ ...formData, nutrition_info: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  placeholder="Nutrition facts, allergen information, storage instructions, important notes, or any other product details..."
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  📋 Perfect for: Nutrition tables, allergen warnings, storage instructions, certifications, or any additional product info
+                </p>
               </div>
             </div>
           </div>
