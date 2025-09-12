@@ -116,7 +116,10 @@ export default function ProductEditPage() {
       const response = await fetch('/api/products', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
+        body: JSON.stringify({
+          ...product,
+          variants: useVariants ? variants : null
+        })
       })
 
       const result = await response.json()
@@ -728,6 +731,7 @@ export default function ProductEditPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Price *
+                {useVariants && <span className="text-xs text-gray-500 ml-2">(Base price if variants enabled)</span>}
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
@@ -735,17 +739,24 @@ export default function ProductEditPage() {
                   type="number"
                   step="0.01"
                   min="0"
-                  required
+                  required={!useVariants}
                   value={product.price}
                   onChange={(e) => updateProduct('price', parseFloat(e.target.value) || 0)}
                   className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  disabled={useVariants}
                 />
               </div>
+              {useVariants && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Prices are set per variant when using size options
+                </p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Compare Price
+                {useVariants && <span className="text-xs text-gray-500 ml-2">(Set per variant)</span>}
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
@@ -756,6 +767,7 @@ export default function ProductEditPage() {
                   value={product.compare_price || ''}
                   onChange={(e) => updateProduct('compare_price', parseFloat(e.target.value) || null)}
                   className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  disabled={useVariants}
                 />
               </div>
             </div>
@@ -780,6 +792,7 @@ export default function ProductEditPage() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Stock Quantity
+                {useVariants && <span className="text-xs text-gray-500 ml-2">(Set per variant)</span>}
               </label>
               <input
                 type="number"
@@ -787,7 +800,13 @@ export default function ProductEditPage() {
                 value={product.stock_quantity}
                 onChange={(e) => updateProduct('stock_quantity', parseInt(e.target.value) || 0)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                disabled={useVariants}
               />
+              {useVariants && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Stock is tracked per variant when using size options
+                </p>
+              )}
             </div>
 
             <div>
@@ -816,6 +835,155 @@ export default function ProductEditPage() {
               />
             </div>
           </div>
+        </div>
+
+        {/* Size/Variant Options */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-medium text-gray-900">📏 Size/Variant Options</h2>
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useVariants}
+                onChange={(e) => setUseVariants(e.target.checked)}
+                className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 mr-2"
+              />
+              <span className="text-sm text-gray-600">Enable multiple sizes/variants</span>
+            </label>
+          </div>
+
+          {useVariants ? (
+            <div className="space-y-4">
+              {variants.map((variant, index) => (
+                <div key={variant.id} className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-sm font-medium text-gray-700">
+                      Variant {index + 1}
+                      {variant.is_default && <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Default</span>}
+                    </h4>
+                    {variants.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeVariant(variant.id)}
+                        className="text-red-600 hover:text-red-700 text-sm"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Size Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={variant.size_name}
+                        onChange={(e) => updateVariant(variant.id, 'size_name', e.target.value)}
+                        placeholder={product?.unit === 'g' ? "e.g., 200g" : product?.unit === 'liter' ? "e.g., 1L" : "e.g., Small"}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                        required={useVariants}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Price *
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={variant.price}
+                          onChange={(e) => updateVariant(variant.id, 'price', parseFloat(e.target.value) || 0)}
+                          className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                          required={useVariants}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Compare Price
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={variant.compare_price || ''}
+                          onChange={(e) => updateVariant(variant.id, 'compare_price', parseFloat(e.target.value) || null)}
+                          className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Stock Quantity
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={variant.stock_quantity}
+                        onChange={(e) => updateVariant(variant.id, 'stock_quantity', parseInt(e.target.value) || 0)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        SKU
+                      </label>
+                      <input
+                        type="text"
+                        value={variant.sku || ''}
+                        onChange={(e) => updateVariant(variant.id, 'sku', e.target.value || null)}
+                        placeholder="Optional"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                      />
+                    </div>
+                    
+                    <div className="flex items-end">
+                      <label className="flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={variant.is_default}
+                          onChange={(e) => updateVariant(variant.id, 'is_default', e.target.checked)}
+                          className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 mr-2"
+                        />
+                        <span className="text-sm text-gray-600">Set as default</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              <button
+                type="button"
+                onClick={addVariant}
+                className="w-full py-2 px-4 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-green-500 hover:text-green-600 transition-colors text-sm"
+              >
+                + Add Another Size/Variant
+              </button>
+              
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-xs text-blue-700">
+                  <strong>💡 Tip:</strong> Each variant can have different prices and stock levels. Set one as default for initial display.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <p className="text-sm text-gray-600">
+                Enable variants to offer multiple sizes or options with different prices (e.g., 200g for $5.99, 400g for $9.99)
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Product Specifications */}
