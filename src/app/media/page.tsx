@@ -248,13 +248,14 @@ export default function MediaGalleryPage() {
 
           if (!error && records) {
             for (const record of records) {
-              const imageUrl = (record as any)[column]
+              const recordData = record as any
+              const imageUrl = recordData[column]
               if (imageUrl && imageUrls.includes(imageUrl)) {
                 await supabase
                   .from(table)
                   .update({ [column]: null })
-                  .eq('id', record.id)
-                console.log(`✅ Cleaned ${table} record ${record.id}`)
+                  .eq('id', recordData.id)
+                console.log(`✅ Cleaned ${table} record ${recordData.id}`)
               }
             }
           }
