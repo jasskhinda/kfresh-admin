@@ -79,6 +79,13 @@ export default function MediaGalleryPage() {
         }
       }))
 
+      // Sort by most recent first (created_at descending)
+      mediaItems.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0).getTime()
+        const dateB = new Date(b.created_at || 0).getTime()
+        return dateB - dateA // Most recent first
+      })
+
       setMedia(mediaItems)
     } catch (error) {
       console.error('Error fetching media:', error)
