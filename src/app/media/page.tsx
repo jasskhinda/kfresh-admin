@@ -309,6 +309,18 @@ export default function MediaGalleryPage() {
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  // Helper functions for visual indicators
+  const isNewImage = (createdAt: string) => {
+    const imageDate = new Date(createdAt)
+    const now = new Date()
+    const hoursDiff = (now.getTime() - imageDate.getTime()) / (1000 * 60 * 60)
+    return hoursDiff < 24 // Less than 24 hours old
+  }
+
+  const isRecentUpload = (item: MediaItem, index: number) => {
+    return index < 5 // Top 5 most recent (already sorted by created_at desc)
+  }
+
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return 'Unknown'
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
@@ -323,7 +335,13 @@ export default function MediaGalleryPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Media Gallery</h1>
-            <p className="text-gray-600">Manage all your images in one place</p>
+            <p className="text-gray-600 flex items-center gap-2">
+              Manage all your images in one place
+              <span className="text-sm text-green-600 font-medium flex items-center gap-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                Most recent uploads first
+              </span>
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -447,7 +465,7 @@ export default function MediaGalleryPage() {
             </div>
           ) : (
             <div className={viewMode === 'grid' ? 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 p-4' : 'divide-y'}>
-              {filteredMedia.map((item) => (
+              {filteredMedia.map((item, index) => (
                 <div key={item.id} className={viewMode === 'grid' ? 'group relative' : 'flex items-center justify-between p-4'}>
                   {viewMode === 'grid' ? (
                     <>
@@ -457,6 +475,18 @@ export default function MediaGalleryPage() {
                           alt={item.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                         />
+                        
+                        {/* NEW Badge for images less than 24 hours old (takes priority) */}
+                        {isNewImage(item.created_at) ? (
+                          <div className="absolute top-1 right-1 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium animate-pulse shadow-lg">
+                            NEW
+                          </div>
+                        ) : (
+                          /* Green dot for top 5 most recent uploads (if not NEW) */
+                          isRecentUpload(item, index) && (
+                            <div className="absolute top-1 right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-md animate-pulse"></div>
+                          )
+                        )}
                       </div>
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
                         <div className="flex gap-2">
@@ -485,7 +515,10 @@ export default function MediaGalleryPage() {
                         />
                       </div>
                       <div className="mt-2">
-                        <p className="text-xs text-gray-600 truncate" title={item.name}>{item.name}</p>
+                        <p className="text-xs text-gray-600 truncate flex items-center gap-1" title={item.name}>
+                          {item.name}
+                          {isRecentUpload(item, index) && <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>}
+                        </p>
                         <p className="text-xs text-gray-400">{formatFileSize(item.size)}</p>
                       </div>
                     </>
@@ -498,9 +531,24 @@ export default function MediaGalleryPage() {
                           onChange={() => toggleItemSelection(item.id)}
                           className="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200"
                         />
-                        <img src={item.url} alt={item.name} className="w-12 h-12 object-cover rounded" />
+                        <div className="relative">
+                          <img src={item.url} alt={item.name} className="w-12 h-12 object-cover rounded" />
+                          {/* NEW Badge for images less than 24 hours old */}
+                          {isNewImage(item.created_at) && (
+                            <div className="absolute -top-1 -right-1 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full font-medium animate-pulse shadow-lg">
+                              NEW
+                            </div>
+                          )}
+                          {/* Green dot for top 5 most recent uploads (if not NEW) */}
+                          {!isNewImage(item.created_at) && isRecentUpload(item, index) && (
+                            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border border-white shadow-md animate-pulse"></div>
+                          )}
+                        </div>
                         <div>
-                          <p className="font-medium text-gray-900">{item.name}</p>
+                          <p className="font-medium text-gray-900 flex items-center gap-2">
+                            {item.name}
+                            {isRecentUpload(item, index) && <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>}
+                          </p>
                           <p className="text-sm text-gray-500">{formatFileSize(item.size)} • {new Date(item.created_at).toLocaleDateString()}</p>
                         </div>
                       </div>
