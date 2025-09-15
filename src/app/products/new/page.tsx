@@ -112,7 +112,7 @@ export default function NewProductPage() {
       size_name: '',
       price: 0,
       compare_price: 0,
-      stock_quantity: 0,
+      stock_quantity: 100,
       sku: '',
       is_default: false
     }])

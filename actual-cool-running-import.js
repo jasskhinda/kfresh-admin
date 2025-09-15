@@ -154,7 +154,10 @@ async function importActualProducts(categoryMap, products) {
         slug: productSlug,
         description: product.description,
         price: product.price,
-        category_id: category.id
+        category_id: category.id,
+        stock_quantity: 100,
+        is_available: true,
+        is_featured: false
       };
       
       const { data, error } = await supabase

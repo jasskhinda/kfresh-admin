@@ -142,7 +142,7 @@ export default function ProductEditPage() {
       size_name: '',
       price: 0,
       compare_price: null,
-      stock_quantity: 0,
+      stock_quantity: 100,
       sku: null,
       is_default: variants.length === 0
     }
