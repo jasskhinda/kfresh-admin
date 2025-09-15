@@ -33,6 +33,7 @@ export function MediaGallerySelector({
   const [searchTerm, setSearchTerm] = useState('')
   const [uploadProgress, setUploadProgress] = useState<string[]>([])
   const [dragActive, setDragActive] = useState(false)
+  const [dragCounter, setDragCounter] = useState(0)
   const [uploadingCount, setUploadingCount] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
@@ -149,7 +150,7 @@ export function MediaGallerySelector({
     }
   }
 
-  // Drag and drop handlers
+  // Drag and drop handlers - Fixed to prevent flashing
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -158,7 +159,9 @@ export function MediaGallerySelector({
   const handleDragIn = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+    
+    setDragCounter(prev => prev + 1)
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0 && !dragActive) {
       setDragActive(true)
     }
   }
@@ -166,13 +169,23 @@ export function MediaGallerySelector({
   const handleDragOut = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setDragActive(false)
+    
+    setDragCounter(prev => {
+      const newCount = prev - 1
+      if (newCount <= 0) {
+        setDragActive(false)
+        return 0
+      }
+      return newCount
+    })
   }
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    
     setDragActive(false)
+    setDragCounter(0)
     
     const files = e.dataTransfer.files
     if (files && files.length > 0) {

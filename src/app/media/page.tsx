@@ -29,6 +29,7 @@ export default function MediaGalleryPage() {
   const [previewImage, setPreviewImage] = useState<MediaItem | null>(null)
   const [uploadProgress, setUploadProgress] = useState<string[]>([])
   const [dragActive, setDragActive] = useState(false)
+  const [dragCounter, setDragCounter] = useState(0)
 
   const supabase = createClient()
 
@@ -124,17 +125,29 @@ export default function MediaGalleryPage() {
     }
   }
 
-  // Drag and drop handlers
+  // Drag and drop handlers - Fixed to prevent flashing
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setDragActive(true)
+    
+    setDragCounter(prev => prev + 1)
+    if (!dragActive) {
+      setDragActive(true)
+    }
   }
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setDragActive(false)
+    
+    setDragCounter(prev => {
+      const newCount = prev - 1
+      if (newCount <= 0) {
+        setDragActive(false)
+        return 0
+      }
+      return newCount
+    })
   }
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -145,7 +158,9 @@ export default function MediaGalleryPage() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
+    
     setDragActive(false)
+    setDragCounter(0)
     
     const files = e.dataTransfer.files
     if (files && files.length > 0) {
