@@ -51,18 +51,6 @@ export default function ProductsPage() {
   useEffect(() => {
     fetchProducts()
     fetchCategories()
-    
-    // Emergency fallback: force loading to end after 30 seconds
-    const emergencyTimeout = setTimeout(() => {
-      console.log('⚠️ Emergency timeout: Forcing loading to end')
-      setLoading(false)
-      if (products.length === 0) {
-        console.log('📦 Using enhanced mock data as fallback')
-        setProducts(getEnhancedMockProducts())
-      }
-    }, 30000)
-
-    return () => clearTimeout(emergencyTimeout)
   }, [])
 
   const fetchProducts = async () => {
@@ -70,31 +58,22 @@ export default function ProductsPage() {
     try {
       const supabase = createClient()
       console.log('📡 Making Supabase query...')
-      
-      // Increase timeout to 15 seconds for production reliability
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Request timeout')), 15000)
-      )
-      
-      const supabasePromise = supabase
+
+      const { data, error } = await supabase
         .from('products')
         .select('*')
         .order('created_at', { ascending: false })
 
-      const result = await Promise.race([supabasePromise, timeoutPromise])
-      const { data, error } = result as any
-
       if (error) {
         console.error('❌ Supabase error:', error)
-        // Use enhanced mock data for demo
-        setProducts(getEnhancedMockProducts())
+        setProducts([])
       } else {
         console.log('✅ Got products:', data?.length || 0)
         setProducts(data || [])
       }
     } catch (error) {
       console.error('❌ Fetch error:', error)
-      setProducts(getEnhancedMockProducts())
+      setProducts([])
     } finally {
       console.log('✅ Setting loading to false')
       setLoading(false)
@@ -105,30 +84,22 @@ export default function ProductsPage() {
     console.log('🔄 Starting fetchCategories...')
     try {
       const supabase = createClient()
-      
-      // Increase timeout to 15 seconds for production reliability
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Categories timeout')), 15000)
-      )
-      
-      const supabasePromise = supabase
+
+      const { data, error } = await supabase
         .from('categories')
         .select('id, name, slug')
         .eq('is_active', true)
 
-      const result = await Promise.race([supabasePromise, timeoutPromise])
-      const { data, error } = result as any
-
       if (error) {
         console.error('❌ Categories error:', error)
-        setCategories(getEnhancedMockCategories())
+        setCategories([])
       } else {
         console.log('✅ Got categories:', data?.length || 0)
         setCategories(data || [])
       }
     } catch (error) {
       console.error('❌ Categories fetch error:', error)
-      setCategories(getEnhancedMockCategories())
+      setCategories([])
     }
   }
 
