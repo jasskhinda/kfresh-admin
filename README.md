@@ -121,3 +121,12 @@ Perfect for managing KFresh Supermarket's operations with the same database as t
 ---
 
 **Built with ❤️ for KFresh Supermarket Management**
+
+## Latest Updates - September 27, 2025
+
+- ✅ Fixed user deletion functionality with cascade deletion
+- ✅ Implemented self-deletion prevention for admin safety
+- ✅ Added visual lock indicator for own account
+- ✅ Fixed user creation with proper profile management
+- ✅ Enhanced review system with dynamic ratings
+- ✅ Improved authentication flow and session handling
