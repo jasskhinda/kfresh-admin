@@ -183,11 +183,11 @@ export default function AdminLoginPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-xl p-4 flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+            <div className="bg-gradient-to-r from-red-100 to-red-200 border-2 border-red-400 rounded-xl p-5 flex items-start gap-3 shadow-lg">
+              <AlertCircle className="h-6 w-6 text-red-700 mt-0.5" />
               <div>
-                <p className="text-red-700 font-medium">Error</p>
-                <p className="text-red-600 text-sm mt-1">{error}</p>
+                <p className="text-red-900 font-bold text-lg">Error</p>
+                <p className="text-red-800 font-bold text-base mt-1">{error}</p>
               </div>
             </div>
           )}
