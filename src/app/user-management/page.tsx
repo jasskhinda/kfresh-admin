@@ -248,14 +248,14 @@ export default function AdminManagementPage() {
       await new Promise(resolve => setTimeout(resolve, 2000))
 
       // Verify profile was created by trigger
-      const { data: profileCheck, error: checkError } = await supabase
+      const { data: profileCheck, error: verifyError } = await supabase
         .from('user_profiles')
         .select('id, email, role')
         .eq('id', authData.user.id)
         .single()
 
-      if (checkError || !profileCheck) {
-        console.error('Profile verification failed:', checkError)
+      if (verifyError || !profileCheck) {
+        console.error('Profile verification failed:', verifyError)
         setError('User created but profile setup failed. The user may need to complete setup manually.')
         return
       }
