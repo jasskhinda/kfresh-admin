@@ -12,6 +12,7 @@ interface AdminProfile {
   role: string | null
   created_at: string
   updated_at: string
+  password_last_changed?: string | null
 }
 
 interface AuthContextType {

@@ -163,6 +163,20 @@ export default function AdminProfilePage() {
 
       if (updateError) throw updateError
 
+      // Update the password_last_changed timestamp in user_profiles
+      const timestamp = new Date().toISOString()
+      await supabase
+        .from('user_profiles')
+        .update({
+          password_last_changed: timestamp
+        })
+        .eq('id', user?.id)
+
+      // Update the profile in context to reflect the change immediately
+      await updateProfile({
+        password_last_changed: timestamp
+      })
+
       // Clear form and show success
       setPasswordData({
         currentPassword: '',
@@ -507,7 +521,17 @@ export default function AdminProfilePage() {
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">Password</p>
-                  <p className="text-sm text-gray-600">Last changed: Not available</p>
+                  <p className="text-sm text-gray-600">
+                    Last changed: {
+                      profile?.password_last_changed
+                        ? new Date(profile.password_last_changed).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })
+                        : 'Never'
+                    }
+                  </p>
                 </div>
               </div>
               <button
