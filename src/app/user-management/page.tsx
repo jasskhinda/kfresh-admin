@@ -216,16 +216,16 @@ export default function AdminManagementPage() {
         return
       }
 
-      // Create auth user - profile will be created automatically by database trigger
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Create auth user using admin API to avoid auto-login
+      // This creates the user WITHOUT signing them in
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email: newAdminData.email,
         password: newAdminData.password,
-        options: {
-          data: {
-            first_name: newAdminData.first_name,
-            last_name: newAdminData.last_name,
-            role: newAdminData.role
-          }
+        email_confirm: true, // Auto-confirm email since admin is creating
+        user_metadata: {
+          first_name: newAdminData.first_name,
+          last_name: newAdminData.last_name,
+          role: newAdminData.role
         }
       })
 
