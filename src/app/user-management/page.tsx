@@ -216,18 +216,30 @@ export default function AdminManagementPage() {
         return
       }
 
-      // Create auth user using admin API to avoid auto-login
-      // This creates the user WITHOUT signing them in
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Store current session before creating new user
+      const { data: currentSession } = await supabase.auth.getSession()
+
+      // Create auth user - profile will be created automatically by database trigger
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: newAdminData.email,
         password: newAdminData.password,
-        email_confirm: true, // Auto-confirm email since admin is creating
-        user_metadata: {
-          first_name: newAdminData.first_name,
-          last_name: newAdminData.last_name,
-          role: newAdminData.role
+        options: {
+          data: {
+            first_name: newAdminData.first_name,
+            last_name: newAdminData.last_name,
+            role: newAdminData.role
+          },
+          emailRedirectTo: window.location.origin // Prevent auto redirect
         }
       })
+
+      // Restore the original session if we got logged in as the new user
+      if (currentSession?.session && authData?.user?.id !== currentSession.session.user.id) {
+        await supabase.auth.setSession({
+          access_token: currentSession.session.access_token,
+          refresh_token: currentSession.session.refresh_token
+        })
+      }
 
       if (authError) {
         console.error('Auth creation error:', authError)
