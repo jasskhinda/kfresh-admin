@@ -52,12 +52,6 @@ export default function AdminLoginPage() {
     }
   }
 
-  const fillDemoCredentials = () => {
-    setFormData({
-      email: 'admin@kfresh.ca',
-      password: 'admin123'
-    })
-  }
 
   return (
     <div className="min-h-screen hero-gradient relative overflow-hidden">
@@ -270,34 +264,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <svg className="h-4 w-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-              <h3 className="text-base font-bold text-black" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>
-                Demo Credentials
-              </h3>
-            </div>
-            <div className="space-y-3 text-base mb-4">
-              <div className="flex justify-between items-center">
-                <span className="text-black font-bold" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>Email:</span>
-                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono font-bold" style={{ color: '#000000 !important', backgroundColor: '#fef08a', fontWeight: '700' }}>admin@kfresh.ca</code>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-black font-bold" style={{ color: '#000000 !important', fontSize: '1rem', fontWeight: '700' }}>Password:</span>
-                <code className="text-black bg-yellow-200 px-3 py-1 rounded text-sm font-mono font-bold" style={{ color: '#000000 !important', backgroundColor: '#fef08a', fontWeight: '700' }}>admin123</code>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={fillDemoCredentials}
-              className="w-full py-2 px-4 bg-brand text-white rounded-lg text-sm font-medium hover:opacity-90 transition-colors"
-            >
-              Fill Demo Credentials
-            </button>
-          </div>
 
           {/* Admin Notice */}
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 text-center">
