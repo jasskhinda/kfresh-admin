@@ -216,43 +216,37 @@ export default function AdminManagementPage() {
         return
       }
 
-      console.log('Creating user via API to preserve session...')
+      console.log('Creating admin user without affecting session...')
 
-      // Use API route to create user without affecting current session
-      const response = await fetch('/api/users/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: newAdminData.email,
-          password: newAdminData.password,
-          first_name: newAdminData.first_name,
-          last_name: newAdminData.last_name,
-          role: newAdminData.role
+      // Use the SQL function to create user without affecting current session
+      const { data: result, error: createError } = await supabase
+        .rpc('create_admin_user', {
+          user_email: newAdminData.email,
+          user_password: newAdminData.password,
+          user_first_name: newAdminData.first_name,
+          user_last_name: newAdminData.last_name,
+          user_role: newAdminData.role
         })
-      })
 
-      const result = await response.json()
+      if (createError) {
+        console.error('User creation error:', createError)
+        setError(`Failed to create user: ${createError.message}`)
+        return
+      }
 
-      if (!response.ok) {
-        console.error('Auth creation error:', result.error)
-        if (result.error?.includes('already registered') || result.error?.includes('already exists')) {
+      if (!result?.success) {
+        console.error('User creation failed:', result?.error)
+        if (result?.error === 'Email already exists') {
           setError('This email is already registered. Please use a different email.')
         } else {
-          setError(`Failed to create auth account: ${result.error}`)
+          setError(`Failed to create user: ${result?.error || 'Unknown error'}`)
         }
         return
       }
 
-      const authData = { user: { id: result.userId, email: result.email } }
+      const authData = { user: { id: result.id, email: result.email } }
 
-      if (!result.userId) {
-        setError('Auth user creation failed - no user ID returned')
-        return
-      }
-
-      console.log('Auth user created successfully:', result.userId)
+      console.log('Admin user created successfully:', result.id)
 
       // Wait for database trigger to create profile
       await new Promise(resolve => setTimeout(resolve, 2000))
