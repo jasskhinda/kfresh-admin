@@ -34,12 +34,12 @@ export class ImageUploadService {
         }
       }
 
-      // Optimize image if larger than 200KB
-      const maxSize = 200 * 1024 // 200KB in bytes
+      // Optimize image if larger than 150KB
+      const maxSize = 150 * 1024 // 150KB in bytes
       let processedFile = file
 
       if (file.size > maxSize) {
-        console.log('🔄 Image size exceeds 200KB, optimizing...')
+        console.log('🔄 Image size exceeds 150KB, optimizing...')
         processedFile = await this.optimizeImage(file, maxSize)
         console.log('✅ Image optimized from', Math.round(file.size / 1024), 'KB to', Math.round(processedFile.size / 1024), 'KB')
       }
@@ -156,7 +156,7 @@ export class ImageUploadService {
     }
   }
 
-  // Optimize image to target size (200KB)
+  // Optimize image to target size (150KB max)
   private async optimizeImage(file: File, targetSize: number): Promise<File> {
     return new Promise((resolve) => {
       const reader = new FileReader()
@@ -175,10 +175,10 @@ export class ImageUploadService {
           // Calculate initial quality based on file size
           let quality = 0.9
           if (file.size > targetSize * 5) {
-            // If file is > 1MB, start with lower quality
+            // If file is > 750KB, start with lower quality
             quality = 0.6
           } else if (file.size > targetSize * 3) {
-            // If file is > 600KB, start with medium quality
+            // If file is > 450KB, start with medium quality
             quality = 0.7
           }
 
