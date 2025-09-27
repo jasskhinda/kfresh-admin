@@ -14,11 +14,11 @@ export class ImageUploadService {
     try {
       console.log('📁 Starting image upload to folder:', folder)
       console.log('📄 File info:', { name: file.name, size: file.size, type: file.type })
-      
+
       // Check if user is authenticated
       const { data: { user }, error: authError } = await this.supabase.auth.getUser()
       console.log('👤 Auth check:', { user: !!user, error: authError })
-      
+
       if (authError || !user) {
         return {
           success: false,
@@ -34,24 +34,27 @@ export class ImageUploadService {
         }
       }
 
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit
-        return {
-          success: false,
-          error: 'File too large. Maximum size is 10MB.'
-        }
+      // Optimize image if larger than 200KB
+      const maxSize = 200 * 1024 // 200KB in bytes
+      let processedFile = file
+
+      if (file.size > maxSize) {
+        console.log('🔄 Image size exceeds 200KB, optimizing...')
+        processedFile = await this.optimizeImage(file, maxSize)
+        console.log('✅ Image optimized from', Math.round(file.size / 1024), 'KB to', Math.round(processedFile.size / 1024), 'KB')
       }
 
-      // Generate unique filename
-      const fileExt = file.name.split('.').pop()
+      // Generate unique filename using processed file
+      const fileExt = processedFile.name.split('.').pop()
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`
       const filePath = `${folder}/${fileName}`
       
       console.log('📤 Upload details:', { fileName, filePath, bucketName: this.bucketName })
 
-      // Upload to Supabase Storage with explicit options
+      // Upload to Supabase Storage with explicit options (using optimized file)
       const { data, error } = await this.supabase.storage
         .from(this.bucketName)
-        .upload(filePath, file, {
+        .upload(filePath, processedFile, {
           cacheControl: '3600',
           upsert: false,
           duplex: 'half'
@@ -151,6 +154,87 @@ export class ImageUploadService {
       console.error('Setup error:', error)
       return false
     }
+  }
+
+  // Optimize image to target size (200KB)
+  private async optimizeImage(file: File, targetSize: number): Promise<File> {
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+
+      reader.onload = (e) => {
+        const img = new Image()
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')!
+
+          // Start with original dimensions
+          let width = img.width
+          let height = img.height
+
+          // Calculate initial quality based on file size
+          let quality = 0.9
+          if (file.size > targetSize * 5) {
+            // If file is > 1MB, start with lower quality
+            quality = 0.6
+          } else if (file.size > targetSize * 3) {
+            // If file is > 600KB, start with medium quality
+            quality = 0.7
+          }
+
+          // Also reduce dimensions if image is very large
+          const maxDimension = 1200
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = (maxDimension / width) * height
+              width = maxDimension
+            } else {
+              width = (maxDimension / height) * width
+              height = maxDimension
+            }
+          }
+
+          // Set canvas dimensions
+          canvas.width = width
+          canvas.height = height
+
+          // Draw and compress image
+          ctx.drawImage(img, 0, 0, width, height)
+
+          // Try different quality levels to get close to target size
+          const tryCompress = (q: number) => {
+            canvas.toBlob(
+              (blob) => {
+                if (!blob) {
+                  resolve(file) // Fallback to original if compression fails
+                  return
+                }
+
+                if (blob.size > targetSize && q > 0.3) {
+                  // If still too large and quality can be reduced, try again
+                  tryCompress(q - 0.1)
+                } else {
+                  // Convert blob to File
+                  const optimizedFile = new File([blob], file.name, {
+                    type: blob.type || file.type,
+                    lastModified: Date.now()
+                  })
+                  resolve(optimizedFile)
+                }
+              },
+              file.type === 'image/png' ? 'image/jpeg' : file.type, // Convert PNG to JPEG for better compression
+              q
+            )
+          }
+
+          tryCompress(quality)
+        }
+
+        img.src = e.target?.result as string
+      }
+
+      reader.readAsDataURL(file)
+    })
   }
 }
 
