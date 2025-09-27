@@ -170,12 +170,14 @@ export default function AdminProfilePage() {
         confirmPassword: ''
       })
       setPasswordSuccess('Password updated successfully!')
+
+      // Close form immediately but keep success message visible
       setShowPasswordForm(false)
 
-      // Auto-hide success message after 3 seconds
+      // Clear success message after 5 seconds
       setTimeout(() => {
         setPasswordSuccess('')
-      }, 3000)
+      }, 5000)
 
     } catch (err: any) {
       console.error('Password change error:', err)
@@ -248,12 +250,12 @@ export default function AdminProfilePage() {
         )}
 
         {/* Success Message */}
-        {success && (
+        {(success || passwordSuccess) && (
           <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
             <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
             <div>
               <p className="text-green-700 font-medium">Success!</p>
-              <p className="text-green-600 text-sm mt-1">{success}</p>
+              <p className="text-green-600 text-sm mt-1">{success || passwordSuccess}</p>
             </div>
           </div>
         )}
