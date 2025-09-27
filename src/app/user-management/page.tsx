@@ -214,7 +214,7 @@ export default function AdminManagementPage() {
         return
       }
 
-      // Create auth user first
+      // Create auth user - profile will be created automatically by database trigger
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: newAdminData.email,
         password: newAdminData.password,
@@ -244,30 +244,23 @@ export default function AdminManagementPage() {
 
       console.log('Auth user created successfully:', authData.user.id)
 
-      // Wait a moment for auth user to be fully committed
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Wait for database trigger to create profile
+      await new Promise(resolve => setTimeout(resolve, 2000))
 
-      // Create user profile
-      const { error: profileError } = await supabase
+      // Verify profile was created by trigger
+      const { data: profileCheck, error: checkError } = await supabase
         .from('user_profiles')
-        .insert({
-          id: authData.user.id,
-          email: newAdminData.email,
-          first_name: newAdminData.first_name,
-          last_name: newAdminData.last_name,
-          role: newAdminData.role,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
+        .select('id, email, role')
+        .eq('id', authData.user.id)
+        .single()
 
-      if (profileError) {
-        console.error('Profile creation error:', profileError)
-
-        // Note: Cannot clean up auth user from client side
-        // The auth user will exist but without a profile
-        setError(`Failed to create admin profile: ${profileError.message}. Please contact system administrator to clean up the auth user.`)
+      if (checkError || !profileCheck) {
+        console.error('Profile verification failed:', checkError)
+        setError('User created but profile setup failed. The user may need to complete setup manually.')
         return
       }
+
+      console.log('Profile created successfully by trigger:', profileCheck)
 
       console.log('Admin profile created successfully')
       setSuccess(`Admin account created successfully! Login credentials sent to ${newAdminData.email}`)
@@ -705,6 +698,11 @@ export default function AdminManagementPage() {
                     <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                       <p className="text-xs text-blue-700">
                         <strong>Note:</strong> New administrators will need to confirm their email address before first login.
+                      </p>
+                    </div>
+                    <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <p className="text-xs text-yellow-700">
+                        <strong>Database Setup Required:</strong> If user creation fails with foreign key errors, run the user profile trigger SQL in your Supabase dashboard first.
                       </p>
                     </div>
                   </div>
