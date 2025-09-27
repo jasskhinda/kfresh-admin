@@ -61,6 +61,7 @@ export default function AdminManagementPage() {
   const [retryCount, setRetryCount] = useState(0)
   const [isRetrying, setIsRetrying] = useState(false)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
+  const [creatingAdmin, setCreatingAdmin] = useState(false)
 
   const retryFetchAdmins = async () => {
     if (retryCount >= 3) {
@@ -168,23 +169,27 @@ export default function AdminManagementPage() {
     e.preventDefault()
     setError('')
     setSuccess('')
+    setCreatingAdmin(true)
 
     try {
       // Validate password
       if (!newAdminData.password || newAdminData.password.length < 8) {
         setError('Password must be at least 8 characters long')
+        setCreatingAdmin(false)
         return
       }
 
       // Validate email
       if (!newAdminData.email || !newAdminData.email.includes('@')) {
         setError('Please enter a valid email address')
+        setCreatingAdmin(false)
         return
       }
 
       // Validate names
       if (!newAdminData.first_name.trim() || !newAdminData.last_name.trim()) {
         setError('First name and last name are required')
+        setCreatingAdmin(false)
         return
       }
 
@@ -205,18 +210,25 @@ export default function AdminManagementPage() {
 
       if (existingUser) {
         setError('An administrator with this email already exists')
+        setCreatingAdmin(false)
         return
       }
 
-      // Create auth user first
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Create auth user first using admin API for better control
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email: newAdminData.email,
         password: newAdminData.password,
+        email_confirm: true, // Auto-confirm email
+        user_metadata: {
+          first_name: newAdminData.first_name,
+          last_name: newAdminData.last_name,
+          role: newAdminData.role
+        }
       })
 
       if (authError) {
-        console.error('Auth signup error:', authError)
-        if (authError.message.includes('already registered')) {
+        console.error('Auth creation error:', authError)
+        if (authError.message.includes('already registered') || authError.message.includes('already exists')) {
           setError('This email is already registered. Please use a different email.')
         } else {
           setError(`Failed to create auth account: ${authError.message}`)
@@ -224,17 +236,21 @@ export default function AdminManagementPage() {
         return
       }
 
-      console.log('Auth user created:', authData.user?.id)
+      if (!authData.user || !authData.user.id) {
+        setError('Auth user creation failed - no user ID returned')
+        return
+      }
 
-      // Create user profile with timeout protection
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Profile creation is taking longer than expected')), 15000)
-      )
+      console.log('Auth user created successfully:', authData.user.id)
 
-      const profilePromise = supabase
+      // Wait a moment for auth user to be fully committed
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Create user profile
+      const { error: profileError } = await supabase
         .from('user_profiles')
         .insert({
-          id: authData.user?.id,
+          id: authData.user.id,
           email: newAdminData.email,
           first_name: newAdminData.first_name,
           last_name: newAdminData.last_name,
@@ -243,11 +259,17 @@ export default function AdminManagementPage() {
           updated_at: new Date().toISOString()
         })
 
-      const result = await Promise.race([profilePromise, timeoutPromise])
-      const { error: profileError } = result as any
-
       if (profileError) {
         console.error('Profile creation error:', profileError)
+
+        // If profile creation fails, clean up the auth user
+        try {
+          await supabase.auth.admin.deleteUser(authData.user.id)
+          console.log('Cleaned up auth user after profile creation failure')
+        } catch (cleanupError) {
+          console.error('Failed to cleanup auth user:', cleanupError)
+        }
+
         setError(`Failed to create admin profile: ${profileError.message}`)
         return
       }
@@ -273,6 +295,8 @@ export default function AdminManagementPage() {
       } else {
         setError(err.message || 'Failed to create admin account')
       }
+    } finally {
+      setCreatingAdmin(false)
     }
   }
 
@@ -696,10 +720,20 @@ export default function AdminManagementPage() {
                 <div className="flex gap-3 pt-4 border-t border-gray-200">
                   <button
                     type="submit"
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg"
+                    disabled={creatingAdmin}
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <UserPlus className="h-4 w-4" />
-                    Create Administrator
+                    {creatingAdmin ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Creating...
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="h-4 w-4" />
+                        Create Administrator
+                      </>
+                    )}
                   </button>
                   <button
                     type="button"
