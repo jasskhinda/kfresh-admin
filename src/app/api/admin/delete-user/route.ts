@@ -13,7 +13,7 @@ export async function DELETE(request: Request) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Check if the requesting user is an admin
     const { data: { user } } = await supabase.auth.getUser()
