@@ -60,6 +60,7 @@ export default function AdminManagementPage() {
   // Add retry functionality
   const [retryCount, setRetryCount] = useState(0)
   const [isRetrying, setIsRetrying] = useState(false)
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
 
   const retryFetchAdmins = async () => {
     if (retryCount >= 3) {
@@ -340,6 +341,53 @@ export default function AdminManagementPage() {
       last_name: '',
       role: 'admin'
     })
+  }
+
+  const handleDeleteAdmin = async (adminId: string, adminEmail: string) => {
+    setError('')
+    setSuccess('')
+
+    // Confirm deletion
+    const confirmed = confirm(`Are you sure you want to delete administrator: ${adminEmail}?\n\nThis action cannot be undone.`)
+    if (!confirmed) return
+
+    setDeletingUserId(adminId)
+
+    try {
+      console.log('Deleting admin:', adminId)
+
+      // Delete from user_profiles table
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .delete()
+        .eq('id', adminId)
+
+      if (profileError) {
+        console.error('Error deleting user profile:', profileError)
+        throw profileError
+      }
+
+      // Delete from auth.users (this requires admin privileges)
+      const { error: authError } = await supabase.auth.admin.deleteUser(adminId)
+
+      if (authError) {
+        console.error('Error deleting auth user:', authError)
+        // Don't throw here as profile deletion might have succeeded
+        setSuccess('User profile deleted, but auth account may need manual cleanup.')
+      } else {
+        setSuccess(`Administrator ${adminEmail} has been successfully deleted.`)
+      }
+
+      // Refresh the admin list
+      await fetchAdmins()
+      setTimeout(() => setSuccess(''), 5000)
+
+    } catch (err: any) {
+      console.error('Error deleting admin:', err)
+      setError(`Failed to delete administrator: ${err.message}`)
+    } finally {
+      setDeletingUserId(null)
+    }
   }
 
   const getInitials = (firstName: string | null, lastName: string | null, email: string) => {
@@ -780,16 +828,16 @@ export default function AdminManagementPage() {
                             <Edit3 className="h-5 w-5" />
                           </button>
                           <button
-                            onClick={() => {
-                              if (confirm(`Remove administrator access for: ${admin.email}?`)) {
-                                setSuccess('Administrator removal is restricted for security.')
-                                setTimeout(() => setSuccess(''), 3000)
-                              }
-                            }}
-                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                            title="Remove administrator"
+                            onClick={() => handleDeleteAdmin(admin.id, admin.email)}
+                            disabled={deletingUserId === admin.id}
+                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            title="Delete administrator"
                           >
-                            <Trash2 className="h-5 w-5" />
+                            {deletingUserId === admin.id ? (
+                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
+                            ) : (
+                              <Trash2 className="h-5 w-5" />
+                            )}
                           </button>
                         </div>
                       </div>
