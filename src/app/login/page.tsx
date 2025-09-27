@@ -37,12 +37,12 @@ export default function AdminLoginPage() {
 
       console.log('Login successful, setting success message')
       setSuccess('Signed in successfully!')
-      
-      // Redirect to admin dashboard after a shorter delay
+
+      // Redirect to admin dashboard after showing success message
       setTimeout(() => {
         console.log('Redirecting to dashboard...')
         router.push('/')
-      }, 800)
+      }, 2000)
       
     } catch (error: any) {
       console.error('Login error in handleSubmit:', error)
@@ -172,11 +172,11 @@ export default function AdminLoginPage() {
 
           {/* Success Message */}
           {success && (
-            <div className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl p-4 flex items-start gap-3">
-              <CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+            <div className="bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-300 rounded-xl p-5 flex items-start gap-3 shadow-lg animate-pulse">
+              <CheckCircle className="h-6 w-6 text-green-600 mt-0.5" />
               <div>
-                <p className="text-green-700 font-medium">Success!</p>
-                <p className="text-green-600 text-sm mt-1">{success}</p>
+                <p className="text-green-800 font-bold text-lg">Success!</p>
+                <p className="text-green-700 font-bold text-base mt-1">{success}</p>
               </div>
             </div>
           )}
