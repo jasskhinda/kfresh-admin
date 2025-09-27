@@ -256,34 +256,17 @@ export default function AdminManagementPage() {
 
       if (verifyError) {
         console.error('Profile verification failed:', verifyError)
-        // Try to create profile manually as fallback
-        console.log('Attempting to create profile manually as fallback...')
+        // Don't try manual creation if verification failed due to other reasons
+        console.log('Skipping manual creation due to verification error')
+      }
 
-        const { error: manualCreateError } = await supabase
-          .from('user_profiles')
-          .insert({
-            id: authData.user.id,
-            email: newAdminData.email,
-            first_name: newAdminData.first_name,
-            last_name: newAdminData.last_name,
-            role: newAdminData.role,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-
-        if (manualCreateError) {
-          console.error('Manual profile creation also failed:', manualCreateError)
-          setError('User created but profile setup failed. The user may need to complete setup manually.')
-          return
-        }
-
-        console.log('Profile created manually as fallback')
-      } else if (!profileCheck) {
+      if (!profileCheck) {
         console.log('No profile found, creating manually...')
 
-        const { error: manualCreateError } = await supabase
+        // Use upsert to handle conflicts gracefully
+        const { data: upsertData, error: manualCreateError } = await supabase
           .from('user_profiles')
-          .insert({
+          .upsert({
             id: authData.user.id,
             email: newAdminData.email,
             first_name: newAdminData.first_name,
@@ -291,15 +274,29 @@ export default function AdminManagementPage() {
             role: newAdminData.role,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'id'
           })
 
         if (manualCreateError) {
           console.error('Manual profile creation failed:', manualCreateError)
-          setError('User created but profile setup failed. The user may need to complete setup manually.')
-          return
-        }
 
-        console.log('Profile created manually')
+          // Check if profile exists now (maybe trigger worked)
+          const { data: finalCheck } = await supabase
+            .from('user_profiles')
+            .select('*')
+            .eq('id', authData.user.id)
+            .maybeSingle()
+
+          if (!finalCheck) {
+            setError('User created but profile setup failed. The user may need to complete setup manually.')
+            return
+          } else {
+            console.log('Profile exists after all, continuing...')
+          }
+        } else {
+          console.log('Profile created manually successfully')
+        }
       }
 
       console.log('Profile created successfully by trigger:', profileCheck)
@@ -410,20 +407,27 @@ export default function AdminManagementPage() {
     try {
       console.log('Deleting admin:', adminId)
 
-      // Delete from user_profiles table
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .delete()
-        .eq('id', adminId)
+      // Delete from auth.users table first (this will cascade to user_profiles)
+      const { error: authError } = await supabase.auth.admin.deleteUser(adminId)
 
-      if (profileError) {
-        console.error('Error deleting user profile:', profileError)
-        throw profileError
+      if (authError) {
+        console.error('Auth deletion error:', authError)
+        // If auth deletion fails, try to delete just the profile
+        const { error: profileError } = await supabase
+          .from('user_profiles')
+          .delete()
+          .eq('id', adminId)
+
+        if (profileError) {
+          console.error('Error deleting user profile:', profileError)
+          throw new Error(`Failed to delete user profile: ${profileError.message}`)
+        }
+
+        setSuccess(`Administrator profile for ${adminEmail} has been deleted. Note: The authentication account may still exist and require manual cleanup.`)
+      } else {
+        console.log('Auth user deleted successfully, profile should be deleted automatically')
+        setSuccess(`Administrator ${adminEmail} has been completely deleted from the system.`)
       }
-
-      // Note: Cannot delete auth user from client side
-      // Only the profile is deleted, auth user remains
-      setSuccess(`Administrator profile for ${adminEmail} has been deleted. Note: The user's authentication account still exists and may need manual cleanup by a system administrator.`)
 
       // Refresh the admin list
       await fetchAdmins()
