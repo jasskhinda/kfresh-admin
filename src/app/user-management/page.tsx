@@ -216,11 +216,12 @@ export default function AdminManagementPage() {
         return
       }
 
-      // Store current session before creating new user
-      const { data: currentSession } = await supabase.auth.getSession()
+      // Create a separate Supabase client for user creation to avoid affecting current session
+      const { createClient: createServerClient } = await import('@/lib/supabase/client')
+      const separateClient = createServerClient()
 
-      // Create auth user - profile will be created automatically by database trigger
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Create auth user with the separate client - this won't affect our current session
+      const { data: authData, error: authError } = await separateClient.auth.signUp({
         email: newAdminData.email,
         password: newAdminData.password,
         options: {
@@ -229,17 +230,12 @@ export default function AdminManagementPage() {
             last_name: newAdminData.last_name,
             role: newAdminData.role
           },
-          emailRedirectTo: window.location.origin // Prevent auto redirect
+          emailRedirectTo: window.location.origin
         }
       })
 
-      // Restore the original session if we got logged in as the new user
-      if (currentSession?.session && authData?.user?.id !== currentSession.session.user.id) {
-        await supabase.auth.setSession({
-          access_token: currentSession.session.access_token,
-          refresh_token: currentSession.session.refresh_token
-        })
-      }
+      // Important: Sign out from the separate client to prevent any session leakage
+      await separateClient.auth.signOut()
 
       if (authError) {
         console.error('Auth creation error:', authError)
