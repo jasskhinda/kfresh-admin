@@ -214,15 +214,16 @@ export default function AdminManagementPage() {
         return
       }
 
-      // Create auth user first using admin API for better control
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Create auth user first
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: newAdminData.email,
         password: newAdminData.password,
-        email_confirm: true, // Auto-confirm email
-        user_metadata: {
-          first_name: newAdminData.first_name,
-          last_name: newAdminData.last_name,
-          role: newAdminData.role
+        options: {
+          data: {
+            first_name: newAdminData.first_name,
+            last_name: newAdminData.last_name,
+            role: newAdminData.role
+          }
         }
       })
 
@@ -262,15 +263,9 @@ export default function AdminManagementPage() {
       if (profileError) {
         console.error('Profile creation error:', profileError)
 
-        // If profile creation fails, clean up the auth user
-        try {
-          await supabase.auth.admin.deleteUser(authData.user.id)
-          console.log('Cleaned up auth user after profile creation failure')
-        } catch (cleanupError) {
-          console.error('Failed to cleanup auth user:', cleanupError)
-        }
-
-        setError(`Failed to create admin profile: ${profileError.message}`)
+        // Note: Cannot clean up auth user from client side
+        // The auth user will exist but without a profile
+        setError(`Failed to create admin profile: ${profileError.message}. Please contact system administrator to clean up the auth user.`)
         return
       }
 
@@ -391,16 +386,9 @@ export default function AdminManagementPage() {
         throw profileError
       }
 
-      // Delete from auth.users (this requires admin privileges)
-      const { error: authError } = await supabase.auth.admin.deleteUser(adminId)
-
-      if (authError) {
-        console.error('Error deleting auth user:', authError)
-        // Don't throw here as profile deletion might have succeeded
-        setSuccess('User profile deleted, but auth account may need manual cleanup.')
-      } else {
-        setSuccess(`Administrator ${adminEmail} has been successfully deleted.`)
-      }
+      // Note: Cannot delete auth user from client side
+      // Only the profile is deleted, auth user remains
+      setSuccess(`Administrator profile for ${adminEmail} has been deleted. Note: The user's authentication account still exists and may need manual cleanup by a system administrator.`)
 
       // Refresh the admin list
       await fetchAdmins()
@@ -714,6 +702,11 @@ export default function AdminManagementPage() {
                     <p className="text-xs text-gray-500 mt-1">
                       Super Administrators have full system access including user management
                     </p>
+                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-xs text-blue-700">
+                        <strong>Note:</strong> New administrators will need to confirm their email address before first login.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
