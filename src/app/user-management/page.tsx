@@ -398,6 +398,12 @@ export default function AdminManagementPage() {
     setError('')
     setSuccess('')
 
+    // Prevent self-deletion
+    if (user?.id === adminId) {
+      setError('You cannot delete your own account. Please ask another administrator to remove your account if needed.')
+      return
+    }
+
     // Confirm deletion
     const confirmed = confirm(`Are you sure you want to delete administrator: ${adminEmail}?\n\nThis action cannot be undone.`)
     if (!confirmed) return
@@ -407,48 +413,22 @@ export default function AdminManagementPage() {
     try {
       console.log('Deleting admin:', adminId)
 
-      console.log('Attempting to delete auth user:', adminId)
+      console.log('Attempting to delete user via SQL function:', adminId)
 
-      // Try to delete from auth.users table first
-      const { data: deleteData, error: authError } = await supabase.auth.admin.deleteUser(adminId)
+      // Use the SQL function to delete user completely
+      const { data, error } = await supabase
+        .rpc('delete_user_completely', { user_id: adminId })
 
-      console.log('Auth delete result:', { deleteData, authError })
+      if (error) {
+        console.error('Deletion error:', error)
+        throw new Error(`Failed to delete user: ${error.message}`)
+      }
 
-      if (authError) {
-        console.error('Auth deletion failed:', authError)
-        console.log('Attempting manual profile deletion as fallback...')
+      console.log('Deletion result:', data)
 
-        // If auth deletion fails, delete the profile manually
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .delete()
-          .eq('id', adminId)
-
-        if (profileError) {
-          console.error('Profile deletion also failed:', profileError)
-          throw new Error(`Failed to delete user: ${profileError.message}`)
-        }
-
-        console.log('Profile deleted successfully (auth user may still exist)')
-        setSuccess(`User profile deleted. Authentication account may still exist and require manual cleanup.`)
+      if (data?.includes('auth user may still exist')) {
+        setSuccess(`User profile deleted. Note: Authentication account may require manual cleanup in Supabase dashboard.`)
       } else {
-        console.log('Auth user deleted successfully')
-
-        // Double-check that profile was also deleted
-        const { data: remainingProfile } = await supabase
-          .from('user_profiles')
-          .select('id')
-          .eq('id', adminId)
-          .maybeSingle()
-
-        if (remainingProfile) {
-          console.log('Profile still exists, deleting manually...')
-          await supabase
-            .from('user_profiles')
-            .delete()
-            .eq('id', adminId)
-        }
-
         setSuccess(`Administrator ${adminEmail} has been completely deleted from the system.`)
       }
 
@@ -921,18 +901,25 @@ export default function AdminManagementPage() {
                           >
                             <Edit3 className="h-5 w-5" />
                           </button>
-                          <button
-                            onClick={() => handleDeleteAdmin(admin.id, admin.email)}
-                            disabled={deletingUserId === admin.id}
-                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                            title="Delete administrator"
-                          >
-                            {deletingUserId === admin.id ? (
-                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
-                            ) : (
-                              <Trash2 className="h-5 w-5" />
-                            )}
-                          </button>
+                          {user?.id !== admin.id && (
+                            <button
+                              onClick={() => handleDeleteAdmin(admin.id, admin.email)}
+                              disabled={deletingUserId === admin.id}
+                              className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Delete administrator"
+                            >
+                              {deletingUserId === admin.id ? (
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-600"></div>
+                              ) : (
+                                <Trash2 className="h-5 w-5" />
+                              )}
+                            </button>
+                          )}
+                          {user?.id === admin.id && (
+                            <div className="p-2 text-gray-400" title="Cannot delete your own account">
+                              <Lock className="h-5 w-5" />
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
