@@ -216,43 +216,43 @@ export default function AdminManagementPage() {
         return
       }
 
-      // Create a separate Supabase client for user creation to avoid affecting current session
-      const { createClient: createServerClient } = await import('@/lib/supabase/client')
-      const separateClient = createServerClient()
+      console.log('Creating user via API to preserve session...')
 
-      // Create auth user with the separate client - this won't affect our current session
-      const { data: authData, error: authError } = await separateClient.auth.signUp({
-        email: newAdminData.email,
-        password: newAdminData.password,
-        options: {
-          data: {
-            first_name: newAdminData.first_name,
-            last_name: newAdminData.last_name,
-            role: newAdminData.role
-          },
-          emailRedirectTo: window.location.origin
-        }
+      // Use API route to create user without affecting current session
+      const response = await fetch('/api/users/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: newAdminData.email,
+          password: newAdminData.password,
+          first_name: newAdminData.first_name,
+          last_name: newAdminData.last_name,
+          role: newAdminData.role
+        })
       })
 
-      // Important: Sign out from the separate client to prevent any session leakage
-      await separateClient.auth.signOut()
+      const result = await response.json()
 
-      if (authError) {
-        console.error('Auth creation error:', authError)
-        if (authError.message.includes('already registered') || authError.message.includes('already exists')) {
+      if (!response.ok) {
+        console.error('Auth creation error:', result.error)
+        if (result.error?.includes('already registered') || result.error?.includes('already exists')) {
           setError('This email is already registered. Please use a different email.')
         } else {
-          setError(`Failed to create auth account: ${authError.message}`)
+          setError(`Failed to create auth account: ${result.error}`)
         }
         return
       }
 
-      if (!authData.user || !authData.user.id) {
+      const authData = { user: { id: result.userId, email: result.email } }
+
+      if (!result.userId) {
         setError('Auth user creation failed - no user ID returned')
         return
       }
 
-      console.log('Auth user created successfully:', authData.user.id)
+      console.log('Auth user created successfully:', result.userId)
 
       // Wait for database trigger to create profile
       await new Promise(resolve => setTimeout(resolve, 2000))
