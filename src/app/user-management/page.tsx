@@ -250,14 +250,56 @@ export default function AdminManagementPage() {
       // Verify profile was created by trigger
       const { data: profileCheck, error: verifyError } = await supabase
         .from('user_profiles')
-        .select('id, email, role')
+        .select('*')
         .eq('id', authData.user.id)
-        .single()
+        .maybeSingle()
 
-      if (verifyError || !profileCheck) {
+      if (verifyError) {
         console.error('Profile verification failed:', verifyError)
-        setError('User created but profile setup failed. The user may need to complete setup manually.')
-        return
+        // Try to create profile manually as fallback
+        console.log('Attempting to create profile manually as fallback...')
+
+        const { error: manualCreateError } = await supabase
+          .from('user_profiles')
+          .insert({
+            id: authData.user.id,
+            email: newAdminData.email,
+            first_name: newAdminData.first_name,
+            last_name: newAdminData.last_name,
+            role: newAdminData.role,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+
+        if (manualCreateError) {
+          console.error('Manual profile creation also failed:', manualCreateError)
+          setError('User created but profile setup failed. The user may need to complete setup manually.')
+          return
+        }
+
+        console.log('Profile created manually as fallback')
+      } else if (!profileCheck) {
+        console.log('No profile found, creating manually...')
+
+        const { error: manualCreateError } = await supabase
+          .from('user_profiles')
+          .insert({
+            id: authData.user.id,
+            email: newAdminData.email,
+            first_name: newAdminData.first_name,
+            last_name: newAdminData.last_name,
+            role: newAdminData.role,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+
+        if (manualCreateError) {
+          console.error('Manual profile creation failed:', manualCreateError)
+          setError('User created but profile setup failed. The user may need to complete setup manually.')
+          return
+        }
+
+        console.log('Profile created manually')
       }
 
       console.log('Profile created successfully by trigger:', profileCheck)

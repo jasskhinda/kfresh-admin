@@ -33,17 +33,23 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
 GRANT USAGE ON SCHEMA public TO authenticated;
 GRANT USAGE ON SCHEMA public TO anon;
 
--- Create RLS policies for user_profiles if they don't exist
+-- Create RLS policies for user_profiles (drop existing ones first to avoid conflicts)
+DROP POLICY IF EXISTS "Users can view own profile" ON user_profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON user_profiles;
+DROP POLICY IF EXISTS "Admins can view all profiles" ON user_profiles;
+DROP POLICY IF EXISTS "Admins can update all profiles" ON user_profiles;
+DROP POLICY IF EXISTS "Admins can delete profiles" ON user_profiles;
+
 -- Allow users to read their own profile
-CREATE POLICY IF NOT EXISTS "Users can view own profile" ON user_profiles
+CREATE POLICY "Users can view own profile" ON user_profiles
   FOR SELECT USING (auth.uid() = id);
 
 -- Allow users to update their own profile
-CREATE POLICY IF NOT EXISTS "Users can update own profile" ON user_profiles
+CREATE POLICY "Users can update own profile" ON user_profiles
   FOR UPDATE USING (auth.uid() = id);
 
 -- Allow admins to view all profiles
-CREATE POLICY IF NOT EXISTS "Admins can view all profiles" ON user_profiles
+CREATE POLICY "Admins can view all profiles" ON user_profiles
   FOR SELECT USING (
     EXISTS (
       SELECT 1 FROM user_profiles
@@ -53,7 +59,7 @@ CREATE POLICY IF NOT EXISTS "Admins can view all profiles" ON user_profiles
   );
 
 -- Allow admins to update all profiles
-CREATE POLICY IF NOT EXISTS "Admins can update all profiles" ON user_profiles
+CREATE POLICY "Admins can update all profiles" ON user_profiles
   FOR UPDATE USING (
     EXISTS (
       SELECT 1 FROM user_profiles
@@ -63,7 +69,7 @@ CREATE POLICY IF NOT EXISTS "Admins can update all profiles" ON user_profiles
   );
 
 -- Allow admins to delete profiles
-CREATE POLICY IF NOT EXISTS "Admins can delete profiles" ON user_profiles
+CREATE POLICY "Admins can delete profiles" ON user_profiles
   FOR DELETE USING (
     EXISTS (
       SELECT 1 FROM user_profiles
