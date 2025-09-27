@@ -407,25 +407,48 @@ export default function AdminManagementPage() {
     try {
       console.log('Deleting admin:', adminId)
 
-      // Delete from auth.users table first (this will cascade to user_profiles)
-      const { error: authError } = await supabase.auth.admin.deleteUser(adminId)
+      console.log('Attempting to delete auth user:', adminId)
+
+      // Try to delete from auth.users table first
+      const { data: deleteData, error: authError } = await supabase.auth.admin.deleteUser(adminId)
+
+      console.log('Auth delete result:', { deleteData, authError })
 
       if (authError) {
-        console.error('Auth deletion error:', authError)
-        // If auth deletion fails, try to delete just the profile
+        console.error('Auth deletion failed:', authError)
+        console.log('Attempting manual profile deletion as fallback...')
+
+        // If auth deletion fails, delete the profile manually
         const { error: profileError } = await supabase
           .from('user_profiles')
           .delete()
           .eq('id', adminId)
 
         if (profileError) {
-          console.error('Error deleting user profile:', profileError)
-          throw new Error(`Failed to delete user profile: ${profileError.message}`)
+          console.error('Profile deletion also failed:', profileError)
+          throw new Error(`Failed to delete user: ${profileError.message}`)
         }
 
-        setSuccess(`Administrator profile for ${adminEmail} has been deleted. Note: The authentication account may still exist and require manual cleanup.`)
+        console.log('Profile deleted successfully (auth user may still exist)')
+        setSuccess(`User profile deleted. Authentication account may still exist and require manual cleanup.`)
       } else {
-        console.log('Auth user deleted successfully, profile should be deleted automatically')
+        console.log('Auth user deleted successfully')
+
+        // Double-check that profile was also deleted
+        const { data: remainingProfile } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('id', adminId)
+          .maybeSingle()
+
+        if (remainingProfile) {
+          console.log('Profile still exists, deleting manually...')
+          await supabase
+            .from('user_profiles')
+            .delete()
+            .eq('id', adminId)
+        }
+
         setSuccess(`Administrator ${adminEmail} has been completely deleted from the system.`)
       }
 
