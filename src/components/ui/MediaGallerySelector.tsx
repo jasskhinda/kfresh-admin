@@ -266,7 +266,7 @@ export function MediaGallerySelector({
           <input
             type="file"
             multiple={multiple}
-            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/avif"
             onChange={(e) => e.target.files && handleUpload(e.target.files)}
             className="hidden"
             id={`upload-${Date.now()}`}
@@ -377,7 +377,7 @@ export function MediaGallerySelector({
                 ref={fileInputRef}
                 type="file"
                 multiple
-                accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/avif"
                 onChange={(e) => e.target.files && handleUpload(e.target.files, true)}
                 className="hidden"
               />
@@ -401,7 +401,8 @@ export function MediaGallerySelector({
                     <div className="text-center">
                       <Upload className="h-8 w-8 text-gray-400 mx-auto mb-3" />
                       <p className="text-sm font-medium text-gray-700 mb-1">Click to upload or drag and drop</p>
-                      <p className="text-xs text-gray-500">JPG, PNG, GIF, WEBP up to 10MB each</p>
+                      <p className="text-xs text-gray-500">JPG, PNG, GIF, WEBP, AVIF • Max 150KB per image</p>
+                      <p className="text-xs text-orange-600 mt-1">Images larger than 150KB will be auto-optimized</p>
                     </div>
                   </div>
 

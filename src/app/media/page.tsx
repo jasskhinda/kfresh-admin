@@ -461,7 +461,7 @@ export default function MediaGalleryPage() {
             <input
               type="file"
               multiple
-              accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+              accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/avif"
               onChange={(e) => e.target.files && handleBulkUpload(e.target.files)}
               className="hidden"
               id="bulk-upload"

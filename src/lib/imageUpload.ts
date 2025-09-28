@@ -30,7 +30,7 @@ export class ImageUploadService {
       if (!this.isValidImageFile(file)) {
         return {
           success: false,
-          error: 'Invalid file type. Please upload PNG, JPG, or WebP images.'
+          error: 'Invalid file type. Please upload PNG, JPG, WebP, or AVIF images.'
         }
       }
 
@@ -130,7 +130,7 @@ export class ImageUploadService {
   }
 
   private isValidImageFile(file: File): boolean {
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/avif']
     return validTypes.includes(file.type)
   }
 
@@ -140,7 +140,7 @@ export class ImageUploadService {
       // Create bucket if it doesn't exist
       const { data, error } = await this.supabase.storage.createBucket(this.bucketName, {
         public: true,
-        allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'],
+        allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/avif'],
         fileSizeLimit: 10485760 // 10MB
       })
 
