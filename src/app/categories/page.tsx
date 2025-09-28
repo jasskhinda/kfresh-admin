@@ -744,7 +744,7 @@ export default function CategoriesPage() {
                               Replace Image
                               <input
                                 type="file"
-                                accept="image/*"
+                                accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/avif"
                                 onChange={(e) => {
                                   const file = e.target.files?.[0]
                                   if (file) handleImageUpload(file)
@@ -771,7 +771,7 @@ export default function CategoriesPage() {
                               {isDragging ? 'Drop image here' : 'Upload Image'}
                               <input
                                 type="file"
-                                accept="image/*"
+                                accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/avif"
                                 onChange={(e) => {
                                   const file = e.target.files?.[0]
                                   if (file) handleImageUpload(file)
@@ -781,7 +781,7 @@ export default function CategoriesPage() {
                             </label>
                           </div>
                           <p className="mt-2 text-xs text-gray-500">
-                            {isDragging ? 'Drop your image here' : 'Drag & drop or click to upload • PNG, JPG, GIF up to 10MB'}
+                            {isDragging ? 'Drop your image here' : 'Drag & drop or click to upload • PNG, JPG, GIF, WEBP, AVIF up to 10MB'}
                           </p>
                         </div>
                       )}
