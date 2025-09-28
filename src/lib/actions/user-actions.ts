@@ -1,6 +1,6 @@
 'use server'
 
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs'
+import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
@@ -41,7 +41,22 @@ interface CreateUserResult {
 export async function createAdminUser(userData: CreateUserData): Promise<CreateUserResult> {
   try {
     const cookieStore = await cookies()
-    const supabase = createServerActionClient({ cookies: () => cookieStore })
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll()
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options)
+            })
+          },
+        },
+      }
+    )
 
     // Verify current user is authenticated and has admin privileges
     const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -195,7 +210,22 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
 export async function updateUserPassword(userId: string, newPassword: string): Promise<CreateUserResult> {
   try {
     const cookieStore = await cookies()
-    const supabase = createServerActionClient({ cookies: () => cookieStore })
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll()
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options)
+            })
+          },
+        },
+      }
+    )
 
     // Verify current user is authenticated and has admin privileges
     const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -242,7 +272,22 @@ export async function updateUserPassword(userId: string, newPassword: string): P
 export async function deleteAdminUser(userId: string): Promise<CreateUserResult> {
   try {
     const cookieStore = await cookies()
-    const supabase = createServerActionClient({ cookies: () => cookieStore })
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll()
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options)
+            })
+          },
+        },
+      }
+    )
 
     // Verify current user is authenticated and has admin privileges
     const { data: { user }, error: userError } = await supabase.auth.getUser()
