@@ -255,8 +255,8 @@ export async function deleteAdminUser(userId: string): Promise<CreateUserResult>
       .eq('id', user.id)
       .single()
 
-    if (!currentProfile || currentProfile.role !== 'super_admin') {
-      return { success: false, error: 'Only super admins can delete users' }
+    if (!currentProfile || !['admin', 'super_admin'].includes(currentProfile.role)) {
+      return { success: false, error: 'Admin permissions required to delete users' }
     }
 
     // Don't allow deleting yourself
