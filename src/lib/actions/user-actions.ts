@@ -40,7 +40,8 @@ interface CreateUserResult {
 
 export async function createAdminUser(userData: CreateUserData): Promise<CreateUserResult> {
   try {
-    const supabase = createServerActionClient({ cookies })
+    const cookieStore = await cookies()
+    const supabase = createServerActionClient({ cookies: () => cookieStore })
 
     // Verify current user is authenticated and has admin privileges
     const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -193,7 +194,8 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
 
 export async function updateUserPassword(userId: string, newPassword: string): Promise<CreateUserResult> {
   try {
-    const supabase = createServerActionClient({ cookies })
+    const cookieStore = await cookies()
+    const supabase = createServerActionClient({ cookies: () => cookieStore })
 
     // Verify current user is authenticated and has admin privileges
     const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -239,7 +241,8 @@ export async function updateUserPassword(userId: string, newPassword: string): P
 
 export async function deleteAdminUser(userId: string): Promise<CreateUserResult> {
   try {
-    const supabase = createServerActionClient({ cookies })
+    const cookieStore = await cookies()
+    const supabase = createServerActionClient({ cookies: () => cookieStore })
 
     // Verify current user is authenticated and has admin privileges
     const { data: { user }, error: userError } = await supabase.auth.getUser()
