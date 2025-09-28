@@ -80,6 +80,10 @@ export async function POST(request: NextRequest) {
       email,
       password,
       email_confirm: true, // Auto-confirm email
+      app_metadata: {
+        provider: 'email',
+        providers: ['email']
+      },
       user_metadata: {
         first_name: firstName,
         last_name: lastName,

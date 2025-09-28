@@ -110,6 +110,10 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
       email,
       password,
       email_confirm: true, // Auto-confirm email to avoid email verification
+      app_metadata: {
+        provider: 'email',
+        providers: ['email']
+      },
       user_metadata: {
         first_name: firstName,
         last_name: lastName,
