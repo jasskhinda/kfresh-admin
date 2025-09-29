@@ -95,35 +95,63 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
 
     console.log('Creating admin user:', { email, firstName, lastName, role })
 
-    // Use the fixed database function for reliable user creation
-    const { data, error } = await supabaseAdmin
-      .rpc('create_new_admin_user', {
-        user_email: email,
-        user_password: password,
-        user_first_name: firstName || '',
-        user_last_name: lastName || '',
-        user_role: role
-      })
+    // Create user directly using admin API (more reliable than database function)
+    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email: email,
+      password: password,
+      email_confirm: true,
+      user_metadata: {
+        first_name: firstName || '',
+        last_name: lastName || '',
+        role: role
+      }
+    })
 
-    if (error) {
-      console.error('Database function error:', error)
+    if (authError) {
+      console.error('Auth user creation error:', authError)
       return {
         success: false,
-        error: `Failed to create user: ${error.message}`
+        error: `Failed to create user: ${authError.message}`
       }
     }
 
-    const result = data as any
+    console.log('✓ Auth user created:', authData.user.email)
 
-    if (!result.success) {
-      console.error('User creation failed:', result.error)
-      return {
-        success: false,
-        error: result.error || 'Failed to create user'
+    // Wait a moment for the database trigger to create the profile
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    // Verify profile was created by trigger
+    const { data: profileCheck, error: profileCheckError } = await supabaseAdmin
+      .from('user_profiles')
+      .select('*')
+      .eq('id', authData.user.id)
+      .single()
+
+    if (profileCheckError) {
+      console.error('Profile verification error:', profileCheckError)
+      // Manually create profile if trigger failed
+      const { error: manualProfileError } = await supabaseAdmin
+        .from('user_profiles')
+        .insert({
+          id: authData.user.id,
+          email: email,
+          first_name: firstName || '',
+          last_name: lastName || '',
+          role: role
+        })
+
+      if (manualProfileError) {
+        console.error('Manual profile creation error:', manualProfileError)
+        // Clean up the auth user if profile creation fails
+        await supabaseAdmin.auth.admin.deleteUser(authData.user.id)
+        return {
+          success: false,
+          error: `Failed to create user profile: ${manualProfileError.message}`
+        }
       }
     }
 
-    console.log('✓ User created successfully:', result.id)
+    console.log('✓ User created successfully:', authData.user.id)
 
     // Revalidate any pages that might show user lists
     revalidatePath('/user-management')
@@ -132,7 +160,7 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
     return {
       success: true,
       user: {
-        id: result.id,
+        id: authData.user.id,
         email: email,
         firstName: firstName,
         lastName: lastName,
@@ -251,27 +279,28 @@ export async function deleteAdminUser(userId: string): Promise<CreateUserResult>
 
     console.log('Deleting user:', userId)
 
-    // Use the new database function for reliable user deletion
-    const { data, error } = await supabaseAdmin
-      .rpc('delete_admin_user', {
-        user_id: userId
-      })
+    // Delete user profile first
+    const { error: profileError } = await supabaseAdmin
+      .from('user_profiles')
+      .delete()
+      .eq('id', userId)
 
-    if (error) {
-      console.error('Database function error:', error)
+    if (profileError) {
+      console.error('Profile deletion error:', profileError)
       return {
         success: false,
-        error: `Failed to delete user: ${error.message}`
+        error: `Failed to delete user profile: ${profileError.message}`
       }
     }
 
-    const result = data as any
+    // Delete auth user
+    const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
-    if (!result.success) {
-      console.error('User deletion failed:', result.error)
+    if (authError) {
+      console.error('Auth user deletion error:', authError)
       return {
         success: false,
-        error: result.error || 'Failed to delete user'
+        error: `Failed to delete user: ${authError.message}`
       }
     }
 
