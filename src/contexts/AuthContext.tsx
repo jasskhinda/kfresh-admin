@@ -52,7 +52,74 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     let isMounted = true
     let initializationComplete = false
-    
+
+    // Check for emergency session first
+    const checkEmergencySession = () => {
+      try {
+        const emergencySession = localStorage.getItem('emergency_admin_session')
+        if (emergencySession) {
+          const sessionData = JSON.parse(emergencySession)
+
+          // Check if session is less than 24 hours old
+          const isValid = sessionData.timestamp && (Date.now() - sessionData.timestamp) < 24 * 60 * 60 * 1000
+
+          if (isValid) {
+            console.log('Emergency session found and valid')
+
+            // Create emergency user object
+            const emergencyUser = {
+              id: 'emergency-admin',
+              email: sessionData.email,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              aud: 'authenticated',
+              role: 'authenticated',
+              app_metadata: {},
+              user_metadata: { emergency: true }
+            } as any
+
+            // Create emergency profile
+            const emergencyProfile: AdminProfile = {
+              id: 'emergency-admin',
+              email: sessionData.email,
+              first_name: 'Emergency',
+              last_name: 'Admin',
+              role: sessionData.role,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }
+
+            setUser(emergencyUser)
+            setProfile(emergencyProfile)
+            setSession({
+              access_token: 'emergency-token',
+              refresh_token: 'emergency-refresh',
+              expires_in: 86400,
+              expires_at: Date.now() + 86400000,
+              token_type: 'bearer',
+              user: emergencyUser
+            } as any)
+
+            setLoading(false)
+            initializationComplete = true
+            return true
+          } else {
+            // Remove expired emergency session
+            localStorage.removeItem('emergency_admin_session')
+          }
+        }
+      } catch (error) {
+        console.error('Error checking emergency session:', error)
+        localStorage.removeItem('emergency_admin_session')
+      }
+      return false
+    }
+
+    // Check emergency session first
+    if (checkEmergencySession()) {
+      return
+    }
+
     // Force loading to false after 3 seconds regardless of what happens (more generous for production)
     const forceInitTimeout = setTimeout(() => {
       if (!initializationComplete) {
@@ -62,32 +129,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       }
     }, 3000)
-    
+
     // Get initial session
     const getSession = async () => {
       console.log('Getting initial session...')
       try {
         console.log('Supabase client created, calling getSession...')
-        
+
         // Create a timeout promise that rejects after 5 seconds (production-friendly)
         const timeoutPromise = new Promise((_, reject) => {
           setTimeout(() => reject(new Error('getSession timeout - this is normal on slow connections')), 5000)
         })
-        
+
         // Race between getSession and timeout
         const result = await Promise.race([
           supabase.auth.getSession(),
           timeoutPromise
         ])
-        
+
         const { data: { session }, error } = result as any
         console.log('Initial session result:', { session: !!session, error, userId: session?.user?.id })
-        
+
         if (!isMounted) return
-        
+
         setSession(session)
         setUser(session?.user ?? null)
-        
+
         if (session?.user) {
           console.log('Fetching profile for user:', session.user.id)
           // Don't await profile fetch to avoid blocking
@@ -95,7 +162,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.warn('Profile fetch failed during init:', err)
           })
         }
-        
+
         console.log('Setting loading to false')
         initializationComplete = true
         setLoading(false)
@@ -336,19 +403,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Error during signOut:', error)
     }
-    
+
     // Clear state immediately for better UX
     setUser(null)
     setProfile(null)
     setSession(null)
     setLoading(false)
-    
-    // Clear any cached data
+
+    // Clear any cached data including emergency session
     if (typeof window !== 'undefined') {
-      localStorage.clear()
+      localStorage.removeItem('emergency_admin_session')
+      // Don't clear all localStorage, just auth-related items
       sessionStorage.clear()
     }
-    
+
     console.log('Signed out successfully')
   }
 
