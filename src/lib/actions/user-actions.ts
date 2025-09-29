@@ -95,9 +95,9 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
 
     console.log('Creating admin user:', { email, firstName, lastName, role })
 
-    // Use the new database function for reliable user creation
+    // Use the fixed database function for reliable user creation
     const { data, error } = await supabaseAdmin
-      .rpc('create_admin_user', {
+      .rpc('create_new_admin_user', {
         user_email: email,
         user_password: password,
         user_first_name: firstName || '',
