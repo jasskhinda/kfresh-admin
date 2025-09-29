@@ -167,20 +167,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (error) {
         console.error('Error fetching profile:', error)
-        
-        // For admin email, create a profile with admin role if it doesn't exist
-        if (user?.email === 'info@jasskhinda.com') {
+
+        // For admin emails, create a profile with admin role if it doesn't exist
+        if (user?.email === 'kfreshsupermarket@gmail.com' || user?.email === 'info@jasskhinda.com') {
+          const adminEmail = user.email === 'kfreshsupermarket@gmail.com' ? 'kfreshsupermarket@gmail.com' : 'info@jasskhinda.com'
           const adminProfile: AdminProfile = {
             id: userId,
-            email: 'info@jasskhinda.com',
-            first_name: 'Jass',
-            last_name: 'Khinda',
-            role: 'admin',
+            email: adminEmail,
+            first_name: adminEmail === 'kfreshsupermarket@gmail.com' ? 'Kwame' : 'Jass',
+            last_name: adminEmail === 'kfreshsupermarket@gmail.com' ? 'Fenning' : 'Khinda',
+            role: 'super_admin',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           }
           setProfile(adminProfile)
-          
+
           // Try to insert the profile into the database
           try {
             await supabase
@@ -189,11 +190,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.log('Admin profile created/updated in database')
           } catch (insertError) {
             console.warn('Could not insert admin profile:', insertError)
+            // Even if DB insert fails, keep the profile in state for this session
           }
           return
         }
-        
-        // For other users, set a basic profile
+
+        // For other users, set a basic profile but don't create in DB
         const basicProfile: AdminProfile = {
           id: userId,
           email: user?.email || '',
@@ -252,15 +254,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Handle the sign in response
         signInPromise.then(({ data, error }) => {
           if (!resolved) {
-            if (error && error.message.includes('Email not confirmed')) {
-              console.log('Email not confirmed error detected')
+            if (error) {
+              console.error('Login error:', error)
+
+              let userFriendlyError: Error
+
+              if (error.message.includes('Email not confirmed')) {
+                userFriendlyError = new Error('This account was created before email verification was disabled. Please contact support.')
+              } else if (error.message.includes('Invalid login credentials')) {
+                userFriendlyError = new Error('Invalid email or password. Please check your credentials and try again.')
+              } else if (error.message.includes('Email rate limit exceeded')) {
+                userFriendlyError = new Error('Too many login attempts. Please wait a few minutes before trying again.')
+              } else if (error.message.includes('network') || error.message.includes('Network')) {
+                userFriendlyError = new Error('Network error. Please check your internet connection and try again.')
+              } else {
+                userFriendlyError = new Error('Login failed. Please check your credentials and try again.')
+              }
+
               resolved = true
               setLoading(false)
               authListener.data.subscription.unsubscribe()
-              resolve({ error: new Error('This account was created before email verification was disabled. Please create a new account or contact support.') })
+              resolve({ error: userFriendlyError })
               return
             }
-            
+
             if (!error && data.session) {
               // Auth state change should handle this, but fallback
               console.log('Sign in successful via direct response')
@@ -268,21 +285,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               setSession(data.session)
               setUser(data.user)
               setLoading(false)
-              
+
               if (data.user) {
                 fetchProfile(data.user.id).catch(err => {
                   console.warn('Profile fetch failed after login:', err)
                 })
               }
-              
+
               authListener.data.subscription.unsubscribe()
               resolve({ error: null })
-            } else if (error) {
-              console.error('Login error:', error)
-              resolved = true
-              setLoading(false)
-              authListener.data.subscription.unsubscribe()
-              resolve({ error })
             }
           }
         }).catch((error) => {

@@ -93,175 +93,47 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
       return { success: false, error: 'Invalid email format' }
     }
 
-    // Check if user already exists
-    const { data: existingProfile } = await supabaseAdmin
-      .from('user_profiles')
-      .select('id, email')
-      .eq('email', email)
-      .single()
+    console.log('Creating admin user:', { email, firstName, lastName, role })
 
-    if (existingProfile) {
-      return { success: false, error: 'User with this email already exists' }
-    }
-
-    console.log('Creating auth user with metadata:', { email, firstName, lastName, role })
-
-    // Step 1: Create authentication user (profile will be auto-created by database trigger)
-    const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true, // Auto-confirm email to avoid email verification
-      app_metadata: {
-        provider: 'email',
-        providers: ['email']
-      },
-      user_metadata: {
-        first_name: firstName || '',
-        last_name: lastName || '',
-        role: role,
-        created_by: user.id
-      }
-    })
-
-    if (authError || !authUser.user) {
-      console.error('❌ Auth user creation failed:', authError)
-      console.error('   Error details:', JSON.stringify(authError, null, 2))
-      return {
-        success: false,
-        error: `Database error creating new user`
-      }
-    }
-
-    console.log('✓ Auth user created:', authUser.user.id)
-
-    // Step 2: Wait for database trigger to create profile, then verify and update
-    await new Promise(resolve => setTimeout(resolve, 2000)) // Wait 2 seconds for trigger
-
-    // Verify profile was created and update with correct data
-    let profileData = null
-    let attempts = 0
-    const maxAttempts = 5
-
-    while (!profileData && attempts < maxAttempts) {
-      attempts++
-      console.log(`Checking for profile creation, attempt ${attempts}`)
-
-      const { data: existingProfile, error: checkError } = await supabaseAdmin
-        .from('user_profiles')
-        .select('*')
-        .eq('id', authUser.user.id)
-        .single()
-
-      if (existingProfile) {
-        console.log('Profile found, updating with correct data')
-
-        // Update profile with correct information
-        const { data: updatedProfile, error: updateError } = await supabaseAdmin
-          .from('user_profiles')
-          .update({
-            first_name: firstName || null,
-            last_name: lastName || null,
-            role: role,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', authUser.user.id)
-          .select()
-          .single()
-
-        if (updateError) {
-          console.error('Profile update error:', updateError)
-          // Clean up auth user
-          try {
-            await supabaseAdmin.auth.admin.deleteUser(authUser.user.id)
-            console.log('✓ Cleaned up auth user after profile update failure')
-          } catch (cleanupError) {
-            console.error('Failed to cleanup auth user:', cleanupError)
-          }
-          return {
-            success: false,
-            error: `Database error creating new user`
-          }
-        }
-
-        profileData = updatedProfile
-        break
-      } else if (checkError && !checkError.message.includes('No rows')) {
-        console.error('Profile check error:', checkError)
-        break
-      }
-
-      // Wait before next attempt
-      if (attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 1000))
-      }
-    }
-
-    if (!profileData) {
-      console.error('Profile was not created by trigger, creating manually')
-
-      // Fallback: create profile manually
-      const { data: manualProfile, error: manualError } = await supabaseAdmin
-        .from('user_profiles')
-        .insert({
-          id: authUser.user.id,
-          email: email,
-          first_name: firstName || null,
-          last_name: lastName || null,
-          role: role,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .select()
-        .single()
-
-      if (manualError) {
-        console.error('Manual profile creation error:', manualError)
-        // Clean up auth user
-        try {
-          await supabaseAdmin.auth.admin.deleteUser(authUser.user.id)
-          console.log('✓ Cleaned up auth user after manual profile creation failure')
-        } catch (cleanupError) {
-          console.error('Failed to cleanup auth user:', cleanupError)
-        }
-        return {
-          success: false,
-          error: `Database error creating new user`
-        }
-      }
-
-      profileData = manualProfile
-    }
-
-    console.log('✓ User profile created/updated:', profileData.id)
-
-    // Test the login to ensure everything works
-    try {
-      const testLogin = await supabaseAdmin.auth.signInWithPassword({
-        email,
-        password
+    // Use the new database function for reliable user creation
+    const { data, error } = await supabaseAdmin
+      .rpc('create_admin_user', {
+        user_email: email,
+        user_password: password,
+        user_first_name: firstName || '',
+        user_last_name: lastName || '',
+        user_role: role
       })
 
-      if (testLogin.data.user) {
-        console.log('✓ Login test successful')
-        // Sign out the test session
-        await supabaseAdmin.auth.signOut()
-      } else {
-        console.warn('⚠️ Login test failed, but user was created')
+    if (error) {
+      console.error('Database function error:', error)
+      return {
+        success: false,
+        error: `Failed to create user: ${error.message}`
       }
-    } catch (testError) {
-      console.warn('⚠️ Login test error:', testError)
-      // Don't fail the creation for this
     }
 
+    const result = data as any
+
+    if (!result.success) {
+      console.error('User creation failed:', result.error)
+      return {
+        success: false,
+        error: result.error || 'Failed to create user'
+      }
+    }
+
+    console.log('✓ User created successfully:', result.id)
+
     // Revalidate any pages that might show user lists
-    revalidatePath('/users')
+    revalidatePath('/user-management')
     revalidatePath('/settings')
 
     return {
       success: true,
       user: {
-        id: authUser.user.id,
-        email: authUser.user.email!,
+        id: result.id,
+        email: email,
         firstName: firstName,
         lastName: lastName,
         role: role
@@ -377,25 +249,35 @@ export async function deleteAdminUser(userId: string): Promise<CreateUserResult>
       return { success: false, error: 'Admin permissions required to delete users' }
     }
 
-    // Don't allow deleting yourself
-    if (user.id === userId) {
-      return { success: false, error: 'Cannot delete your own account' }
+    console.log('Deleting user:', userId)
+
+    // Use the new database function for reliable user deletion
+    const { data, error } = await supabaseAdmin
+      .rpc('delete_admin_user', {
+        user_id: userId
+      })
+
+    if (error) {
+      console.error('Database function error:', error)
+      return {
+        success: false,
+        error: `Failed to delete user: ${error.message}`
+      }
     }
 
-    // Delete auth user (this will cascade delete the profile if set up correctly)
-    const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId)
+    const result = data as any
 
-    if (authError) {
-      return { success: false, error: `Failed to delete user: ${authError.message}` }
+    if (!result.success) {
+      console.error('User deletion failed:', result.error)
+      return {
+        success: false,
+        error: result.error || 'Failed to delete user'
+      }
     }
 
-    // Also delete profile explicitly to be safe
-    await supabaseAdmin
-      .from('user_profiles')
-      .delete()
-      .eq('id', userId)
+    console.log('✓ User deleted successfully')
 
-    revalidatePath('/users')
+    revalidatePath('/user-management')
 
     return { success: true }
 
