@@ -104,8 +104,9 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
       return { success: false, error: 'User with this email already exists' }
     }
 
-    // Step 1: Create authentication user (profile will be auto-created by database trigger)
+    console.log('Creating auth user with metadata:', { email, firstName, lastName, role })
 
+    // Step 1: Create authentication user (profile will be auto-created by database trigger)
     const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -115,8 +116,8 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
         providers: ['email']
       },
       user_metadata: {
-        first_name: firstName,
-        last_name: lastName,
+        first_name: firstName || '',
+        last_name: lastName || '',
         role: role,
         created_by: user.id
       }
@@ -127,46 +128,111 @@ export async function createAdminUser(userData: CreateUserData): Promise<CreateU
       console.error('   Error details:', JSON.stringify(authError, null, 2))
       return {
         success: false,
-        error: `Failed to create authentication: ${authError?.message || 'Unknown error'}`
+        error: `Database error creating new user`
       }
     }
 
     console.log('✓ Auth user created:', authUser.user.id)
 
-    // Step 2: Wait for database trigger to create profile, then update it with correct data
-    // The trigger creates a basic profile, but we need to update it with the correct details
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Wait 1 second for trigger
+    // Step 2: Wait for database trigger to create profile, then verify and update
+    await new Promise(resolve => setTimeout(resolve, 2000)) // Wait 2 seconds for trigger
 
-    const { data: profileData, error: profileError } = await supabaseAdmin
-      .from('user_profiles')
-      .update({
-        first_name: firstName || null,
-        last_name: lastName || null,
-        role: role,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', authUser.user.id)
-      .select()
-      .single()
+    // Verify profile was created and update with correct data
+    let profileData = null
+    let attempts = 0
+    const maxAttempts = 5
 
-    if (profileError) {
-      console.error('Profile update failed:', profileError)
+    while (!profileData && attempts < maxAttempts) {
+      attempts++
+      console.log(`Checking for profile creation, attempt ${attempts}`)
 
-      // Clean up auth user if profile update fails
-      try {
-        await supabaseAdmin.auth.admin.deleteUser(authUser.user.id)
-        console.log('✓ Cleaned up auth user after profile update failure')
-      } catch (cleanupError) {
-        console.error('Failed to cleanup auth user:', cleanupError)
+      const { data: existingProfile, error: checkError } = await supabaseAdmin
+        .from('user_profiles')
+        .select('*')
+        .eq('id', authUser.user.id)
+        .single()
+
+      if (existingProfile) {
+        console.log('Profile found, updating with correct data')
+
+        // Update profile with correct information
+        const { data: updatedProfile, error: updateError } = await supabaseAdmin
+          .from('user_profiles')
+          .update({
+            first_name: firstName || null,
+            last_name: lastName || null,
+            role: role,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', authUser.user.id)
+          .select()
+          .single()
+
+        if (updateError) {
+          console.error('Profile update error:', updateError)
+          // Clean up auth user
+          try {
+            await supabaseAdmin.auth.admin.deleteUser(authUser.user.id)
+            console.log('✓ Cleaned up auth user after profile update failure')
+          } catch (cleanupError) {
+            console.error('Failed to cleanup auth user:', cleanupError)
+          }
+          return {
+            success: false,
+            error: `Database error creating new user`
+          }
+        }
+
+        profileData = updatedProfile
+        break
+      } else if (checkError && !checkError.message.includes('No rows')) {
+        console.error('Profile check error:', checkError)
+        break
       }
 
-      return {
-        success: false,
-        error: `Failed to update profile: ${profileError.message}`
+      // Wait before next attempt
+      if (attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, 1000))
       }
     }
 
-    console.log('✓ User profile updated:', profileData.id)
+    if (!profileData) {
+      console.error('Profile was not created by trigger, creating manually')
+
+      // Fallback: create profile manually
+      const { data: manualProfile, error: manualError } = await supabaseAdmin
+        .from('user_profiles')
+        .insert({
+          id: authUser.user.id,
+          email: email,
+          first_name: firstName || null,
+          last_name: lastName || null,
+          role: role,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+
+      if (manualError) {
+        console.error('Manual profile creation error:', manualError)
+        // Clean up auth user
+        try {
+          await supabaseAdmin.auth.admin.deleteUser(authUser.user.id)
+          console.log('✓ Cleaned up auth user after manual profile creation failure')
+        } catch (cleanupError) {
+          console.error('Failed to cleanup auth user:', cleanupError)
+        }
+        return {
+          success: false,
+          error: `Database error creating new user`
+        }
+      }
+
+      profileData = manualProfile
+    }
+
+    console.log('✓ User profile created/updated:', profileData.id)
 
     // Test the login to ensure everything works
     try {

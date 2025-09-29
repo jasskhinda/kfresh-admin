@@ -75,7 +75,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'User already exists' }, { status: 409 })
     }
 
-    // Step 1: Create auth user
+    console.log('Creating auth user with metadata:', { email, firstName, lastName, role })
+
+    // Step 1: Create auth user (profile will be auto-created by trigger)
     const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -85,8 +87,8 @@ export async function POST(request: NextRequest) {
         providers: ['email']
       },
       user_metadata: {
-        first_name: firstName,
-        last_name: lastName,
+        first_name: firstName || '',
+        last_name: lastName || '',
         role: role
       }
     })
@@ -94,45 +96,119 @@ export async function POST(request: NextRequest) {
     if (authError) {
       console.error('Auth creation error:', authError)
       return NextResponse.json({
-        error: 'Failed to create authentication user',
+        error: 'Database error creating new user',
         details: authError.message
       }, { status: 500 })
     }
 
     if (!authUser.user) {
-      return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
-    }
-
-    // Step 2: Create user profile
-    const { data: profileData, error: profileError } = await supabaseAdmin
-      .from('user_profiles')
-      .insert({
-        id: authUser.user.id, // Use the auth user ID
-        email: email,
-        first_name: firstName || null,
-        last_name: lastName || null,
-        role: role,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-      .select()
-      .single()
-
-    if (profileError) {
-      console.error('Profile creation error:', profileError)
-
-      // If profile creation fails, clean up the auth user
-      try {
-        await supabaseAdmin.auth.admin.deleteUser(authUser.user.id)
-      } catch (cleanupError) {
-        console.error('Failed to cleanup auth user:', cleanupError)
-      }
-
       return NextResponse.json({
-        error: 'Failed to create user profile',
-        details: profileError.message
+        error: 'Database error creating new user',
+        details: 'No user returned from auth creation'
       }, { status: 500 })
     }
+
+    console.log('Auth user created successfully:', authUser.user.id)
+
+    // Step 2: Wait for trigger to create profile, then verify and update if needed
+    await new Promise(resolve => setTimeout(resolve, 2000)) // Wait 2 seconds for trigger
+
+    // Verify profile was created and update with correct data
+    let profileData = null
+    let attempts = 0
+    const maxAttempts = 5
+
+    while (!profileData && attempts < maxAttempts) {
+      attempts++
+      console.log(`Checking for profile creation, attempt ${attempts}`)
+
+      const { data: existingProfile, error: checkError } = await supabaseAdmin
+        .from('user_profiles')
+        .select('*')
+        .eq('id', authUser.user.id)
+        .single()
+
+      if (existingProfile) {
+        console.log('Profile found, updating with correct data')
+
+        // Update profile with correct information
+        const { data: updatedProfile, error: updateError } = await supabaseAdmin
+          .from('user_profiles')
+          .update({
+            first_name: firstName || null,
+            last_name: lastName || null,
+            role: role,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', authUser.user.id)
+          .select()
+          .single()
+
+        if (updateError) {
+          console.error('Profile update error:', updateError)
+          // Try to delete the auth user
+          try {
+            await supabaseAdmin.auth.admin.deleteUser(authUser.user.id)
+          } catch (cleanupError) {
+            console.error('Failed to cleanup auth user:', cleanupError)
+          }
+          return NextResponse.json({
+            error: 'Database error creating new user',
+            details: 'Failed to update user profile: ' + updateError.message
+          }, { status: 500 })
+        }
+
+        profileData = updatedProfile
+        break
+      } else if (checkError && !checkError.message.includes('No rows')) {
+        console.error('Profile check error:', checkError)
+        break
+      }
+
+      // Wait before next attempt
+      if (attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, 1000))
+      }
+    }
+
+    if (!profileData) {
+      console.error('Profile was not created by trigger, creating manually')
+
+      // Fallback: create profile manually
+      const { data: manualProfile, error: manualError } = await supabaseAdmin
+        .from('user_profiles')
+        .insert({
+          id: authUser.user.id,
+          email: email,
+          first_name: firstName || null,
+          last_name: lastName || null,
+          role: role,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+
+      if (manualError) {
+        console.error('Manual profile creation error:', manualError)
+
+        // Clean up auth user
+        try {
+          await supabaseAdmin.auth.admin.deleteUser(authUser.user.id)
+        } catch (cleanupError) {
+          console.error('Failed to cleanup auth user:', cleanupError)
+        }
+
+        return NextResponse.json({
+          error: 'Database error creating new user',
+          details: 'Profile creation failed: ' + manualError.message
+        }, { status: 500 })
+      }
+
+      profileData = manualProfile
+    }
+
+    console.log('User profile created/updated successfully:', profileData.id)
 
     // Return success
     return NextResponse.json({
