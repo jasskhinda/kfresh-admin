@@ -1,0 +1,45 @@
+FERMA Products Verification Report
+Generated: 10/20/2025, 4:25:49 PM
+
+FOUND IN DATABASE (8):
+✅ Frozen Red Fish Whole
+   DB: FROZEN RED FISH WHOLE 12/750g
+   Brand: FERMA | Pack: 12/750g | Item #: 0526
+
+✅ Frozen Sardines Nacional
+   DB: FROZEN SARDINES NACIONAL 12/750g
+   Brand: FERMA | Pack: 12/750g | Item #: 0491
+
+✅ Frozen Large Mackerel
+   DB: FROZEN LARGE MACKEREL (TOTE) 130 FROZEN FISH
+   Brand: FERMA | Pack: 1/kg | Item #: 0506
+
+✅ Frozen Large Mackerel (Tote)
+   DB: FROZEN LARGE MACKEREL (TOTE) 130 FROZEN FISH
+   Brand: FERMA | Pack: TOTE | Item #: 0506A
+
+✅ Frozen Small Mackerel
+   DB: FROZEN SMALL MACKEREL 12/750g
+   Brand: FERMA | Pack: 12/750g | Item #: 0507
+
+✅ Frozen Red Fish (Slices)
+   DB: FROZEN RED FISH (SLICES) 12/750g
+   Brand: FERMA | Pack: 12/750g | Item #: 0528
+
+✅ Frozen Nile Perch
+   DB: FROZEN NILE PERCH 1/Kg
+   Brand: FERMA | Pack: 1/Kg | Item #: 0552
+
+✅ Maggi Chicken Flavour Cubes (10g X 60)
+   DB: Maggi Chicken Flavour Cubes (10g X 60)
+   Brand: Maggi | Pack: 10g x 60 | Item #: undefined
+
+MISSING FROM DATABASE (1):
+❌ Frz Med. Blue Jack Mackerel Carapau
+   Brand: FERMA | Pack: 12/750g | Item #: 0495 | Category: Frozen Foods
+
+SUMMARY:
+Total: 9
+Found: 8
+Missing: 1
+Coverage: 89%

@@ -1,0 +1,257 @@
+{
+  "toDelete": [
+    "da7e7fb1-2ebc-4b50-928a-9c172b283c54",
+    "84699330-601a-4305-894d-6a260e4bcabd",
+    "14528d93-22e8-4c27-a456-a5acdcf36e48",
+    "04f1e25c-549b-44c4-8408-822fa108748a",
+    "c4933923-2691-4f9e-8ef8-a05a85a21bf7",
+    "44a50f7b-68cb-4667-ae7e-8442fb8e2f64",
+    "4a250488-7802-435a-8c78-c00f5d6f8fcc",
+    "3b2105c0-ff27-441b-b2b0-5fd708cd0076",
+    "48969b48-9e48-4a66-ad70-e637e57b30e3",
+    "ffff1f66-37f8-4830-8f5c-455d099e1ae8",
+    "480bcb13-19b0-4768-9baf-4852ba2d57ce",
+    "19b6db6c-393b-42eb-9047-75067882366d",
+    "a5f3b89d-f460-4341-b791-5dd142415b6d",
+    "79d4cf72-a300-47f3-a030-4cfd75413e42",
+    "a919bad5-3ace-40b0-abde-8f9a51955f58",
+    "90e4c713-ebcc-4bc3-84f5-b663401da060",
+    "c2a26c6f-afb1-421e-8bb2-277373e1edc8",
+    "0f91e531-6d6c-4b25-92e3-b50ba1c59534",
+    "c9caa978-ed9f-4a40-a2b6-d372077fc7c5",
+    "dabfcefc-1f0c-4771-a4d6-d70ce3edb8fe",
+    "62cf9072-be06-444c-87a8-12da21fe4b04",
+    "6e356e26-c09b-436f-83cd-6a75a8902b20",
+    "4719eb04-c14b-448c-822e-90bb070ea388",
+    "39623f8a-7067-430f-83cb-cc78a29f2d89",
+    "1558d135-0b5b-4c42-80bf-8f819b8c9dde",
+    "735db2a5-68b9-41ea-897e-ee67289f9b22",
+    "2c0e8052-a45b-4890-9c81-9f2896658cc9",
+    "508cc49a-9495-4b61-8cf2-71d9ad0e8b80",
+    "ec92ae11-450c-426b-aab4-eef06d9b02e1"
+  ],
+  "duplicates": [
+    {
+      "name": "Beef Patty-Mild",
+      "count": 2,
+      "keepId": "434910d2-6c8b-46d4-942e-79f6b2ba70b8",
+      "deleteIds": [
+        "da7e7fb1-2ebc-4b50-928a-9c172b283c54"
+      ]
+    },
+    {
+      "name": "Bertie's Original Pepper Sauce",
+      "count": 2,
+      "keepId": "596e562c-8ff5-44ef-96a9-0f910e3dab4d",
+      "deleteIds": [
+        "84699330-601a-4305-894d-6a260e4bcabd"
+      ]
+    },
+    {
+      "name": "Bertie's Pimento Pepper Sauce",
+      "count": 2,
+      "keepId": "c5438030-32f3-4a8b-9b56-a973bc63b054",
+      "deleteIds": [
+        "14528d93-22e8-4c27-a456-a5acdcf36e48"
+      ]
+    },
+    {
+      "name": "Bertie's Scorpion Pepper Sauce",
+      "count": 2,
+      "keepId": "9f263e59-7364-4e01-a34f-bac8c7cec31f",
+      "deleteIds": [
+        "04f1e25c-549b-44c4-8408-822fa108748a"
+      ]
+    },
+    {
+      "name": "Chicken Patty -- Spicy",
+      "count": 2,
+      "keepId": "9e5583e7-30d7-4bb4-bc00-f938b1c31319",
+      "deleteIds": [
+        "c4933923-2691-4f9e-8ef8-a05a85a21bf7"
+      ]
+    },
+    {
+      "name": "Chicken Patty-Mild",
+      "count": 2,
+      "keepId": "281f7127-9ec1-40b6-ba65-85876aed0b9b",
+      "deleteIds": [
+        "44a50f7b-68cb-4667-ae7e-8442fb8e2f64"
+      ]
+    },
+    {
+      "name": "Chilli Pepper Ground",
+      "count": 2,
+      "keepId": "8346f97f-5a77-4639-877f-b7baccb50a7a",
+      "deleteIds": [
+        "4a250488-7802-435a-8c78-c00f5d6f8fcc"
+      ]
+    },
+    {
+      "name": "Egusi Ground",
+      "count": 2,
+      "keepId": "5427218f-af26-4643-8c82-e91f564ea954",
+      "deleteIds": [
+        "3b2105c0-ff27-441b-b2b0-5fd708cd0076"
+      ]
+    },
+    {
+      "name": "Kenkey",
+      "count": 2,
+      "keepId": "6760ebce-e80b-4d77-a5c1-dd5d7a36c3ee",
+      "deleteIds": [
+        "48969b48-9e48-4a66-ad70-e637e57b30e3"
+      ]
+    },
+    {
+      "name": "KFresh Body and Hair Cream",
+      "count": 2,
+      "keepId": "13a63174-14e6-4229-a1c5-13791aea9c1c",
+      "deleteIds": [
+        "ffff1f66-37f8-4830-8f5c-455d099e1ae8"
+      ]
+    },
+    {
+      "name": "KFresh Shito",
+      "count": 2,
+      "keepId": "b7b47bd6-cffd-4d4c-8867-3702c718d560",
+      "deleteIds": [
+        "480bcb13-19b0-4768-9baf-4852ba2d57ce"
+      ]
+    },
+    {
+      "name": "Maggi Chicken (6pcs)",
+      "count": 2,
+      "keepId": "63dde9a0-2c36-4548-b30c-8b5275cd6578",
+      "deleteIds": [
+        "19b6db6c-393b-42eb-9047-75067882366d"
+      ]
+    },
+    {
+      "name": "Maggi Crayfish (6pcs)",
+      "count": 3,
+      "keepId": "311203ff-6168-464a-b573-ce2182065432",
+      "deleteIds": [
+        "a5f3b89d-f460-4341-b791-5dd142415b6d",
+        "79d4cf72-a300-47f3-a030-4cfd75413e42"
+      ]
+    },
+    {
+      "name": "Momoni (frozen)",
+      "count": 2,
+      "keepId": "29c92501-bbdf-495d-b50b-58cf04531ca8",
+      "deleteIds": [
+        "a919bad5-3ace-40b0-abde-8f9a51955f58"
+      ]
+    },
+    {
+      "name": "Nestle Nido Milk Powder",
+      "count": 2,
+      "keepId": "27848ba2-3ed7-40bc-ab49-055783c52073",
+      "deleteIds": [
+        "90e4c713-ebcc-4bc3-84f5-b663401da060"
+      ]
+    },
+    {
+      "name": "Peak Milk Powder",
+      "count": 2,
+      "keepId": "6657b40f-496b-4a16-92bf-cdf8f3b87e5e",
+      "deleteIds": [
+        "c2a26c6f-afb1-421e-8bb2-277373e1edc8"
+      ]
+    },
+    {
+      "name": "Roasted Peanuts",
+      "count": 2,
+      "keepId": "164339f0-aca2-4933-b5f2-df1445095779",
+      "deleteIds": [
+        "0f91e531-6d6c-4b25-92e3-b50ba1c59534"
+      ]
+    },
+    {
+      "name": "Roasted Peanuts 510g",
+      "count": 3,
+      "keepId": "c736dec0-cb71-4980-85c6-6bc5e287ba6d",
+      "deleteIds": [
+        "c9caa978-ed9f-4a40-a2b6-d372077fc7c5",
+        "dabfcefc-1f0c-4771-a4d6-d70ce3edb8fe"
+      ]
+    },
+    {
+      "name": "Salted Pig Feet",
+      "count": 2,
+      "keepId": "e4e162b0-31ba-4cee-a158-da2640720919",
+      "deleteIds": [
+        "62cf9072-be06-444c-87a8-12da21fe4b04"
+      ]
+    },
+    {
+      "name": "Salted Pig Tail",
+      "count": 2,
+      "keepId": "4b5bac21-3de9-4771-8f66-97b92482b1fd",
+      "deleteIds": [
+        "6e356e26-c09b-436f-83cd-6a75a8902b20"
+      ]
+    },
+    {
+      "name": "Slap Ya Mama Cajun Seasoning",
+      "count": 2,
+      "keepId": "0d17cac1-8d56-4d2a-a41b-eb28d64f9812",
+      "deleteIds": [
+        "4719eb04-c14b-448c-822e-90bb070ea388"
+      ]
+    },
+    {
+      "name": "Tastees Jamaican Patties",
+      "count": 2,
+      "keepId": "cc8f10b2-d5a0-4c8b-9df5-2cb71ba3535e",
+      "deleteIds": [
+        "39623f8a-7067-430f-83cb-cc78a29f2d89"
+      ]
+    },
+    {
+      "name": "Vegetable Patty-Mild",
+      "count": 2,
+      "keepId": "d31a0764-d49f-4810-be2e-17c508ec6b81",
+      "deleteIds": [
+        "1558d135-0b5b-4c42-80bf-8f819b8c9dde"
+      ]
+    },
+    {
+      "name": "Vegetable Patty-Spicy",
+      "count": 2,
+      "keepId": "7353835d-e9ba-4d44-afc2-b49d099d6949",
+      "deleteIds": [
+        "735db2a5-68b9-41ea-897e-ee67289f9b22"
+      ]
+    },
+    {
+      "name": "Vitamalt",
+      "count": 2,
+      "keepId": "42dd5097-4166-4095-bbd5-fd20e2c0340d",
+      "deleteIds": [
+        "2c0e8052-a45b-4890-9c81-9f2896658cc9"
+      ]
+    },
+    {
+      "name": "White Gari",
+      "count": 2,
+      "keepId": "ef47e356-166a-41cc-8304-c857d981b51e",
+      "deleteIds": [
+        "508cc49a-9495-4b61-8cf2-71d9ad0e8b80"
+      ]
+    },
+    {
+      "name": "Yellow Gari",
+      "count": 2,
+      "keepId": "2063d79a-9aa2-434f-a9ba-44812fb4efaa",
+      "deleteIds": [
+        "ec92ae11-450c-426b-aab4-eef06d9b02e1"
+      ]
+    }
+  ],
+  "summary": {
+    "totalToDelete": 29,
+    "uniqueProducts": 430
+  }
+}

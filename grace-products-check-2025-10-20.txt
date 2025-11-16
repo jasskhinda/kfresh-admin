@@ -1,0 +1,39 @@
+Grace Products Verification
+Generated: 10/20/2025, 4:21:39 PM
+Total Products: 100
+
+MISSING PRODUCTS:
+================================================================================
+Grace Black Eye Peas 540ml - $2.5 (Canned & Package Goods)
+Grace Green Pigeon Peas 425ml - $2.5 (Canned & Package Goods)
+Grace Corned Beef 7oz - $3 (Canned & Package Goods)
+Grace Corn Meal 8kg - $9.99 (Canned & Package Goods)
+Grace Coconut Water with pulp 310ml - $1.69 (Canned & Package Goods)
+Grace Cock 42g - $1.83 (Soups)
+
+PRICE DIFFERENCES:
+================================================================================
+Lafe Frozen Cassava 1lb
+  PDF: $2.73 | DB: $13.6
+
+Lafe Frozen Cassava Croquette 908g
+  PDF: $7.99 | DB: $13.6
+
+Grace Pineapple Guava 473ml
+  PDF: $2.29 | DB: $1.49
+
+Grace Pineapple Ginger 473ml
+  PDF: $2.29 | DB: $1.49
+
+Grace Red Kidney Bean 540ml
+  PDF: $2.5 | DB: $8.99
+
+Grace Red Kidney Bean /Rice 175g
+  PDF: $3.29 | DB: $8.99
+
+Grace Coconut Milk Powder 50g
+  PDF: $1.48 | DB: $2.1
+
+Grace Coconut milk powder 300g
+  PDF: $6.28 | DB: $2.1
+

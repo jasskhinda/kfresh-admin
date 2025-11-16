@@ -1,0 +1,470 @@
+[dotenv@17.2.2] injecting env (8) from .env.local -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+📦 Fetching all products from database...
+
+📊 Total Products: 373
+
+================================================================================
+
+📂 BAKING PRODUCTS (1 products)
+--------------------------------------------------------------------------------
+1. ✅ Grace Organic Coconut Sugar 500g - $8.28
+
+📂 Bakery & Snacks (28 products)
+--------------------------------------------------------------------------------
+1. ✅ (Cold Pressed Juice. ginger hibiscus blend) - $5
+2. ✅ Aladun Zobo 500ml - $7
+3. ✅ Bofrot / Beignet / Pufpuf  (pack) - $6
+4. ✅ Bread - $9.99
+5. ✅ Cheese Roll - $7.99
+6. ✅ Chinchin  (pack) - $7
+7. ✅ Chinese Cake (6pcs) - $7.99
+8. ✅ Coconut Buns (6pcs) - $5.99
+9. ✅ Fresh Dhal Pori (2pcs) - $5
+10. ✅ Fresh Doubles (non-spicy) - $8
+11. ✅ Fresh Doubles (spicy) - $8
+12. ✅ Fresh Roti  - $6.5
+13. ✅ Ghana Yam - White (lb) - $3.9
+14. ✅ Green Plantain  (lb) - $1.25
+15. ✅ Kirkland Signature Spring Water (500ml) - $1
+16. ✅ Meat Pie - $4
+17. ✅ Methai - $5.99
+18. ✅ Pholourie - $8
+19. ✅ Pine Tart - $8
+20. ✅ Ripe Plantain  (lb) - $1.2
+21. ✅ Roasted Peanuts 510g - $9
+22. ✅ Salara - $8
+23. ✅ Tastee Jamaican Patties - Chicken (box/dozen) - $16.99
+24. ✅ Tastee Jamaican Patties - Regular Spicy Beef (box/dozen) - $16.99
+25. ✅ Tastee Jamaican Patties - Vegetable (1piece) - $4
+26. ✅ Tastee Jamaican Patties - Vegetable (box/dozen) - $16.99
+27. ✅ Tastee Jamaican Patties Extra Spicy - Beef (box/dozen) - $16.99
+28. ✅ Vegetable Pie - $4
+
+📂 Baking (4 products)
+--------------------------------------------------------------------------------
+1. ✅ Baking Powder (400g) - $4
+2. ✅ Baking Soda (454g) - $4
+3. ✅ Instant Yeast - 85g - $3.99
+4. ✅ Instant Yeast (185g) - $9.99
+
+📂 Beans & Pulses (7 products)
+--------------------------------------------------------------------------------
+1. ✅ CEDAR Black Eyed Beans 907g - $3.99
+2. ✅ CEDAR Chick Peas 907g - $3.99
+3. ✅ Honey Beans 2Ibs - $10.99
+4. ✅ Oloye Peeled Beans 10lbs - $50
+5. ✅ Peanut Butter 498g - $6.99
+6. ✅ Peeled Beans 2Ibs - $11.99
+7. ✅ Red Beans 2Ibs - $9
+
+📂 CANDY (3 products)
+--------------------------------------------------------------------------------
+1. ✅ Grace Dinner Mint (100g) - $1.99
+2. ✅ Grace Ginger Mint (90g) - $1.99
+3. ✅ Grace Ice Mint (100g) - $1.99
+
+📂 CANNED & PACKAGE GOODS (52 products)
+--------------------------------------------------------------------------------
+1. ✅ Crayfish Ground  - $5
+2. ✅ Crayfish Ground 100g - $9.99
+3. ✅ Fresh Fanti Kenkey - $0
+4. ✅ Gino Tomato Paste 210g - $4.99
+5. ✅ Grace Ackees 540g - $11.45
+6. ✅ Grace Black Eye Peas 2kg - $9.99
+7. ✅ Grace Blackeye Peas /Rice - $3.29
+8. ✅ Grace Callaloo 540g - $3.75
+9. ✅ Grace Carib. Seasoning /Rice 175g - $3.29
+10. ✅ Grace Chickpeas 540ml - $2.5
+11. ✅ Grace Coconut Cream 141g - $1.49
+12. ✅ Grace Coconut Milk - $2.1
+13. ✅ Grace Coconut milk powder 300g - $6.28
+14. ✅ Grace Coconut Milk Powder 50g - $1.48
+15. ✅ Grace Coconut Water with pulp 310 ml - $1.69
+16. ✅ Grace Coconut Water with pulp 500ml - $2.3
+17. ✅ Grace Corn Meal 2kg - $4.29
+18. ✅ Grace Corn Meal 800g - $2.99
+19. ✅ Grace Corned Beef Reduced Salt - $4.75
+20. ✅ Grace Dry Pigeon Peas 540ml - $2.5
+21. ✅ Grace Festival 270g - $2.55
+22. ✅ Grace Green Pigeon Peas 425 ml - $2.5
+23. ✅ Grace Halal Corned Beef 340g - $4.85
+24. ✅ Grace Hominy Corn 400g - $2
+25. ✅ Grace Jack Mackerel in Brine - $3.48
+26. ✅ Grace Jack Mackerel Tom. 425g - $3.85
+27. ✅ Grace Johnny Cake 270g - $2.39
+28. ✅ Grace Lima Beans 540ml - $3.25
+29. ✅ Grace Lite Coconut Milk 400ml - $1.79
+30. ✅ Grace Mackerel in Tomato Sauce - $1.27
+31. ✅ Grace Mackerel Tom/Chili - $1.27
+32. ✅ Grace Oats - $3.55
+33. ✅ Grace Organic Coconut Milk - $3.48
+34. ✅ Grace Parboiled Rice 2kg - $6.29
+35. ✅ Grace Parboiled Rice 8kg - $21.89
+36. ✅ Grace Pigeon Peas 2kg - $9.5
+37. ✅ Grace Pigeon Peas 800g - $3.99
+38. ✅ Grace Red Kidney - $8.99
+39. ✅ Grace Red Kidney Bean /Rice - $3.29
+40. ✅ Grace Red Kidney Bean 540ml - $2.5
+41. ✅ Grace Regular Corn Beef 340g - $4.75
+42. ✅ Grace Regular Vienna Sausages 113g - $1.99
+43. ✅ Grace Salt Fish Fritter 270g - $3.29
+44. ✅ Grace Sardine in Tom/Chili 155g - $1.27
+45. ✅ Grace Sardines in Tomato Sauce 155g - $1.27
+46. ✅ Grace Sundried Sorrel 126g - $4
+47. ✅ Grace Vienna Sausages Hot n Spicy - $1.99
+48. ✅ Grace White Rice 2kg - $5.99
+49. ✅ Grace White Rice 8kg - $21
+50. ✅ Grace Yellow Split - $6.49
+51. ✅ Oloye Oat Fufu  - $10.99
+52. ✅ Wirri Wirri Pepper  - $7.66
+
+📂 COOKING OILS (2 products)
+--------------------------------------------------------------------------------
+1. ✅ Grace Coconut Oil 500ml - $9.55
+2. ✅ Grace Organic Coconut Oil 1L - $17.58
+
+📂 Canned Foods (20 products)
+--------------------------------------------------------------------------------
+1. ✅ Derica Tomato Paste 213g - $4.99
+2. ✅ DeRica Tomato Paste 400g - $8.99
+3. ✅ Dunn`s River Ackee 540g - $12
+4. ✅ Fresh Hausa Koko - $6.99
+5. ✅ Grace Corned Beef 198g - $3
+6. ✅ Hereford Corned Beef -Halal (340g) - $4.99
+7. ✅ Hereford Corned Beef (340g) - $4.99
+8. ✅ Jamaican Pride Ackee 540ml - $12
+9. ✅ Mr Goudas Ackee 540ml - $12
+10. ✅ Nkulenu Palm Soup Base 390g - $3.45
+11. ✅ Nkulenu Palm Soup Base with Prekese & Abemuduro 390g - $3.45
+12. ✅ Nkulenu Palm Soup Base with Prekese & Abemuduro 780g - $6.99
+13. ✅ Primo Diced Tomato 796 ml - $2.49
+14. ✅ Star Kist Tuna -- Flakes 160g - $6.46
+15. ✅ Star Kist Tuna -- Kpapko Shito 160g - $6.46
+16. ✅ Titus Sardine in Soybean Oil (125g) 1pc - $2
+17. ✅ Titus Sardine in Soybean Oil (125g) 3pcs - $5
+18. ✅ Titus Sardines in Soya Oil 125g (50pcs) - $80
+19. ✅ Turkey Berry / Wild Eggplant/Kwahu Nkwasusua (700g) - $8
+20. ✅ Unico Tomato Paste (156ml) - $1.29
+
+📂 Cooking Oils & Fats (24 products)
+--------------------------------------------------------------------------------
+1. ✅ Adam Salt / Kawu 210g - $5
+2. ✅ Banga Red Palm Oil (2L) Nigeria - $16.83
+3. ✅ Gallo Extra Virgin Olive Oil 1L - $12
+4. ✅ Ghana Yam - Pona (lb) - $3.9
+5. ✅ Irie All Purpose Seasoning 275g - $5.99
+6. ✅ Irie Jerk BBQ 454ml - $5.29
+7. ✅ Irie Oxtail Seasoning 400g - $5.99
+8. ✅ Maggi Chicken Flavour (6pcs) - $2
+9. ✅ Maggi Crayfish (6pcs) - $2
+10. ✅ Maggi Crayfish Flavour (10gx60) - $14
+11. ✅ Maggi Shrimp - $2
+12. ✅ Maggi Shrimp  (pack) - $14
+13. ✅ Onga Powder -- Classic - $2.75
+14. ✅ Palm Kernel Oil (1L) Ghana - $11
+15. ✅ Palm Oil - Regular (1L) Ghana - $8.99
+16. ✅ Palm Oil - Regular (500ml) Ghana - $4.99
+17. ✅ Palm Oil - Zomi (1L) Ghana - $8.99
+18. ✅ Palm Oil - Zomi (2L) Ghana - $16.83
+19. ✅ Palm Oil - Zomi (500ml) Ghana - $4.99
+20. ✅ Palm Oil -- Regular (2L) Ghana - $16.83
+21. ✅ Palm Oil Regular (4L) Ghana - $33.66
+22. ✅ Saporito Foods Canola Oil 3L - $9.78
+23. ✅ Saporito Foods Vegetable Oil 3L - $9.78
+24. ✅ Suya Spice 125g - Spicy - $8.25
+
+📂 Drinks/Beverages (31 products)
+--------------------------------------------------------------------------------
+1. ✅ Coke 355ml - $2.5
+2. ✅ Eska Natural Sprink Water (500ml) - $1.5
+3. ✅ Fanta 355ml - $2.5
+4. ✅ Fruit Punch Nectar (473ml) - $2.99
+5. ✅ Ginger Ale 355ml (Canada Dry) - $2.5
+6. ✅ Grace Cream Soda - $1.49
+7. ✅ Grace Fruit Punch - $2.29
+8. ✅ Grace Gingerbeer - $1.49
+9. ✅ Grace Island Mango 473ml - $2.29
+10. ✅ Grace Kola Champange - $1.49
+11. ✅ Grace Malta - $2.99
+12. ✅ Grace Mango Carrot 473ml - $2.29
+13. ✅ Grace Mango drink - $1.49
+14. ✅ Grace Pineapple - $1.49
+15. ✅ Grace Pineapple Ginger - $2.29
+16. ✅ Grace Pineapple Guava - $2.29
+17. ✅ Grace Sorrel Ginger - $2.29
+18. ✅ Grace Vita Malt Classic 330ml - $2.99
+19. ✅ Hajia Fati (Burkina Drink) - $5
+20. ✅ Hajia Fati (Fura Drink) - $5
+21. ✅ Mango Carrot Nectar (473ml) - $2.99
+22. ✅ Mango Juice (500ml) - $2.99
+23. ✅ Mango Nectar (473ml) - $2.99
+24. ✅ Ovaltine Chocolate (Brown Btl) 400g - $7.49
+25. ✅ Ovaltine Malted Milk Drink (White) 400g - $7.49
+26. ✅ Ovaltine Original Classic - $7.49
+27. ✅ Peach Juice (500ml) - $2.99
+28. ✅ Pineapple Ginger Nectar (473ml) - $2.99
+29. ✅ Pink Guava Juice (500ml) - $2.99
+30. ✅ Soursop Nectar (463ml) - $2.99
+31. ✅ Spirit 355ml - $2.5
+
+📂 Flour & Baking (11 products)
+--------------------------------------------------------------------------------
+1. ✅ Ayo-Ola Poundo Yam Flour (10lbs) - $50
+2. ✅ Ayo-Ola Poundo Yam Flour (4lbs) - $24
+3. ✅ Cassava Flour / Konkonte 3.5Ibs - $8
+4. ✅ Cassava Flour / Konkonte 7Ibs - $16
+5. ✅ Diehuo -- Corn flour mixed with cassava flour 3.5lbs - $11.99
+6. ✅ Hausa Koko Flour 800g - $11.99
+7. ✅ Kinazi Cassava Flour 1kg - $7.99
+8. ✅ Kinazi Cassava Flour 2kg - $15.99
+9. ✅ Maganjo Maize Flour 2kg - $12.99
+10. ✅ Tropiway Cocoyam Fufu (700g) - $9.99
+11. ✅ Tropiway Plantain Fufu (700g) - $9.99
+
+📂 Fresh Fruits & Vegetables (8 products)
+--------------------------------------------------------------------------------
+1. ✅ Fresh Chado Beni - $8
+2. ✅ Fresh Pumpkin - $5
+3. ✅ Garlic   - $2.49
+4. ✅ Lemon - $0.99
+5. ✅ Organic Ginger Root (160g) - $4.99
+6. ✅ Red Onion - $2
+7. ✅ Tomatoes  (lb) - $3.99
+8. ✅ Yellow Onions   - $3.49
+
+📂 Frozen Fish & Seafood (12 products)
+--------------------------------------------------------------------------------
+1. ✅ Crocker Fish(headless)  (lb) - $8
+2. ✅ FROZEN LARGE MACKEREL (TOTE) 130 FROZEN FISH - $10
+3. ✅ FROZEN LARGE MACKEREL 1/kg - $10
+4. ✅ FROZEN RED FISH (SLICES) 12/750g - $10
+5. ✅ FROZEN RED FISH WHOLE 12/750g - $10
+6. ✅ FROZEN SMALL MACKEREL 12/750g - $10
+7. ✅ FRZ MED. BLUE JACK MACKEREL CARAPAU 12/750g - $10
+8. ✅ Mackerel Fish  (lb) - $7
+9. ✅ Smoked Cat Fish Large - $60
+10. ✅ Smoked Mackerel  (Ib) - $7
+11. ✅ Tilapia Fish  (lb) - $6.9
+12. ✅ Whiting Fish  (1lb) - $7.5
+
+📂 Frozen Foods (33 products)
+--------------------------------------------------------------------------------
+1. ✅ Bitter Leaves - $5.55
+2. ✅ Bobolo - $12
+3. ✅ Cassava Leaves - $5.55
+4. ✅ Fresh Frozen Peeled Matooki 1kg - $11.99
+5. ✅ Fresh Ga Kenkey - $3.5
+6. ✅ Fresh Okro (Sliced or Chopped) - $3.7
+7. ✅ Fresh Trinidad Pimento Peppers - $8
+8. ✅ FROZEN NILE PERCH 1/Kg - $10
+9. ✅ FROZEN SARDINES NACIONAL 12/750g - $10
+10. ✅ Ghana Fermented Corn Dough - $7.5
+11. ✅ Ghana Fermented Grated Cassava (2lbs) - $7.5
+12. ✅ Grace Passion fruit frozen fruit pulp - $4.99
+13. ✅ Grace Soursop frozen fruit pulp - $4.99
+14. ✅ Jute Leaves Cut (Ewedu) - $2.55
+15. ✅ Kwanga - $12
+16. ✅ Lafe Frozen Cassava - $13.6
+17. ✅ Lafe Frozen Cassava 1lb - $2.73
+18. ✅ Lafe Frozen Cassava Croquette 908Gr - $7.99
+19. ✅ Mixed Vegetables - $3.5
+20. ✅ Ndole (cut) - $5.55
+21. ✅ Pondu (Cassava Leaves) - $5.55
+22. ✅ Smoked Turkey  (lb) - $8.5
+23. ✅ Smoked Turkey Drumstick  (Ib) - $12
+24. ✅ Smoked Turkey Wings - Cut  (Ib) - $12
+25. ✅ Smoked Turkey Wings - Split  (Ib) - $12
+26. ✅ Spinach - $3.65
+27. ✅ Tastee Jamaican Patties - Extra Spicy - Beef (1piece) - $4
+28. ✅ Tastee Jamaican Patties - Regular Spicy Beef (1piece) - $4
+29. ✅ Ugwu Leaves - $5.5
+30. ✅ Unsmoked Turkey Wings  (Ib) - $12
+31. ✅ Water Leaves - $5.5
+32. ✅ Yam Chips (2.5kg) - $21.5
+33. ✅ Yam Chips (600g) - $8.2
+
+📂 Frozen Meats (3 products)
+--------------------------------------------------------------------------------
+1. ✅ Chicken Feet  (Ib) - $5
+2. ✅ Soft chicken Drumstick (Halal)  (Ib) - $7
+3. ✅ Tastee Jamaican Patties - Chicken (1piece) - $4
+
+📂 HOT PEPPER SAUCE (4 products)
+--------------------------------------------------------------------------------
+1. ✅ Grace Habanero Pepper 167ml - $2.29
+2. ✅ Grace Hot Pepper Sauce 85ml - $3.25
+3. ✅ Grace Scotch Bonnet 142ml - $3.85
+4. ✅ Grace Scotch Bonnet Pepper sauce 85ml - $2.75
+
+📂 Pantry Essentials (39 products)
+--------------------------------------------------------------------------------
+1. ✅ Carnation Evaporated Milk (354ml) - $2.49
+2. ✅ Carnation Fat Free Evaporated Skim Milk (354ml) - $2.49
+3. ✅ Crayfish Whole 100g - $9.99
+4. ✅ Earthern Ware -- apotowewa - $14.5
+5. ✅ Egusi - Ground  - $5
+6. ✅ Egusi - Whole  - $5
+7. ✅ Fresh Eggs - $7
+8. ✅ Fried Fish with Shrimps large - $12.5
+9. ✅ Fried Fish with Shrimps medium - $8
+10. ✅ Ghana Milo 400g - $10.99
+11. ✅ Golden Mourn 900g - $16
+12. ✅ Grandious Ogi White 500g - $10
+13. ✅ Grandious Ogi Yellow 500g - $10
+14. ✅ Honeywell Semolina 1.8kg - $10
+15. ✅ Indomie Chicken Flavour (1box) - $22.5
+16. ✅ Indomie Chicken Flavour (1pack) - $0.8
+17. ✅ Indomie Onion Chicken Flavour (1pack) - $0.95
+18. ✅ Indomie Onion Chicken Flavour(1Box) - $22.5
+19. ✅ KFresh Body & Hair Cream 250ml - $10
+20. ✅ Koobi (salted Fish) - $7
+21. ✅ Mama`s Choice Plantain Fufu 10Ibs - $54
+22. ✅ Mama`s Choice Plantain Fufu 4Ibs - $24
+23. ✅ Moi-Moi Plate  (one) - $2
+24. ✅ Nigeria Milo 400 g - $14.99
+25. ✅ Nkulenu Palm Soup Base 780g - $6.99
+26. ✅ Okro Powder - $5.99
+27. ✅ Ola Ola Poundo Yam (2Ibs) - $11
+28. ✅ Ola Ola Poundo Yam (4lbs) - $24
+29. ✅ Ola-Ola Poundo Yam (10lbs) - $50
+30. ✅ Oloye Wheat Fufu  - $50
+31. ✅ Prekese / Tetrapleura tetraptera -- whole - $5
+32. ✅ Primo Crushed Tomatoes 796 ml - $2.49
+33. ✅ Smoked Cat Fish Medium - $10
+34. ✅ Smoked Peeled Herrings   - $9
+35. ✅ Unico Crushed Tomatoes 796 ml (No Salt) - $2.49
+36. ✅ Unico Diced Tomatoes 796 ml - $2.49
+37. ✅ Wakye Leaves - $4
+38. ✅ Wooden Stick -- Eta - $7
+39. ✅ Yellow Gari 8Ibs - $20
+
+📂 Rice & Grains (13 products)
+--------------------------------------------------------------------------------
+1. ✅ 555 Basmati Rice 4.54kg - $17.99
+2. ✅ Botan Calrose Rice 8kg - $20
+3. ✅ CEDAR Long Grain Parboiled Rice 1.81kg  (4Ibs) - $6
+4. ✅ CEDAR Long Grain Parboiled Rice 4kg -- 8.8Ibs - $12
+5. ✅ Guyanese Pride Rice - $25
+6. ✅ Ijebu Garri 4Ibs - $10
+7. ✅ Ijebu Garri 8Ibs - $20
+8. ✅ Mekong Jasmine Scented Rice 8kg - $20
+9. ✅ Ofada Rice 4lbs - $12
+10. ✅ OX Head Fragrance Rice 7kg - $24
+11. ✅ Par Excellent Parboiled Rice 25lbs - $39.99
+12. ✅ Rooster Scented Jasmine Rice 8kg - $20
+13. ✅ Yellow Gari 4Ibs - $10
+
+📂 SOUPS (5 products)
+--------------------------------------------------------------------------------
+1. ✅ Grace Beef Pumpkin 50g - $1.83
+2. ✅ Grace Chicken Noodle 60g - $1.83
+3. ✅ Grace Chicken Noodle Soup 60g – NALCAN - $1.29
+4. ✅ Grace Cock Soup 43g  - $1.83
+5. ✅ Grace Fish Tea 45g - $1.83
+
+📂 SPICES, HERBS & SEASONINGS (4 products)
+--------------------------------------------------------------------------------
+1. ✅ Grace Jerk B.B.Q. 480ml - $4.99
+2. ✅ Grace Jerk Seasoning - HOT  284g - $4.99
+3. ✅ Grace Jerk Seasoning - MILD 284g - $4.99
+4. ✅ Grace Oxtail Marinade 350ml - $4.99
+
+📂 Sauces (10 products)
+--------------------------------------------------------------------------------
+1. ✅ Barbecue Sauce (300ml) - $5.99
+2. ✅ Golden Light Soy Sauce (500ml) - $5.99
+3. ✅ Grace Browning 142ml - $3
+4. ✅ Grace Fish & Meat 142ml - $3
+5. ✅ Grace Guava Jelly 340g - $3.99
+6. ✅ Grace Hot Pepper Sauce 170ml - $3.25
+7. ✅ Mushroom Flavoured Soy Sauce (500ml) - $5.99
+8. ✅ Premium Dark Soy Sauce (500ml) - $5.99
+9. ✅ Premium Oyster Sauce (500ml) - $5.99
+10. ✅ Prestige Cassava Cassareep 284ml - $6.99
+
+📂 Sauces & Condiments (12 products)
+--------------------------------------------------------------------------------
+1. ✅ Brown Betty pomeroon style cassareep (300ml) - $6.99
+2. ✅ Guyanese Pride Cassareep (300ml) - $6.99
+3. ✅ Guyanese Pride Cassareep 500ml - $13.99
+4. ✅ Irie Ultimate BBQ Sauce 16oz - $5
+5. ✅ KFresh Shito (2.5L) Extra Spicy - $70
+6. ✅ KFresh Shito (2.5L) Regular Spicy - $70
+7. ✅ KFresh Shito (250ml) Regular Spicy - $8
+8. ✅ KFresh Shito (500ml) Regular Spicy - $16
+9. ✅ KFresh Shito 5L (Extra Spicy) - $144
+10. ✅ KFresh Shito 5L (Regular Spicy) - $144
+11. ✅ KFresh Shito Extra Spicy (250ml) - $8
+12. ✅ KFresh Shito Extra Spicy (500ml) - $16
+
+📂 Snacks (6 products)
+--------------------------------------------------------------------------------
+1. ✅ Mr. Johns Caribbean Style Plantain Chips - $5
+2. ✅ Mr. Johns Regular Plantain Chips (135g) - $5
+3. ✅ Mr. Johns Ripe Plantain Chips (135g) - $5
+4. ✅ Mr. Johns Ripe Spicy Plantain Chips (135g) - $5
+5. ✅ Mr. Johns Spicy Caribbean Style Plantain Chips (135g) - $5
+6. ✅ Ovaltine Cookie 150g - $2
+
+📂 Spices & Seasonings (10 products)
+--------------------------------------------------------------------------------
+1. ✅ Aurora Fine Sea Salt 1kg - $2.99
+2. ✅ Efom Wisa - $5.99
+3. ✅ Esoro Wisa - $5.99
+4. ✅ Hwentia - $5.99
+5. ✅ Irie Seasoning Salt 454g - $5.99
+6. ✅ Kalas Classic Iodized Sea Salt 750g - $2.99
+7. ✅ Knorr Chicken Seasoning Cubes (Nigeria) 400g - $9.33
+8. ✅ Knorr Chicken Seasoning Powder (Nigeria) 400g - $9.33
+9. ✅ Maggi Chicken Flavour Cubes (10g X 60) - $14
+10. ✅ Pepper Soup Spice 322g - $20
+
+📂 Spices, Herbs & Seasoning (9 products)
+--------------------------------------------------------------------------------
+1. ✅ Adobo Seasoning w/Garlic & Pepper (300g) - $5.99
+2. ✅ All Spice Whole (Pimento) (50g) - $3.5
+3. ✅ Almond Flavour Extract (150ml) - $3.99
+4. ✅ Madras Curry Powder (454g) - $5.99
+5. ✅ Maggi Arome 200g - $5
+6. ✅ Meat Tenderizer (350g) - $5.99
+7. ✅ Mixed Essence Flavour Extract (150ml) - $3.99
+8. ✅ Thyme Leaf (90g) - $4.5
+9. ✅ Vanilla Flavour Extract (150ml) - $3.99
+
+📂 Teas (18 products)
+--------------------------------------------------------------------------------
+1. ✅ Balance Sugar (40g) - $4.99
+2. ✅ Black Tea Citrus (34g) - $4.99
+3. ✅ Blackcurrant & Elderberry (40g) - $4.99
+4. ✅ Care About Heart (40g) - $4.99
+5. ✅ Citrus Fruits & Ginger (40g) - $4.99
+6. ✅ Cold Infusion - Mint, Lemon & Lime (30g) - $4.99
+7. ✅ Cranberry & Ginger (40g) - $4.99
+8. ✅ Earl Grey (30g) - $4.99
+9. ✅ Everyday Detox (34g) - $4.99
+10. ✅ Green Tea w/Lemon & Lemongrass (30g) - $4.99
+11. ✅ Green Tea w/Matcha (30g) - $5.99
+12. ✅ Honey Ginger Tea (20 Tea Bags) - $4.99
+13. ✅ Honey Jasmine Tea (20 Tea Bags) - $4.99
+14. ✅ Mint Tea (40g) - $4.49
+15. ✅ Rooibos Honey & Vanilla (40g) - $4.49
+16. ✅ Support Digestion (40g) - $4.99
+17. ✅ Support Throat (40g) - $4.99
+18. ✅ Turmeric Honey Ginger Tea (20 Tea Bags) - $4.99
+
+📂 Uncategorized (4 products)
+--------------------------------------------------------------------------------
+1. ✅ Honey Beans 8lbs - $29.99
+2. ✅ Jamaican Pride Butter Beans 398ml - $3
+3. ✅ Mauby 750ml Concentrate - $9.99
+4. ✅ Oloye Peeled Beans 5lbs - $20
+
+================================================================================
+
+📊 Summary:
+   Total Products: 373
+   Available: 373
+   Unavailable: 0
+   Categories: 27
+
+📄 Full list saved to: product-list-2025-10-20.txt

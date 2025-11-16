@@ -1,0 +1,286 @@
+FERMA Grocery Products Verification Report
+Generated: 10/20/2025, 4:30:36 PM
+
+FOUND WITH MATCHING PRICE (116):
+✅ Whiting Fish - $7.5
+✅ Tilapia Fish - $6.9
+✅ Mackerel Fish - $7
+✅ Smoked Mackerel - $7
+✅ Crocker Fish (headless) - $8
+✅ Soft chicken Drumstick (Halal) - $7
+✅ Chicken Feet - $5
+✅ Smoked Turkey Wings - Cut - $12
+✅ Smoked Turkey Wings - Split - $12
+✅ Smoked Turkey - $8.5
+✅ Smoked Turkey Drumstick - $12
+✅ Unsmoked Turkey Wings - $12
+✅ Ugwu Leaves - $5.5
+✅ Water Leaves - $5.5
+✅ Bitter Leaves - $5.55
+✅ Spinach - $3.65
+✅ CASII Sliced Okro - $3.7
+✅ CASII Chopped Okro - $3.7
+✅ Mixed Vegetables - $3.5
+✅ Cassava Leaves - $5.55
+✅ Ghana Fermented Corn Dough (2lbs) - $7.5
+✅ Ghana Fermented Grated Cassava (2lbs) - $7.5
+✅ Yam Chips (2.5kg) - $21.5
+✅ Yam Chips (600g) - $8.2
+✅ Honey Beans 2lbs - $10.99
+✅ Ofada Rice 4lbs - $12
+✅ Guyanese Pride Rice - $25
+✅ Durum Semolina 1.8kg - $9.99
+✅ Unico Tomato Paste (156ml) - $1.29
+✅ Hereford Corned Beef (340g) - $4.99
+✅ Hereford Corned Beef -Halal (340g) - $4.99
+✅ Tropiway Plantain Fufu (700g) - $9.99
+✅ Tropiway Cocoyam Fufu (700g) - $9.99
+✅ Smoked Cat Fish Medium - $10
+✅ Peeled Large Herrings - $9
+✅ Koobi (salted Fish) - $7
+✅ Crayfish Whole 100g - $9.99
+✅ Crayfish Ground 50g - $5
+✅ Fried Fish with Shrimps large - $12.5
+✅ Fried Fish with Shrimps medium - $8
+✅ Cassava Flour / Konkonte 3.5lbs - $8
+✅ Egusi - Ground 200g - $5
+✅ Egusi - Whole 200g - $5
+✅ Peanut Butter 498g - $6.99
+✅ Prekese / Tetrapleura tetraptera - whole - $5
+✅ Wakye Leaves - $4
+✅ Hausa Koko Flour - $11.99
+✅ Nkulenu Palm Soup Base 780g - $6.99
+✅ Nkulenu Palm Soup Base with Prekese & Abemuduro 780g - $6.99
+✅ Gino Tomato Paste 210g - $4.99
+✅ Derica Tomato Paste 210g - $4.99
+✅ Star Kist Tuna - Kpapko Shito 160g - $6.46
+✅ Star Kist Tuna - Flakes 160g - $6.46
+✅ Mama`s Choice Plantain Fufu 10lbs - $54
+✅ Ola Ola Poundo Yam (4lbs) - $24
+✅ Ayo-Ola Poundo Yam Flour (4lbs) - $24
+✅ 555 Basmati Rice 4.54kg - $17.99
+✅ Botan Calrose Rice 8kg - $20
+✅ Mekong Jasmine Scented Rice 8kg - $20
+✅ Rooster Scented Jasmine Rice 8kg - $20
+✅ Indomie Chicken (Box) - $22.5
+✅ Ghana Milo (400g) - $10.99
+✅ Nigeria Milo (400g) - $10.99
+✅ Primo Crushed Tomatoes (796ml) - $2.49
+✅ Primo Diced Tomato (796ml) - $2.49
+✅ Unico Crushed Tomatoes 796ml - $2.49
+✅ Shito (250ml) - $8
+✅ Wooden Stick - Eta - $7
+✅ Earthern Ware - apotowewa - $14.5
+✅ Turkey Berry / Kwahu Nkwasusua (700g) - $8
+✅ Titus Sardine in Soybean Oil (125g) - $2
+✅ Moi-Moi Plate - $2
+✅ CEDAR Chick Peas 907g - $3.99
+✅ CEDAR Black Eyed Beans 907g - $3.99
+✅ CEDAR Long Grain Parboiled Rice 1.81kg - 4lbs - $6
+✅ Carnation Evaporated Milk (354ml) - $2.49
+✅ Carnation Fat Free Evaporated Skim Milk (354ml) - $2.49
+✅ Honeywell Semolina 1.8kg - $10
+✅ Palm Oil - Regular (1L) - $8.99
+✅ Palm Oil - Regular (500ml) - $4.99
+✅ Palm Oil - Zomi (2L) - $16.83
+✅ Palm Oil - Zomi (1L) - $8.99
+✅ Palm Oil - Zomi (500ml) - $4.99
+✅ Palm Kernel Oil 1L - $11
+✅ Gallo Extra Virgin Olive Oil 1L - $12
+✅ Saporito Foods Vegetable Oil 3L - $9.78
+✅ Saporito Foods Canola Oil 3L - $9.78
+✅ Adam Salt / Kawu 210g - $5
+✅ Knorr Chicken Seasoning Powder (Nigeria) 400g - $9.33
+✅ Onga Powder - Classic - $2.75
+✅ Irie All Purpose Seasoning 275g - $5.99
+✅ Irie Oxtail Seasoning 400g - $5.99
+✅ Irie Jerk BBQ 454ml - $5.29
+✅ Seasoning Salt 454ml - $5.99
+✅ Aurora Fine Sea Salt 1kg - $2.99
+✅ Kalas Classic Iodized Sea Salt 750g - $2.99
+✅ Irie Ultimate BBQ Sauce 16oz - $5
+✅ Brown Betty pomeroon style cassareep (300ml) - $6.99
+✅ Guyanese Pride Cassareep (300ml) - $6.99
+✅ Pine Tart - $8
+✅ Salara - $8
+✅ Bread - $9.99
+✅ Chinchin - $7
+✅ Bofrot / Beignet / Pufpuf - $6
+✅ Hajia Fati (Burkina) - $5
+✅ Hajia Fati (Fura) - $5
+✅ Kirkland Signature Spring Water (500ml) - $1
+✅ Eska Natural Sprink Water (500ml) - $1.5
+✅ Coke 355ml - $2.5
+✅ Fanta 355ml - $2.5
+✅ Spirit 355ml - $2.5
+✅ Ginger Ale 355ml - $2.5
+✅ Organic Ginger Root (160g) - $4.99
+✅ Yellow Onions - $3.49
+✅ Wirri Wirri Pepper 200g - $7.66
+✅ Green Plantain - $1.25
+
+FOUND BUT PRICE DIFFERENT (42):
+⚠️  Jute Leaves (Ewedu)
+   PDF: $5.55 | Database: $2.55
+
+⚠️  Ghana Fermented Corn Dough (10lbs)
+   PDF: $23.5 | Database: $7.5
+
+⚠️  Ghana Fermented Corn Dough (4lbs)
+   PDF: $11.5 | Database: $7.5
+
+⚠️  Beef Patty-Spicy
+   PDF: $12 | Database: $4
+
+⚠️  Golden Mourn 900g
+   PDF: $13.99 | Database: $16
+
+⚠️  Grandious Ogi White 500g
+   PDF: $8 | Database: $10
+
+⚠️  Grandious Ogi Yellow 500g
+   PDF: $8 | Database: $10
+
+⚠️  Ijebu Garri 4lbs
+   PDF: $8 | Database: $10
+
+⚠️  Ijebu Garri 2lbs
+   PDF: $4 | Database: $10
+
+⚠️  Yellow Gari 4lbs
+   PDF: $8 | Database: $10
+
+⚠️  Yellow Gari 2lbs
+   PDF: $4 | Database: $10
+
+⚠️  Peeled Beans 2lbs
+   PDF: $11.99 | Database: $50
+
+⚠️  Smoked Cat Fish Large
+   PDF: $9.9 | Database: $60
+
+⚠️  Crayfish Ground 100g
+   PDF: $9.99 | Database: $5
+
+⚠️  Kivo 4in1 - Crispy White Gari Mixed with Sugar, Milk & Roasted Peanuts 125g
+   PDF: $4.55 | Database: $11.99
+
+⚠️  Cassava Flour / Konkonte 7lbs
+   PDF: $16 | Database: $8
+
+⚠️  Diehuo - Corn flour mixed with cassava flour 3.5lbs
+   PDF: $11.99 | Database: $50
+
+⚠️  Akua`s Special Koose (Blended Peeled Beans with Pepper, Ginger, Onions & Spices) 438g
+   PDF: $8 | Database: $50
+
+⚠️  Dry Okro
+   PDF: $5.99 | Database: $3.7
+
+⚠️  Mama`s Choice Plantain Fufu 4lbs
+   PDF: $24 | Database: $54
+
+⚠️  OCASII Okro Sliced
+   PDF: $6.75 | Database: $3.7
+
+⚠️  OCASII Chopped Okro
+   PDF: $6.75 | Database: $3.7
+
+⚠️  Ola-Ola Poundo Yam (10lbs)
+   PDF: $90 | Database: $50
+
+⚠️  OX Head Fragrance Rice 8kg
+   PDF: $20 | Database: $24
+
+⚠️  Indomie Chicken (A Pack)
+   PDF: $0.95 | Database: $22.5
+
+⚠️  Indomie Onion (Box)
+   PDF: $22.5 | Database: $0.95
+
+⚠️  Indomie Onion (A Pack)
+   PDF: $0.95 | Database: $0.8
+
+⚠️  Shito (500ml)
+   PDF: $15 | Database: $16
+
+⚠️  CEDAR Long Grain Parboiled Rice 4kg - 8.8lbs
+   PDF: $12 | Database: $6
+
+⚠️  Palm Oil - Regular (2L)
+   PDF: $16.83 | Database: $8.99
+
+⚠️  Suya Spice/Pepper 125g
+   PDF: $8.25 | Database: $20
+
+⚠️  Maggi Chicken
+   PDF: $14 | Database: $2
+
+⚠️  Maggi Shrimp
+   PDF: $14 | Database: $2
+
+⚠️  Maggi Crayfish
+   PDF: $14 | Database: $2
+
+⚠️  Meat Pie
+   PDF: $3 | Database: $4
+
+⚠️  Aladun Zobo 500ml
+   PDF: $5 | Database: $7
+
+⚠️  Ginger Root
+   PDF: $6.59 | Database: $4.99
+
+⚠️  Tomatoes
+   PDF: $3.99 | Database: $2.49
+
+⚠️  Garlic
+   PDF: $2.49 | Database: $5.99
+
+⚠️  Lemon
+   PDF: $0.99 | Database: $4.99
+
+⚠️  Ghana Yam
+   PDF: $3.15 | Database: $3.9
+
+⚠️  Ripe Plantain
+   PDF: $1.2 | Database: $5
+
+MISSING FROM DATABASE (10):
+❌ Chicken Patty - Spicy - $12 (Frozen Foods)
+❌ Chicken Patty-Mild - $12 (Frozen Foods)
+❌ Beef Patty-Mild - $12 (Frozen Foods)
+❌ Vegetable Patty-Spicy - $12 (Frozen Foods)
+❌ Vegetable Patty-Mild - $12 (Frozen Foods)
+❌ Ola Ola Poundu Yam (2lbs) - $11 (Canned & Package Goods)
+❌ Red Beans 2lbs - $9 (Canned & Package Goods)
+❌ Pilourie - $8 (Baked Goods)
+❌ Vege. Pie - $3 (Baked Goods)
+❌ Rayjuice Co. (Zobo / Sobolo) - $5 (Drinks/Beverages)
+
+MISSING BY CATEGORY:
+
+Baked Goods (2 missing):
+  - Pilourie
+  - Vege. Pie
+
+Canned & Package Goods (2 missing):
+  - Ola Ola Poundu Yam (2lbs)
+  - Red Beans 2lbs
+
+Drinks/Beverages (1 missing):
+  - Rayjuice Co. (Zobo / Sobolo)
+
+Frozen Foods (5 missing):
+  - Chicken Patty - Spicy
+  - Chicken Patty-Mild
+  - Beef Patty-Mild
+  - Vegetable Patty-Spicy
+  - Vegetable Patty-Mild
+
+SUMMARY:
+Total: 168
+Found with matching price: 116
+Found but price different: 42
+Missing: 10
+Coverage: 94%

@@ -1,0 +1,1186 @@
+{
+  "summary": {
+    "total": 186,
+    "foundWithMatch": 144,
+    "foundDifferentPrice": 41,
+    "missing": 1,
+    "coverage": 99
+  },
+  "foundWithMatch": [
+    {
+      "excelName": "Whiting Fish \\ (lb)",
+      "dbName": "Whiting Fish  (1lb)",
+      "price": 7.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Tilapia Fish \\ (lb)",
+      "dbName": "Tilapia Fish  (lb)",
+      "price": 6.9,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Mackerel Fish \\ (lb)",
+      "dbName": "FROZEN LARGE MACKEREL (TOTE) 130 FROZEN FISH",
+      "price": 7,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Smoked Mackerel \\ (Ib)",
+      "dbName": "Smoked Mackerel  (Ib)",
+      "price": 7,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Crocker Fish(headless) \\ (lb)",
+      "dbName": "Crocker Fish(headless)  (lb)",
+      "price": 8,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Soft chicken Drumstick (Halal) \\ (Ib)",
+      "dbName": "Soft chicken Drumstick (Halal)  (Ib)",
+      "price": 7,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Chicken Feet \\ (Ib)",
+      "dbName": "Chicken Feet  (Ib)",
+      "price": 5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Unsmoked Turkey Wings \\ (Ib)",
+      "dbName": "Smoked Turkey Wings - Cut  (Ib)",
+      "price": 12,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "~~Ugwu Leaves \\",
+      "dbName": "Ugwu Leaves",
+      "price": 5.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Jute Leaves (Ewedu) \\",
+      "dbName": "Jute Leaves Cut (Ewedu)",
+      "price": 5.55,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "~~Water Leaves \\",
+      "dbName": "Water Leaves",
+      "price": 5.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Bitter Leaves \\",
+      "dbName": "Bitter Leaves",
+      "price": 5.55,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Spinach \\",
+      "dbName": "Spinach",
+      "price": 3.65,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Mixed Vegetables \\",
+      "dbName": "Mixed Vegetables",
+      "price": 3.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Cassava Leaves \\",
+      "dbName": "Cassava Leaves",
+      "price": 5.55,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Ghana Fermented Corn Dough (4lbs) \\",
+      "dbName": "Ghana Fermented Corn Dough",
+      "price": 11.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Ghana Fermented Grated Cassava (2lbs) \\",
+      "dbName": "Ghana Fermented Grated Cassava (2lbs)",
+      "price": 7.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Beef Patty-Spicy \\",
+      "dbName": "Beef Patty-Mild",
+      "price": 12,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Beef Patty-Mild \\",
+      "dbName": "Beef Patty-Mild",
+      "price": 12,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "~~Yam Chips (2.5kg) \\",
+      "dbName": "Yam Chips (2.5kg)",
+      "price": 21.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "~~Yam Chips (600g) \\",
+      "dbName": "Yam Chips (600g)",
+      "price": 8.2,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Golden Mourn 900g \\",
+      "dbName": "Golden Mourn 900g",
+      "price": 13.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Grandious Ogi White 500g \\",
+      "dbName": "Grandious Ogi White 500g",
+      "price": 8,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Grandious Ogi Yellow 500g \\",
+      "dbName": "Grandious Ogi Yellow 500g",
+      "price": 8,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Ijebu Garri 4Ibs \\",
+      "dbName": "Ijebu Garri 4Ibs",
+      "price": 8,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Yellow Gari 2Ibs \\",
+      "dbName": "Yellow Gari 4Ibs",
+      "price": 4,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Peeled Beans 2Ibs \\",
+      "dbName": "Peeled Beans 2Ibs",
+      "price": 11.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Honey Beans 2lbs \\",
+      "dbName": "Honey Beans 2Ibs",
+      "price": 10.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Ofada Rice 4lbs \\",
+      "dbName": "Ofada Rice 4lbs",
+      "price": 12,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "~~Guyanese Pride Rice \\",
+      "dbName": "Guyanese Pride Rice",
+      "price": 25,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Durum Semolina 1.8kg \\",
+      "dbName": "Honeywell Semolina 1.8kg",
+      "price": 9.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Unico Tomato Paste (156ml) \\",
+      "dbName": "Unico Tomato Paste (156ml)",
+      "price": 1.29,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Hereford Corned Beef (340g) \\",
+      "dbName": "Hereford Corned Beef (340g)",
+      "price": 4.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Hereford Corned Beef -Halal (340g) \\",
+      "dbName": "Hereford Corned Beef -Halal (340g)",
+      "price": 4.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Tropiway Cocoyam Fufu (700g) \\",
+      "dbName": "Tropiway Cocoyam Fufu (700g)",
+      "price": 9.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Smoked Cat Fish Large \\",
+      "dbName": "Smoked Cat Fish Large",
+      "price": 9.9,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Smoked Cat Fish Medium \\",
+      "dbName": "Smoked Cat Fish Medium",
+      "price": 10,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Peeled Large Herrings \\ (pack)",
+      "dbName": "Smoked Peeled Herrings  ",
+      "price": 9,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Koobi (salted Fish) \\",
+      "dbName": "Koobi (salted Fish)",
+      "price": 7,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Crayfish Whole 100g \\",
+      "dbName": "Crayfish Whole 100g",
+      "price": 9.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Crayfish Ground 100g \\",
+      "dbName": "Crayfish Ground ",
+      "price": 9.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Fried Fish with Shrimps large \\",
+      "dbName": "Fried Fish with Shrimps large",
+      "price": 12.5,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Fried Fish with Shrimps medium \\",
+      "dbName": "Fried Fish with Shrimps medium",
+      "price": 8,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Cassava Flour / Konkonte 3.5Ibs \\",
+      "dbName": "Cassava Flour / Konkonte 3.5Ibs",
+      "price": 8,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Cassava Flour / Konkonte 7Ibs \\",
+      "dbName": "Cassava Flour / Konkonte 7Ibs",
+      "price": 16,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Diehuo -- Corn flour mixed with cassava flour 3.5lbs \\",
+      "dbName": "Diehuo -- Corn flour mixed with cassava flour 3.5lbs",
+      "price": 11.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Egusi -- Ground 200g \\",
+      "dbName": "Egusi - Ground ",
+      "price": 5,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Egusi -- Whole 200g \\",
+      "dbName": "Egusi - Whole ",
+      "price": 5,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Peanut Butter 498g \\",
+      "dbName": "Peanut Butter 498g",
+      "price": 6.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Prekese / Tetrapleura tetraptera -- whole \\",
+      "dbName": "Prekese / Tetrapleura tetraptera -- whole",
+      "price": 5,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Wakye Leaves \\",
+      "dbName": "Wakye Leaves",
+      "price": 4,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Hausa Koko Flour \\",
+      "dbName": "Fresh Hausa Koko",
+      "price": 11.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Nkulenu Palm Soup Base 780g \\",
+      "dbName": "Nkulenu Palm Soup Base 780g",
+      "price": 6.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Nkulenu Palm Soup Base with Prekese & Abemuduro 780g \\",
+      "dbName": "Nkulenu Palm Soup Base with Prekese & Abemuduro 780g",
+      "price": 6.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Gino Tomato Paste 210g \\",
+      "dbName": "Gino Tomato Paste 210g",
+      "price": 4.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Derica Tomato Paste 210g \\",
+      "dbName": "Derica Tomato Paste 213g",
+      "price": 4.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Star Kist Tuna -- Kpapko Shito 160g \\",
+      "dbName": "Star Kist Tuna -- Kpapko Shito 160g",
+      "price": 6.46,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Star Kist Tuna -- Flakes 160g \\",
+      "dbName": "Star Kist Tuna -- Flakes 160g",
+      "price": 6.46,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Mama\\`s Choice Plantain Fufu 10Ibs \\",
+      "dbName": "Mama`s Choice Plantain Fufu 10Ibs",
+      "price": 54,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "OCASII Okro Sliced \\ (pack)",
+      "dbName": "Fresh Okro (Sliced or Chopped)",
+      "price": 6.75,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "OCASII Chopped Okro \\ (pack)",
+      "dbName": "Fresh Okro (Sliced or Chopped)",
+      "price": 6.75,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Ola-Ola Poundo Yam (10lbs) \\",
+      "dbName": "Ola-Ola Poundo Yam (10lbs)",
+      "price": 90,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Ola Ola Poundo Yam (4lbs) \\",
+      "dbName": "Ola Ola Poundo Yam (4lbs)",
+      "price": 24,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Ola Ola Poundu Yam (2Ibs) \\",
+      "dbName": "Ola Ola Poundu Yam (2Ibs)",
+      "price": 11,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Ayo-Ola Poundo Yam Flour (4lbs) \\",
+      "dbName": "Ayo-Ola Poundo Yam Flour (4lbs)",
+      "price": 24,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "555 Basmati Rice 4.54kg \\",
+      "dbName": "555 Basmati Rice 4.54kg",
+      "price": 17.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Botan Calrose Rice 8kg \\",
+      "dbName": "Botan Calrose Rice 8kg",
+      "price": 20,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Mekong Jasmine Scented Rice 8kg \\",
+      "dbName": "Mekong Jasmine Scented Rice 8kg",
+      "price": 20,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "OX Head Fragrance Rice 8kg \\",
+      "dbName": "OX Head Fragrance Rice 7kg",
+      "price": 20,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Rooster Scented Jasmine Rice 8kg \\",
+      "dbName": "Rooster Scented Jasmine Rice 8kg",
+      "price": 20,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Indomie Chicken (Box) \\",
+      "dbName": "Indomie Chicken Flavour (1box)",
+      "price": 22.5,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Ghana Milo (400g) \\",
+      "dbName": "Ghana Milo 400g",
+      "price": 10.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Nigeria Milo (400g) \\",
+      "dbName": "Ghana Milo 400g",
+      "price": 10.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Primo Crushed Tomatoes (796ml) \\",
+      "dbName": "Primo Crushed Tomatoes 796 ml",
+      "price": 2.49,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Primo Diced Tomato (796ml) \\",
+      "dbName": "Primo Crushed Tomatoes 796 ml",
+      "price": 2.49,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Unico Crushed Tomatoes 796ml \\",
+      "dbName": "Primo Crushed Tomatoes 796 ml",
+      "price": 2.49,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Unico Crushed Tomatoes 796ml \\",
+      "dbName": "Primo Crushed Tomatoes 796 ml",
+      "price": 2.49,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Shito (500ml) \\",
+      "dbName": "KFresh Shito (500ml) Regular Spicy",
+      "price": 15,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Shito (250ml) \\",
+      "dbName": "KFresh Shito (250ml) Regular Spicy",
+      "price": 8,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Wooden Stick -- Eta \\",
+      "dbName": "Wooden Stick -- Eta",
+      "price": 7,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Earthern Ware -- apotowewa \\",
+      "dbName": "Earthern Ware -- apotowewa",
+      "price": 14.5,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Turkey Berry / Kwahu Nkwasusua (700g) \\",
+      "dbName": "Turkey Berry / Wild Eggplant/Kwahu Nkwasusua (700g)",
+      "price": 8,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Titus Sardine in Soybean Oil (125g) 3 for \\",
+      "dbName": "Titus Sardine in Soybean Oil (125g) 1pc",
+      "price": 5,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Moi-Moi Plate \\ (one)",
+      "dbName": "Moi-Moi Plate  (one)",
+      "price": 2,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Red Beans 2Ibs \\",
+      "dbName": "Red Beans 2Ibs",
+      "price": 9,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Honey Beans 2Ibs \\",
+      "dbName": "Honey Beans 2Ibs",
+      "price": 10.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "CEDAR Chick Peas 907g \\",
+      "dbName": "CEDAR Chick Peas 907g",
+      "price": 3.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "CEDAR Black Eyed Beans 907g \\",
+      "dbName": "CEDAR Black Eyed Beans 907g",
+      "price": 3.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "CEDAR Long Grain Parboiled Rice 1.81kg - 4Ibs \\",
+      "dbName": "CEDAR Long Grain Parboiled Rice 1.81kg  (4Ibs)",
+      "price": 6,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "CEDAR Long Grain Parboiled Rice 4kg -- 8.8Ibs \\",
+      "dbName": "CEDAR Long Grain Parboiled Rice 4kg -- 8.8Ibs",
+      "price": 12,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Carnation Evaporated Milk (354ml) \\",
+      "dbName": "Carnation Evaporated Milk (354ml)",
+      "price": 2.49,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Carnation Fat Free Evaporated Skim Milk (354ml) \\",
+      "dbName": "Carnation Fat Free Evaporated Skim Milk (354ml)",
+      "price": 2.49,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Honeywell Semolina 1.8kg \\",
+      "dbName": "Honeywell Semolina 1.8kg",
+      "price": 10,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Palm Oil - Zomi (1L) \\",
+      "dbName": "Palm Oil - Zomi (1L) Ghana",
+      "price": 8.99,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Palm Oil - Zomi (500ml) \\",
+      "dbName": "Palm Oil - Regular (500ml) Ghana",
+      "price": 4.99,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Palm Kernel Oil 1L \\",
+      "dbName": "Palm Kernel Oil (1L) Ghana",
+      "price": 11,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Gallo Extra Virgin Olive Oil 1L \\",
+      "dbName": "Gallo Extra Virgin Olive Oil 1L",
+      "price": 12,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Saporito Foods Vegetable Oil 3L \\",
+      "dbName": "Saporito Foods Vegetable Oil 3L",
+      "price": 9.78,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Saporito Foods Canola Oil 3L \\",
+      "dbName": "Saporito Foods Canola Oil 3L",
+      "price": 9.78,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Suya Spice/Pepper 125g \\",
+      "dbName": "Pepper Soup Spice 322g",
+      "price": 8.25,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Maggi Chicken \\",
+      "dbName": "Maggi Chicken Flavour (6pcs)",
+      "price": 2,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Maggi Shrimp \\ (pack)",
+      "dbName": "Maggi Shrimp",
+      "price": 14,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Maggi Crayfish \\",
+      "dbName": "Maggi Crayfish (6pcs)",
+      "price": 2,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Adam Salt / Kawu 210g \\",
+      "dbName": "Adam Salt / Kawu 210g",
+      "price": 5,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Knorr Chicken Seasoning Powder (Nigeria) 400g \\",
+      "dbName": "Knorr Chicken Seasoning Powder (Nigeria) 400g",
+      "price": 9.33,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Onga Powder -- Classic \\",
+      "dbName": "Onga Powder -- Classic",
+      "price": 2.75,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Irie All Purpose Seasoning 275g \\",
+      "dbName": "Irie All Purpose Seasoning 275g",
+      "price": 5.99,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Irie Oxtail Seasoning 400g \\",
+      "dbName": "Irie Oxtail Seasoning 400g",
+      "price": 5.99,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Irie Jerk BBQ 454ml \\",
+      "dbName": "Irie Jerk BBQ 454ml",
+      "price": 5.29,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Seasoning Salt 454ml \\",
+      "dbName": "Irie Seasoning Salt 454g",
+      "price": 5.99,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Aurora Fine Sea Salt 1kg \\",
+      "dbName": "Aurora Fine Sea Salt 1kg",
+      "price": 2.99,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Kalas Classic Iodized Sea Salt 750g \\",
+      "dbName": "Kalas Classic Iodized Sea Salt 750g",
+      "price": 2.99,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Irie Ultimate BBQ Sauce 16oz \\",
+      "dbName": "Irie Ultimate BBQ Sauce 16oz",
+      "price": 5,
+      "category": "SAUCES"
+    },
+    {
+      "excelName": "Brown Betty pomeroon style cassareep (300ml) \\",
+      "dbName": "Brown Betty pomeroon style cassareep (300ml)",
+      "price": 6.99,
+      "category": "SAUCES"
+    },
+    {
+      "excelName": "Guyanese Pride Cassareep (300ml) \\",
+      "dbName": "Guyanese Pride Cassareep (300ml)",
+      "price": 6.99,
+      "category": "SAUCES"
+    },
+    {
+      "excelName": "Pine Tart \\",
+      "dbName": "Pine Tart",
+      "price": 8,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Salara \\",
+      "dbName": "Salara",
+      "price": 8,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Pilourie \\",
+      "dbName": "Pilourie",
+      "price": 8,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Bread \\",
+      "dbName": "Bread",
+      "price": 9.99,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Chinchin \\ (pack)",
+      "dbName": "Chinchin  (pack)",
+      "price": 7,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Meat Pie \\",
+      "dbName": "Meat Pie",
+      "price": 3,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Vege. Pie \\",
+      "dbName": "Vege. Pie",
+      "price": 3,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Bofrot / Beignet / Pufpuf \\ (pack)",
+      "dbName": "Bofrot / Beignet / Pufpuf  (pack)",
+      "price": 6,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Chicken Patty -- Spicy \\",
+      "dbName": "Chicken Patty -- Spicy",
+      "price": 3,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Chicken Patty-Mild \\",
+      "dbName": "Chicken Patty-Mild",
+      "price": 3,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Vegetable Patty-Spicy \\",
+      "dbName": "Vegetable Patty-Spicy",
+      "price": 3,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Vegetable Patty-Mild \\",
+      "dbName": "Vegetable Patty-Mild",
+      "price": 3,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "(Cold Pressed Juice. ginger hibiscus blend) \\",
+      "dbName": "(Cold Pressed Juice. ginger hibiscus blend)",
+      "price": 5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Hajia Fati (Burkina) \\",
+      "dbName": "Hajia Fati (Burkina Drink)",
+      "price": 5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Hajia Fati (Fura) \\",
+      "dbName": "Hajia Fati (Burkina Drink)",
+      "price": 5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Kirkland Signature Spring Water (500ml) \\",
+      "dbName": "Kirkland Signature Spring Water (500ml)",
+      "price": 1,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Eska Natural Sprink Water (500ml) \\",
+      "dbName": "Eska Natural Sprink Water (500ml)",
+      "price": 1.5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Coke 355ml \\",
+      "dbName": "Coke 355ml",
+      "price": 2.5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Fanta 355ml \\",
+      "dbName": "Fanta 355ml",
+      "price": 2.5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Spirit 355ml \\",
+      "dbName": "Spirit 355ml",
+      "price": 2.5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Ginger Ale 355ml \\",
+      "dbName": "Ginger Ale 355ml (Canada Dry)",
+      "price": 2.5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Aladun Zobo 500ml \\",
+      "dbName": "Aladun Zobo 500ml",
+      "price": 5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Organic Ginger Root (160g) \\",
+      "dbName": "Organic Ginger Root (160g)",
+      "price": 4.99,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Yellow Onions \\ (bag)",
+      "dbName": "Yellow Onions  ",
+      "price": 3.49,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Garlic \\ (bag)",
+      "dbName": "Garlic  ",
+      "price": 2.49,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Lemon \\",
+      "dbName": "Lemon",
+      "price": 0.99,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Wirri Wirri Pepper 200g \\",
+      "dbName": "Wirri Wirri Pepper ",
+      "price": 7.66,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Green Plantain \\ (lb)",
+      "dbName": "Green Plantain  (lb)",
+      "price": 1.25,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Ripe Plantain \\ (lb)",
+      "dbName": "Mr. Johns Ripe Plantain Chips (135g)",
+      "price": 1.2,
+      "category": "BAKED GOODS"
+    }
+  ],
+  "foundDifferentPrice": [
+    {
+      "excelName": "Smoked Turkey Wings - Cut \\ (Ib)",
+      "dbName": "Smoked Turkey  (lb)",
+      "excelPrice": 12,
+      "dbPrice": 8.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Smoked Turkey Wings - Split \\ (Ib)",
+      "dbName": "Smoked Turkey  (lb)",
+      "excelPrice": 12,
+      "dbPrice": 8.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Smoked Turkey Drumstick \\ (Ib)",
+      "dbName": "Smoked Turkey  (lb)",
+      "excelPrice": 12,
+      "dbPrice": 8.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "CASII Sliced Okro \\",
+      "dbName": "Fresh Okro (Sliced or Chopped)",
+      "excelPrice": 3.7,
+      "dbPrice": 6.75,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "CASII Chopped Okro \\",
+      "dbName": "Fresh Okro (Sliced or Chopped)",
+      "excelPrice": 3.7,
+      "dbPrice": 6.75,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Ghana Fermented Corn Dough (10lbs) \\",
+      "dbName": "Ghana Fermented Corn Dough",
+      "excelPrice": 23.5,
+      "dbPrice": 11.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Ghana Fermented Corn Dough (2lbs) \\",
+      "dbName": "Ghana Fermented Corn Dough",
+      "excelPrice": 7.5,
+      "dbPrice": 11.5,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Chicken Patty -- Spicy \\",
+      "dbName": "Chicken Patty -- Spicy",
+      "excelPrice": 12,
+      "dbPrice": 3,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Chicken Patty-Mild \\",
+      "dbName": "Chicken Patty-Mild",
+      "excelPrice": 12,
+      "dbPrice": 3,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Vegetable Patty-Spicy \\",
+      "dbName": "Vegetable Patty-Spicy",
+      "excelPrice": 12,
+      "dbPrice": 3,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Vegetable Patty-Mild \\",
+      "dbName": "Vegetable Patty-Mild",
+      "excelPrice": 12,
+      "dbPrice": 3,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Ijebu Garri 2Ibs \\",
+      "dbName": "Ijebu Garri 4Ibs",
+      "excelPrice": 4,
+      "dbPrice": 8,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Yellow Gari 4Ibs \\",
+      "dbName": "Yellow Gari 4Ibs",
+      "excelPrice": 8,
+      "dbPrice": 4,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Tropiway Plantain Fufu (700g) \\",
+      "dbName": "Tropiway Plantain Fufu (700g)",
+      "excelPrice": 9.99,
+      "dbPrice": 24,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Crayfish Ground 50g \\",
+      "dbName": "Crayfish Ground ",
+      "excelPrice": 5,
+      "dbPrice": 9.99,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Dry Okro \\",
+      "dbName": "Fresh Okro (Sliced or Chopped)",
+      "excelPrice": 5.99,
+      "dbPrice": 6.75,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Mama\\`s Choice Plantain Fufu 4Ibs \\",
+      "dbName": "Mama`s Choice Plantain Fufu 10Ibs",
+      "excelPrice": 24,
+      "dbPrice": 54,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Indomie Chicken (A Pack) \\",
+      "dbName": "Indomie Chicken Flavour (1box)",
+      "excelPrice": 0.95,
+      "dbPrice": 22.5,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Indomie Onion (Box) \\",
+      "dbName": "Indomie Onion Chicken Flavour (1pack)",
+      "excelPrice": 22.5,
+      "dbPrice": 0.95,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Indomie Onion (A Pack) \\",
+      "dbName": "Indomie Chicken Flavour (1pack)",
+      "excelPrice": 0.95,
+      "dbPrice": 0.8,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Titus Sardine in Soybean Oil (125g) 1 for \\",
+      "dbName": "Titus Sardine in Soybean Oil (125g) 1pc",
+      "excelPrice": 2,
+      "dbPrice": 5,
+      "category": "CANNED & PACKAGE GOODS"
+    },
+    {
+      "excelName": "Palm Oil -- Regular (2L) \\",
+      "dbName": "Palm Oil - Regular (1L) Ghana",
+      "excelPrice": 16.83,
+      "dbPrice": 3.15,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Palm Oil - Regular (1L) \\",
+      "dbName": "Palm Oil - Regular (1L) Ghana",
+      "excelPrice": 8.99,
+      "dbPrice": 3.15,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Palm Oil - Regular (500ml) \\",
+      "dbName": "KFresh Shito (500ml) Regular Spicy",
+      "excelPrice": 4.99,
+      "dbPrice": 15,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Palm Oil - Zomi (2L) \\",
+      "dbName": "Palm Oil - Zomi (1L) Ghana",
+      "excelPrice": 16.83,
+      "dbPrice": 8.99,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Maggi Chicken \\ (pack)",
+      "dbName": "Indomie Chicken Flavour (1pack)",
+      "excelPrice": 14,
+      "dbPrice": 0.8,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Maggi Shrimp \\",
+      "dbName": "Maggi Shrimp",
+      "excelPrice": 2,
+      "dbPrice": 14,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Maggi Crayfish \\ (pack)",
+      "dbName": "Maggi Crayfish (6pcs)",
+      "excelPrice": 14,
+      "dbPrice": 2,
+      "category": "COOKING OILS"
+    },
+    {
+      "excelName": "Beef Patty-Spicy \\",
+      "dbName": "Beef Patty-Mild",
+      "excelPrice": 3,
+      "dbPrice": 12,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Beef Patty-Mild \\",
+      "dbName": "Beef Patty-Mild",
+      "excelPrice": 3,
+      "dbPrice": 12,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Tomatoes \\ (lb)",
+      "dbName": "Primo Crushed Tomatoes 796 ml",
+      "excelPrice": 3.99,
+      "dbPrice": 2.49,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "Ghana Yam \\ (lb)",
+      "dbName": "Ghana Fermented Corn Dough",
+      "excelPrice": 3.15,
+      "dbPrice": 11.5,
+      "category": "BAKED GOODS"
+    },
+    {
+      "excelName": "FROZEN RED FISH WHOLE",
+      "dbName": "FROZEN RED FISH WHOLE 12/750g",
+      "excelPrice": 0,
+      "dbPrice": 10,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "FRZ MED. BLUE JACK MACKEREL CARAPAU",
+      "dbName": "FRZ MED. BLUE JACK MACKEREL CARAPAU 12/750g",
+      "excelPrice": 0,
+      "dbPrice": 10,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "FROZEN SARDINES NACIONAL",
+      "dbName": "FROZEN SARDINES NACIONAL 12/750g",
+      "excelPrice": 0,
+      "dbPrice": 10,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "FROZEN LARGE MACKEREL",
+      "dbName": "FROZEN LARGE MACKEREL (TOTE) 130 FROZEN FISH",
+      "excelPrice": 0,
+      "dbPrice": 7,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "FROZEN LARGE MACKEREL (TOTE)",
+      "dbName": "FROZEN LARGE MACKEREL (TOTE) 130 FROZEN FISH",
+      "excelPrice": 0,
+      "dbPrice": 7,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "FROZEN SMALL MACKEREL",
+      "dbName": "FROZEN SMALL MACKEREL 12/750g",
+      "excelPrice": 0,
+      "dbPrice": 10,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "FROZEN RED FISH (SLICES)",
+      "dbName": "FROZEN RED FISH (SLICES) 12/750g",
+      "excelPrice": 0,
+      "dbPrice": 10,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "FROZEN NILE PERCH",
+      "dbName": "FROZEN NILE PERCH 1/Kg",
+      "excelPrice": 0,
+      "dbPrice": 10,
+      "category": "FROZEN GOODS"
+    },
+    {
+      "excelName": "Maggi Chicken Flavour Cubes (10g X 60)",
+      "dbName": "Maggi Chicken Flavour Cubes (10g X 60)",
+      "excelPrice": 0,
+      "dbPrice": 2,
+      "category": "Spices & Seasoning"
+    }
+  ],
+  "missing": [
+    {
+      "name": "~~Smoked Turkey \\ (lb)",
+      "price": 8.5,
+      "category": "FROZEN GOODS",
+      "Category": "FROZEN GOODS",
+      "Product Name": "~~Smoked Turkey \\ (lb)",
+      "Product Description": "Essential grocery item suitable for everyday cooking.",
+      "Price": 8.5,
+      "Stock Quantity": 100,
+      "Origin": "Ghana",
+      "Availability": "In Stock"
+    }
+  ],
+  "missingByCategory": {
+    "FROZEN GOODS": [
+      {
+        "name": "~~Smoked Turkey \\ (lb)",
+        "price": 8.5
+      }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+ITEMS FROM LEFT1 AND LEFT2 WITHOUT PRICES
+==========================================
+
+BAKERY ITEMS (16 items):
+- Pholourie
+- Cheese Toll
+- Pine Tart
+- Puf Puf
+- Coconut Buns
+- Salara
+- Dhal Puri
+- Mithai
+- Fresh Roti
+- Cheese Straws (appears twice in document)
+- Sugar Cake
+- Tennis Rolls
+- Plait Bread
+- Chinese Cakes
+- Black Cake / Rum Cake
+- Fresh Buns Bread
+
+OTHER ITEMS (2 items):
+- KFresh Body and Hair Cream
+- Pig Tail (regular, not salted - salted version has price of $6/lb)
+
+ITEMS IN LEFT2 WITHOUT PRICES (already added with estimated prices):
+- Roasted Peanuts (listed as $11.00 in left2, already exists as "Roasted Peanuts 510g" for $9.99)
+- Salted Mackerel (no price in left2, already added as $10.00)
+- Efom Wisa (no price in left2, already added as $8.99)
+- Hwentia (no price in left2, already added as $8.99)
+- Esoro Wisa (no price in left2, already added as $8.99)
+- Chilli Pepper Ground (no price in left2, already added as $7.99)
+- Egusi Ground (no price in left2, already added as $12.99)
+- Momoni frozen (no price in left2, already added as $8.99)
+
+NOTES:
+- Most items without prices are fresh bakery items
+- Some items appeared in both left1 and left2 documents
+- Items already in database with estimated prices are noted above
+- Need prices from client for the 18 items (16 bakery + 2 other items)
+- Total: 18 items still need pricing information to be added to database
