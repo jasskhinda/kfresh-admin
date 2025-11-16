@@ -458,23 +458,23 @@ export default function CategoriesPage() {
         {process.env.NODE_ENV === 'development' && (
           <div className="bg-yellow-50 border-b border-yellow-200 p-3">
             <div className="text-xs text-gray-600">
-              <strong>Debug Info:</strong> Categories: {categories.length} | 
-              Loading: {loading.toString()} | 
-              Search: "{searchTerm}" | 
+              <strong>Debug Info:</strong> Categories: {categories.length} |
+              Loading: {loading.toString()} |
+              Search: "{searchTerm}" |
               Filtered: {filteredCategories.length} |
               Data Source: <span className={dataSource === 'database' ? 'text-green-600' : 'text-red-600'}>{dataSource}</span>
             </div>
           </div>
         )}
-        
+
         {/* Data Source Warning */}
         {dataSource === 'fallback' && (
           <div className="bg-orange-50 border-b border-orange-200 p-3">
             <div className="flex items-center gap-2 text-orange-700">
               <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
               <span className="text-sm">
-                Showing fallback data due to database connectivity issues. 
-                <button 
+                Showing fallback data due to database connectivity issues.
+                <button
                   onClick={() => {
                     setCategories([])
                     setLoading(true)
@@ -488,7 +488,8 @@ export default function CategoriesPage() {
             </div>
           </div>
         )}
-        
+
+        <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -501,28 +502,19 @@ export default function CategoriesPage() {
                   aria-label="Select all categories"
                 />
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Category
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Image
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Slug
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Sort Order
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Created
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
                 Actions
               </th>
             </tr>
@@ -530,7 +522,7 @@ export default function CategoriesPage() {
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredCategories.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-6 py-12 text-center">
+                <td colSpan={6} className="px-6 py-12 text-center">
                   <FolderTree className="mx-auto h-12 w-12 text-gray-400" />
                   <h3 className="mt-4 text-sm font-medium text-gray-900">No categories found</h3>
                   <p className="mt-2 text-sm text-gray-500">
@@ -557,23 +549,26 @@ export default function CategoriesPage() {
                       aria-label={`Select ${category.name}`}
                     />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <div>
                       <div className="text-sm font-medium text-gray-900">
                         {category.name}
                       </div>
                       {category.description && (
-                        <div className="text-sm text-gray-500">
+                        <div className="text-xs text-gray-500 max-w-xs truncate">
                           {category.description}
                         </div>
                       )}
+                      <div className="text-xs font-mono text-gray-400 mt-1">
+                        {category.slug}
+                      </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     {category.image_url ? (
                       <div className="relative h-12 w-12">
                         <img
-                          key={`${category.id}-${category.updated_at}-${category.image_url}`} // More aggressive cache busting
+                          key={`${category.id}-${category.updated_at}-${category.image_url}`}
                           src={`${category.image_url}${category.image_url.includes('?') ? '&' : '?'}t=${Date.now()}&v=${Math.random()}`}
                           alt={category.name}
                           className="h-12 w-12 object-cover rounded-lg border border-gray-200"
@@ -589,7 +584,7 @@ export default function CategoriesPage() {
                             console.log('Image loaded successfully:', category.image_url)
                           }}
                         />
-                        <div 
+                        <div
                           className="hidden h-12 w-12 bg-gray-100 rounded-lg items-center justify-center border border-gray-200"
                           style={{ display: 'none' }}
                         >
@@ -602,12 +597,7 @@ export default function CategoriesPage() {
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm font-mono text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                      {category.slug}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                       category.is_active
                         ? 'bg-green-100 text-green-800'
@@ -616,7 +606,7 @@ export default function CategoriesPage() {
                       {category.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     {(category as any).is_fresh_meals ? (
                       <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">
                         Fresh Meals
@@ -627,13 +617,7 @@ export default function CategoriesPage() {
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {category.sort_order}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(category.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => handleEdit(category)}
@@ -656,6 +640,7 @@ export default function CategoriesPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Modal */}
