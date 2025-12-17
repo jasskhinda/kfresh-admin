@@ -20,6 +20,7 @@ interface Order {
   total_cents: number
   customer_email: string | null
   payment_status: string
+  payment_method: string | null
   created_at: string
 }
 
@@ -51,44 +52,47 @@ export default function PaymentsPage() {
       setError(null)
       const supabase = createClient()
 
-      // Fetch recent orders with payment information
-      const { data: ordersData, error: ordersError } = await supabase
+      // Fetch ALL orders for accurate stats calculation
+      const { data: allOrdersData, error: allOrdersError } = await supabase
         .from('orders')
-        .select('id, order_number, total_cents, customer_email, payment_status, created_at')
+        .select('id, order_number, total_cents, customer_email, payment_status, created_at, payment_method')
         .order('created_at', { ascending: false })
-        .limit(10)
 
-      if (ordersError) {
-        console.error('Error fetching orders:', ordersError)
+      if (allOrdersError) {
+        console.error('Error fetching orders:', allOrdersError)
         setError('Failed to load payment data')
         return
       }
 
-      setOrders(ordersData || [])
+      // Use latest 50 for display, but calculate stats from ALL orders
+      setOrders((allOrdersData || []).slice(0, 50))
 
-      // Calculate stats from orders data
-      if (ordersData && ordersData.length > 0) {
-        const totalRevenue = ordersData
+      // Calculate stats from ALL orders data for accurate totals
+      if (allOrdersData && allOrdersData.length > 0) {
+        const totalRevenue = allOrdersData
           .filter(order => order.payment_status === 'paid')
           .reduce((sum, order) => sum + (order.total_cents / 100), 0)
 
         const today = new Date().toISOString().split('T')[0]
-        const todaySales = ordersData
-          .filter(order => 
-            order.created_at.startsWith(today) && 
+        const todaySales = allOrdersData
+          .filter(order =>
+            order.created_at.startsWith(today) &&
             order.payment_status === 'paid'
           )
           .reduce((sum, order) => sum + (order.total_cents / 100), 0)
 
-        const pendingPayments = ordersData
+        const pendingPayments = allOrdersData
           .filter(order => order.payment_status === 'pending')
           .reduce((sum, order) => sum + (order.total_cents / 100), 0)
+
+        // Total transactions is all paid orders
+        const totalTransactions = allOrdersData.filter(order => order.payment_status === 'paid').length
 
         setStats({
           totalRevenue,
           todaySales,
           pendingPayments,
-          totalTransactions: ordersData.length
+          totalTransactions
         })
       }
 
@@ -262,7 +266,7 @@ export default function PaymentsPage() {
                       <td className="p-4">
                         <span className="inline-flex items-center space-x-1">
                           <CreditCard className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm text-gray-700">Not specified</span>
+                          <span className="text-sm text-gray-700 capitalize">{order.payment_method || 'Card'}</span>
                         </span>
                       </td>
                       <td className="p-4">

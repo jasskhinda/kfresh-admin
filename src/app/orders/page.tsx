@@ -1,16 +1,23 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { 
-  Search, 
-  Filter, 
-  Eye, 
-  Download, 
-  Clock, 
-  Check, 
-  AlertCircle, 
+import {
+  Search,
+  Filter,
+  Eye,
+  Download,
+  Clock,
+  Check,
+  AlertCircle,
   Truck,
-  MapPin
+  MapPin,
+  X,
+  Phone,
+  Mail,
+  User,
+  Package,
+  CreditCard,
+  Calendar
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice, formatDate, downloadCSV } from '@/lib/utils'
@@ -45,12 +52,289 @@ interface Order {
   completed_at: string | null
 }
 
+// Order Details Modal Component
+function OrderDetailsModal({ order, onClose }: { order: Order; onClose: () => void }) {
+  const formatCentsToPrice = (cents: number): string => {
+    return formatPrice(cents / 100)
+  }
+
+  // Parse items - they could be stored as JSON string or already an array
+  const orderItems = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || [])
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
+        {/* Header */}
+        <div className="bg-green-600 text-white p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-2xl font-bold">Order #{order.order_number}</h2>
+              <p className="text-green-100 mt-1">
+                {new Date(order.created_at).toLocaleString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="overflow-y-auto max-h-[calc(90vh-180px)] p-6 space-y-6">
+          {/* Status Overview */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm text-gray-500 mb-1">Order Status</p>
+              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium capitalize ${
+                order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                order.status === 'processing' ? 'bg-purple-100 text-purple-800' :
+                order.status === 'ready' ? 'bg-orange-100 text-orange-800' :
+                'bg-yellow-100 text-yellow-800'
+              }`}>
+                {order.status}
+              </span>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm text-gray-500 mb-1">Payment Status</p>
+              <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium capitalize ${
+                order.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
+                order.payment_status === 'failed' ? 'bg-red-100 text-red-800' :
+                'bg-yellow-100 text-yellow-800'
+              }`}>
+                {order.payment_status}
+              </span>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm text-gray-500 mb-1">Fulfillment</p>
+              <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 capitalize">
+                {order.fulfillment_method}
+              </span>
+            </div>
+          </div>
+
+          {/* Customer Information */}
+          <div className="bg-gray-50 rounded-lg p-5">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+              <User className="h-5 w-5 mr-2 text-green-600" />
+              Customer Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {order.customer_name && (
+                <div className="flex items-center space-x-2">
+                  <User className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-700">{order.customer_name}</span>
+                </div>
+              )}
+              {order.customer_email && (
+                <div className="flex items-center space-x-2">
+                  <Mail className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-700">{order.customer_email}</span>
+                </div>
+              )}
+              {order.customer_phone && (
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-4 w-4 text-gray-400" />
+                  <span className="text-gray-700">{order.customer_phone}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Order Items */}
+          <div className="bg-gray-50 rounded-lg p-5">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+              <Package className="h-5 w-5 mr-2 text-green-600" />
+              Order Items ({orderItems.length} items)
+            </h3>
+            <div className="space-y-3">
+              {orderItems.length > 0 ? (
+                orderItems.map((item: any, index: number) => (
+                  <div key={index} className="bg-white rounded-lg p-4 border border-gray-200">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">{item.name || item.product_name || 'Unknown Item'}</p>
+                        <p className="text-sm text-gray-500">Qty: {item.quantity || 1}</p>
+                        {/* Show customizations if any */}
+                        {item.selectedExtras && item.selectedExtras.length > 0 && (
+                          <p className="text-sm text-gray-500 mt-1">
+                            Extras: {item.selectedExtras.map((e: any) => e.name || e).join(', ')}
+                          </p>
+                        )}
+                        {item.selectedSwallow && (
+                          <p className="text-sm text-gray-500">Swallow: {item.selectedSwallow.name || item.selectedSwallow}</p>
+                        )}
+                        {item.selectedProtein && (
+                          <p className="text-sm text-gray-500">Protein: {item.selectedProtein.name || item.selectedProtein}</p>
+                        )}
+                        {item.special_instructions && (
+                          <p className="text-sm text-orange-600 mt-1">Note: {item.special_instructions}</p>
+                        )}
+                      </div>
+                      <p className="font-medium text-gray-900">
+                        {item.price ? formatPrice(item.price * (item.quantity || 1)) :
+                         item.total_cents ? formatCentsToPrice(item.total_cents) :
+                         item.unit_price_cents ? formatCentsToPrice(item.unit_price_cents * (item.quantity || 1)) : 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center py-4">No item details available</p>
+              )}
+            </div>
+          </div>
+
+          {/* Payment Information */}
+          <div className="bg-gray-50 rounded-lg p-5">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+              <CreditCard className="h-5 w-5 mr-2 text-green-600" />
+              Payment Summary
+            </h3>
+            <div className="space-y-2">
+              <div className="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span>{formatCentsToPrice(order.subtotal_cents)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span>Tax</span>
+                <span>{formatCentsToPrice(order.tax_cents)}</span>
+              </div>
+              {order.shipping_cents > 0 && (
+                <div className="flex justify-between text-gray-600">
+                  <span>Shipping</span>
+                  <span>{formatCentsToPrice(order.shipping_cents)}</span>
+                </div>
+              )}
+              {order.discount_cents > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Discount</span>
+                  <span>-{formatCentsToPrice(order.discount_cents)}</span>
+                </div>
+              )}
+              <div className="border-t border-gray-300 pt-2 mt-2">
+                <div className="flex justify-between font-bold text-gray-900 text-lg">
+                  <span>Total</span>
+                  <span>{formatCentsToPrice(order.total_cents)}</span>
+                </div>
+              </div>
+              {order.payment_method && (
+                <p className="text-sm text-gray-500 mt-2">
+                  Payment Method: {order.payment_method}
+                </p>
+              )}
+              {order.payment_intent_id && (
+                <p className="text-xs text-gray-400 mt-1 break-all">
+                  Payment ID: {order.payment_intent_id}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Delivery Address (if delivery) */}
+          {order.fulfillment_method === 'delivery' && order.delivery_address && (
+            <div className="bg-gray-50 rounded-lg p-5">
+              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                <MapPin className="h-5 w-5 mr-2 text-green-600" />
+                Delivery Address
+              </h3>
+              <div className="text-gray-700">
+                {typeof order.delivery_address === 'string' ? (
+                  <p>{order.delivery_address}</p>
+                ) : (
+                  <>
+                    {order.delivery_address.street && <p>{order.delivery_address.street}</p>}
+                    {order.delivery_address.city && (
+                      <p>
+                        {order.delivery_address.city}
+                        {order.delivery_address.state && `, ${order.delivery_address.state}`}
+                        {order.delivery_address.postal_code && ` ${order.delivery_address.postal_code}`}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Notes & Special Instructions */}
+          {(order.notes || order.special_instructions) && (
+            <div className="bg-orange-50 rounded-lg p-5">
+              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+                <AlertCircle className="h-5 w-5 mr-2 text-orange-600" />
+                Notes & Instructions
+              </h3>
+              {order.notes && (
+                <div className="mb-3">
+                  <p className="text-sm font-medium text-gray-700">Order Notes:</p>
+                  <p className="text-gray-600">{order.notes}</p>
+                </div>
+              )}
+              {order.special_instructions && (
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Special Instructions:</p>
+                  <p className="text-gray-600">{order.special_instructions}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Timestamps */}
+          <div className="bg-gray-50 rounded-lg p-5">
+            <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+              <Calendar className="h-5 w-5 mr-2 text-green-600" />
+              Timeline
+            </h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Order Created</span>
+                <span className="text-gray-700">{new Date(order.created_at).toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Last Updated</span>
+                <span className="text-gray-700">{new Date(order.updated_at).toLocaleString()}</span>
+              </div>
+              {order.completed_at && (
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Completed</span>
+                  <span className="text-gray-700">{new Date(order.completed_at).toLocaleString()}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-gray-200 p-4 bg-gray-50">
+          <button
+            onClick={onClose}
+            className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [selectedOrders, setSelectedOrders] = useState<string[]>([])
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
   useEffect(() => {
     fetchOrders()
@@ -420,7 +704,11 @@ export default function OrdersPage() {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center space-x-2">
-                        <button className="p-1 text-gray-600 hover:text-blue-600 transition-colors">
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="p-1 text-gray-600 hover:text-blue-600 transition-colors"
+                          title="View Order Details"
+                        >
                           <Eye className="h-4 w-4" />
                         </button>
                         <select
@@ -486,6 +774,14 @@ export default function OrdersPage() {
 
       {/* Debug Component - Remove this in production */}
       <DatabaseDebug />
+
+      {/* Order Details Modal */}
+      {selectedOrder && (
+        <OrderDetailsModal
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+        />
+      )}
     </div>
     </DashboardLayout>
   )
