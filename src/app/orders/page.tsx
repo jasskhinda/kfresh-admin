@@ -706,10 +706,11 @@ export default function OrdersPage() {
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="p-1 text-gray-600 hover:text-blue-600 transition-colors"
+                          className="px-2 py-1 bg-blue-100 text-blue-600 hover:bg-blue-200 rounded transition-colors flex items-center gap-1"
                           title="View Order Details"
                         >
                           <Eye className="h-4 w-4" />
+                          <span className="text-xs font-medium">View</span>
                         </button>
                         <select
                           onChange={(e) => {
