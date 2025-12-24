@@ -17,7 +17,9 @@ import {
   User,
   Package,
   CreditCard,
-  Calendar
+  Calendar,
+  Printer,
+  FileDown
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice, formatDate, downloadCSV } from '@/lib/utils'
@@ -60,6 +62,132 @@ function OrderDetailsModal({ order, onClose }: { order: Order; onClose: () => vo
 
   // Parse items - they could be stored as JSON string or already an array
   const orderItems = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || [])
+
+  // Handle print functionality
+  const handlePrint = () => {
+    const printWindow = window.open('', '_blank')
+    if (!printWindow) return
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Order #${order.order_number}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+            .header { background: #16a34a; color: white; padding: 20px; margin: -20px -20px 20px -20px; }
+            .header h1 { font-size: 24px; margin-bottom: 5px; }
+            .header p { opacity: 0.9; }
+            .section { margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 8px; }
+            .section-title { font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+            .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+            .status-paid { background: #dcfce7; color: #166534; }
+            .status-pending { background: #fef9c3; color: #854d0e; }
+            .status-confirmed { background: #dbeafe; color: #1e40af; }
+            .item { background: white; padding: 12px; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+            .summary-row { display: flex; justify-content: space-between; padding: 5px 0; }
+            .summary-total { border-top: 2px solid #333; padding-top: 10px; margin-top: 10px; font-weight: bold; font-size: 18px; }
+            .info-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+            .timeline-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
+            @media print { body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Order #${order.order_number}</h1>
+            <p>${new Date(order.created_at).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+          </div>
+
+          <div class="section">
+            <div class="grid">
+              <div>
+                <p style="font-size: 12px; color: #666; margin-bottom: 5px;">Order Status</p>
+                <span class="status-badge ${order.status === 'confirmed' ? 'status-confirmed' : 'status-pending'}">${order.status}</span>
+              </div>
+              <div>
+                <p style="font-size: 12px; color: #666; margin-bottom: 5px;">Payment Status</p>
+                <span class="status-badge ${order.payment_status === 'paid' ? 'status-paid' : 'status-pending'}">${order.payment_status}</span>
+              </div>
+              <div>
+                <p style="font-size: 12px; color: #666; margin-bottom: 5px;">Fulfillment</p>
+                <span class="status-badge" style="background: #dbeafe; color: #1e40af;">${order.fulfillment_method}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Customer Information</div>
+            ${order.customer_name ? `<div class="info-row"><span>${order.customer_name}</span></div>` : ''}
+            ${order.customer_email ? `<div class="info-row"><span>${order.customer_email}</span></div>` : ''}
+            ${order.customer_phone ? `<div class="info-row"><span>${order.customer_phone}</span></div>` : ''}
+          </div>
+
+          <div class="section">
+            <div class="section-title">Order Items (${orderItems.length} items)</div>
+            ${orderItems.map((item: any) => `
+              <div class="item">
+                <div>
+                  <strong>${item.name || item.product_name || 'Unknown Item'}</strong>
+                  <p style="font-size: 12px; color: #666;">Qty: ${item.quantity || 1}</p>
+                </div>
+                <strong>${item.price ? formatPrice(item.price * (item.quantity || 1)) : item.total_cents ? formatCentsToPrice(item.total_cents) : 'N/A'}</strong>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="section">
+            <div class="section-title">Payment Summary</div>
+            <div class="summary-row"><span>Subtotal</span><span>${formatCentsToPrice(order.subtotal_cents)}</span></div>
+            <div class="summary-row"><span>Tax</span><span>${formatCentsToPrice(order.tax_cents)}</span></div>
+            ${order.shipping_cents > 0 ? `<div class="summary-row"><span>Shipping</span><span>${formatCentsToPrice(order.shipping_cents)}</span></div>` : ''}
+            ${order.discount_cents > 0 ? `<div class="summary-row" style="color: #16a34a;"><span>Discount</span><span>-${formatCentsToPrice(order.discount_cents)}</span></div>` : ''}
+            <div class="summary-row summary-total"><span>Total</span><span>${formatCentsToPrice(order.total_cents)}</span></div>
+            ${order.payment_method ? `<p style="font-size: 12px; color: #666; margin-top: 10px;">Payment Method: ${order.payment_method}</p>` : ''}
+          </div>
+
+          ${order.fulfillment_method === 'delivery' && order.delivery_address ? `
+            <div class="section">
+              <div class="section-title">Delivery Address</div>
+              <p>${typeof order.delivery_address === 'string' ? order.delivery_address :
+                `${order.delivery_address.street || ''}${order.delivery_address.city ? ', ' + order.delivery_address.city : ''}${order.delivery_address.state ? ', ' + order.delivery_address.state : ''} ${order.delivery_address.postal_code || ''}`}</p>
+            </div>
+          ` : ''}
+
+          ${order.notes || order.special_instructions ? `
+            <div class="section" style="background: #fef3c7;">
+              <div class="section-title">Notes & Instructions</div>
+              ${order.notes ? `<p style="margin-bottom: 8px;"><strong>Order Notes:</strong> ${order.notes}</p>` : ''}
+              ${order.special_instructions ? `<p><strong>Special Instructions:</strong> ${order.special_instructions}</p>` : ''}
+            </div>
+          ` : ''}
+
+          <div class="section">
+            <div class="section-title">Timeline</div>
+            <div class="timeline-row"><span>Order Created</span><span>${new Date(order.created_at).toLocaleString()}</span></div>
+            <div class="timeline-row"><span>Last Updated</span><span>${new Date(order.updated_at).toLocaleString()}</span></div>
+            ${order.completed_at ? `<div class="timeline-row"><span>Completed</span><span>${new Date(order.completed_at).toLocaleString()}</span></div>` : ''}
+          </div>
+
+          <p style="text-align: center; color: #999; margin-top: 30px; font-size: 12px;">
+            KFresh - Order Receipt | Printed on ${new Date().toLocaleString()}
+          </p>
+        </body>
+      </html>
+    `)
+    printWindow.document.close()
+    printWindow.focus()
+    setTimeout(() => {
+      printWindow.print()
+      printWindow.close()
+    }, 250)
+  }
+
+  // Handle download as PDF (uses print to PDF functionality)
+  const handleDownloadPDF = () => {
+    handlePrint() // This opens print dialog where user can select "Save as PDF"
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -316,12 +444,28 @@ function OrderDetailsModal({ order, onClose }: { order: Order; onClose: () => vo
 
         {/* Footer */}
         <div className="border-t border-gray-200 p-4 bg-gray-50">
-          <button
-            onClick={onClose}
-            className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors"
-          >
-            Close
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handlePrint}
+              className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              <Printer className="h-5 w-5" />
+              Print
+            </button>
+            <button
+              onClick={handleDownloadPDF}
+              className="flex-1 flex items-center justify-center gap-2 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors"
+            >
+              <FileDown className="h-5 w-5" />
+              Download PDF
+            </button>
+            <button
+              onClick={onClose}
+              className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
