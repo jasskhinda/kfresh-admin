@@ -57,8 +57,16 @@ export async function middleware(request: NextRequest) {
   // Check if user is authenticated
   const { data: { user } } = await supabase.auth.getUser()
 
-  // If trying to access login page and already authenticated, redirect to dashboard
+  // If trying to access login page and already authenticated, check if it's an unauthorized error
+  // If so, let them stay on login page (they need to sign out and use admin account)
   if (request.nextUrl.pathname === '/login' && user) {
+    const errorParam = request.nextUrl.searchParams.get('error')
+    if (errorParam === 'unauthorized') {
+      // User is logged in but not admin - let them see the login page with error
+      // They need to sign out and use an admin account
+      return response
+    }
+    // Otherwise redirect authenticated users away from login
     return NextResponse.redirect(new URL('/', request.url))
   }
 

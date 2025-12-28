@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
-import { Eye, EyeOff, Mail, Lock, Shield, CheckCircle, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, Shield, CheckCircle, AlertCircle, LogOut } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function AdminLoginPage() {
@@ -15,9 +15,37 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [isUnauthorized, setIsUnauthorized] = useState(false)
+  const [signingOut, setSigningOut] = useState(false)
 
-  const { signIn } = useAuth()
+  const { signIn, signOut, user } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Check for unauthorized error in URL
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam === 'unauthorized') {
+      setIsUnauthorized(true)
+      setError('Access denied. Your account does not have administrator privileges. Please sign out and use an admin account.')
+    }
+  }, [searchParams])
+
+  // Handle sign out for unauthorized users
+  const handleSignOut = async () => {
+    setSigningOut(true)
+    try {
+      await signOut()
+      setIsUnauthorized(false)
+      setError('')
+      // Clear the URL parameter
+      router.replace('/login')
+    } catch (err) {
+      console.error('Sign out error:', err)
+    } finally {
+      setSigningOut(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -190,6 +218,28 @@ export default function AdminLoginPage() {
                 <p className="font-bold text-base mt-1" style={{ color: 'white !important' }}>{error}</p>
               </div>
             </div>
+          )}
+
+          {/* Sign Out Button for Unauthorized Users */}
+          {isUnauthorized && user && (
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={signingOut}
+              className="w-full py-4 bg-gray-800 text-white rounded-xl font-bold text-lg hover:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg flex items-center justify-center gap-2"
+            >
+              {signingOut ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  Signing out...
+                </>
+              ) : (
+                <>
+                  <LogOut className="h-5 w-5" />
+                  Sign Out & Try Different Account
+                </>
+              )}
+            </button>
           )}
 
           {/* Form */}
