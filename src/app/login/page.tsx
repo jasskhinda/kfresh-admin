@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { Eye, EyeOff, Mail, Lock, Shield, CheckCircle, AlertCircle, LogOut } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
-export default function AdminLoginPage() {
+function AdminLoginContent() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -340,5 +340,21 @@ export default function AdminLoginPage() {
     </div>
     </div>
     </div>
+  )
+}
+
+// Wrap the component with Suspense for useSearchParams
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen hero-gradient flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+          <p className="mt-4 text-white">Loading...</p>
+        </div>
+      </div>
+    }>
+      <AdminLoginContent />
+    </Suspense>
   )
 }
